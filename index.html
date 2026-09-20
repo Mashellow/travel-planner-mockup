@@ -19,21 +19,23 @@
         .tab-active { border-bottom: 3px solid #0284c7; color: #0284c7; font-weight: 600; }
         
         /* Custom Leaflet DivIcon reset */
-        .leaflet-div-icon {
+        .leaflet-div-icon, .custom-pin-wrapper {
             background: transparent !important;
             border: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
-        /* 🟢 Custom Card Pin: รูปภาพเต็มขอบด้านบนทันที ไร้ช่องว่าง/แถบสีคั่น */
+        /* 🟢 Custom Card Pin: ปรับแก้รูปภาพชิดขอบการ์ด 100% ไร้ช่องว่าง */
         .custom-map-pin {
             width: 130px;
-            border-radius: 14px;
-            overflow: hidden !important; /* บังคับตัดขอบมุมโค้งของการ์ด */
+            border-radius: 12px;
+            overflow: hidden !important; /* ตัดขอบมุมโค้งของการ์ดและรูปภาพให้พอดี */
             box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35);
             transition: all 0.2s ease-in-out;
             cursor: pointer;
             background: var(--pin-bg);
-            border: 3px solid var(--pin-bg); /* กรอบสีหนารอบการ์ด */
+            border: none !important; /* เอาเส้นกรอบเดิมออกเพื่อให้รูปชิดขอบสนิท */
             position: relative;
             padding: 0 !important;
             margin: 0 !important;
@@ -47,26 +49,28 @@
             box-shadow: 0 12px 25px rgba(15, 23, 42, 0.45);
         }
 
-        /* กล่องใส่รูปภาพ แนบชิดขอบบน 100% */
+        /* กล่องใส่รูปภาพ แนบชิดขอบบน/ซ้าย/ขวา แบบ 100% */
         .pin-photo-wrapper {
             position: relative;
-            width: 100%;
-            height: 75px;
+            width: 100% !important;
+            height: 80px !important;
             background: #cbd5e1;
-            overflow: hidden;
+            overflow: hidden !important;
             margin: 0 !important;
             padding: 0 !important;
             display: block;
+            border: none !important;
         }
 
         .pin-photo {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+            display: block !important;
             border: none !important;
             margin: 0 !important;
             padding: 0 !important;
+            outline: none !important;
         }
 
         /* แท็กแสดงราคาตรงมุมขวาล่างของรูปภาพ */
@@ -79,17 +83,18 @@
             font-size: 9.5px;
             font-weight: 700;
             padding: 2px 7px;
-            border-radius: 10px;
+            border-radius: 8px;
             letter-spacing: 0.2px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.4);
             line-height: 1.2;
+            z-index: 2;
         }
 
         /* กล่องชื่อสถานที่ด้านล่างการ์ด */
         .pin-title-box {
             background: var(--pin-bg);
             color: #ffffff;
-            padding: 4px 5px;
+            padding: 5px 6px;
             font-size: 10.5px;
             font-weight: 700;
             text-align: center;
@@ -97,6 +102,8 @@
             overflow: hidden;
             text-overflow: ellipsis;
             line-height: 1.2;
+            margin: 0 !important;
+            border: none !important;
         }
 
         /* ปลายแหลมชี้ตำแหน่งด้านล่างการ์ด */
@@ -106,7 +113,7 @@
             border-left: 8px solid transparent;
             border-right: 8px solid transparent;
             border-top: 8px solid var(--pin-bg);
-            margin: -1px auto 0 auto;
+            margin: 0 auto;
             filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
         }
 
@@ -216,7 +223,7 @@
                             </span>
                         </div>
 
-                        <!-- Dropdown กรองหมวดหมู่ (ลบวงเล็บสีออกแล้ว) -->
+                        <!-- Dropdown กรองหมวดหมู่ -->
                         <div class="flex items-center justify-between bg-slate-800/90 p-3 rounded-2xl border border-slate-700 shadow-md">
                             <label for="map-category-select" class="text-xs font-bold text-slate-200 flex items-center gap-2">
                                 <i class="fa-solid fa-filter text-sky-400"></i>
@@ -401,7 +408,7 @@
     <div id="modal-quick-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden border border-slate-100 animate-in fade-in zoom-in duration-200">
             <div class="relative h-44 w-full bg-slate-900">
-                <img id="modal-quick-img" class="w-full h-full object-cover" src="" alt="">
+                <img id="modal-quick-img" class="w-full h-full object-cover" src="" alt="" onerror="this.src='https://picsum.photos/400/300'">
                 <button onclick="closeModal('modal-quick-detail')" class="absolute top-3 right-3 bg-slate-900/60 hover:bg-slate-900 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs transition">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -437,7 +444,7 @@
     <div id="modal-full-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col animate-in fade-in zoom-in duration-200">
             <div class="relative h-52 w-full bg-slate-900 shrink-0">
-                <img id="modal-full-img" class="w-full h-full object-cover" src="" alt="">
+                <img id="modal-full-img" class="w-full h-full object-cover" src="" alt="" onerror="this.src='https://picsum.photos/500/350'">
                 <button onclick="closeModal('modal-full-detail')" class="absolute top-3 right-3 bg-slate-900/60 hover:bg-slate-900 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs transition">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -550,6 +557,9 @@
             'shop': { bg: 'bg-purple-600', text: 'text-purple-600', hex: '#9333ea', name: 'ร้านค้า/ของฝาก' }
         };
 
+        // รูปจำลองที่มีเสถียรภาพพร้อมระบบรูปสำรองอัตโนมัติ
+        const fallbackImg = "https://picsum.photos/400/300";
+
         const allPinsData = [
             // --- 🇹🇭 ประเทศไทย ---
             { 
@@ -559,7 +569,7 @@
                 reviews: [{ author: 'Somchai T.', rating: 5, comment: 'ประทับใจมาก บรรยากาศตระการตาที่สุด' }]
             },
             { 
-                id: 'th_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'ภูเก็ต', title: 'ทะเลภูเก็ต หาดป่าตอง', price: 0, img: 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400', lat: 7.892, lng: 98.298, tier: 1,
+                id: 'th_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'ภูเก็ต', title: 'ทะเลภูเก็ต หาดป่าตอง', price: 0, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', lat: 7.892, lng: 98.298, tier: 1,
                 address: 'หาดป่าตอง อ.กะทู้ จ.ภูเก็ต', rating: 4.8, reviewCount: 512,
                 description: 'ชายหาดยอดนิยมของภูเก็ต น้ำทะเลใส ทรายนุ่ม เหมาะสำหรับการพักผ่อน เล่นน้ำ และกิจกรรมทางน้ำหลากหลายประเภท',
                 reviews: [{ author: 'John D.', rating: 5, comment: 'Great beach vibe, beautiful sunset!' }]
@@ -715,7 +725,7 @@
                 return `
                     <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 hover:shadow-md transition flex flex-col group">
                         <div class="relative h-36 bg-slate-100 overflow-hidden">
-                            <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='${fallbackImg}'">
                             <span class="absolute top-2.5 left-2.5 ${theme.bg} text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md shadow-sm">
                                 ${item.catName}
                             </span>
@@ -737,7 +747,7 @@
             }).join('');
         }
 
-        /* 🟢 REFRESH MAP PINS - รูปภาพแนบชิดขอบบนทันที */
+        /* 🟢 REFRESH MAP PINS - รูปภาพแนบชิดขอบการ์ดทุกด้าน 100% ไร้ช่องว่าง */
         function refreshMapPins() {
             activeMarkers.forEach(m => map.removeLayer(m));
             activeMarkers = [];
@@ -767,11 +777,11 @@
                 const theme = categoryThemeMap[pin.category] || categoryThemeMap['attraction'];
                 const priceDisplay = pin.price === 0 ? 'เข้าฟรี' : `${pin.price.toLocaleString()} B`;
 
-                /* โครงสร้างหมุดการ์ด: รูปภาพแนบชิดกรอบบนสุด ไร้ช่องว่างคั่น */
+                /* โครงสร้างหมุดการ์ด: รูปภาพแนบชิดขอบการ์ดเต็มพื้นที่ ไร้ขอบสีคั่น */
                 const pinHtml = `
-                    <div class="custom-map-pin" style="--pin-bg: ${theme.hex}; border-color: ${theme.hex};">
+                    <div class="custom-map-pin" style="--pin-bg: ${theme.hex};">
                         <div class="pin-photo-wrapper">
-                            <img class="pin-photo" src="${pin.img}" alt="${pin.title}">
+                            <img class="pin-photo" src="${pin.img}" alt="${pin.title}" onerror="this.src='${fallbackImg}'">
                             <div class="pin-price-tag">${priceDisplay}</div>
                         </div>
                         <div class="pin-title-box" style="background: ${theme.hex};">${pin.title}</div>
@@ -782,8 +792,8 @@
                 const customIcon = L.divIcon({
                     className: 'custom-pin-wrapper',
                     html: pinHtml,
-                    iconSize: [130, 105],
-                    iconAnchor: [65, 105]
+                    iconSize: [130, 108],
+                    iconAnchor: [65, 108]
                 });
 
                 const marker = L.marker([pin.lat, pin.lng], { icon: customIcon }).addTo(map);
@@ -792,7 +802,7 @@
                 const popupContent = `
                     <div class="w-56 font-sans bg-white overflow-hidden rounded-2xl border-t-4" style="border-top-color: ${theme.hex}">
                         <div class="relative h-32 w-full overflow-hidden bg-slate-900">
-                            <img src="${pin.img}" class="w-full h-full object-cover">
+                            <img src="${pin.img}" class="w-full h-full object-cover" onerror="this.src='${fallbackImg}'">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/10"></div>
                             
                             <span class="absolute top-2.5 left-2.5 ${theme.bg} text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full shadow-md">
