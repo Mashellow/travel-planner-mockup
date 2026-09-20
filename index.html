@@ -26,7 +26,7 @@
             padding: 0 !important;
         }
 
-        /* Custom Card Pin บนแผนที่ (ไฟล์ 2) */
+        /* Custom Card Pin บนแผนที่ */
         .custom-map-pin {
             width: 130px;
             border-radius: 12px;
@@ -155,7 +155,7 @@
             box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
         }
 
-        /* Moment Active Tag Style (ไฟล์ 1) */
+        /* Moment Active Tag Style */
         .moment-tag-active {
             background-color: #ec4899 !important;
             color: #ffffff !important;
@@ -902,7 +902,7 @@
             renderMomentsFeed();
         };
 
-        // ฟังก์ชันใหม่: อัปเดตจำนวนวันของหน้าสองแปรผันตรงกับหน้าแรก
+        // อัปเดตจำนวนวันของหน้าสองแปรผันตรงกับหน้าแรก
         function updateDaysCount() {
             const daysInput = document.getElementById('input-days');
             let days = parseInt(daysInput ? daysInput.value : '4') || 1;
@@ -1561,8 +1561,12 @@
             }
         }
 
-        function triggerLogin() {
-            alert('เปิดหน้าต่างเข้าสู่ระบบ');
+        function triggerLogin(action) {
+            if (action === 'save') {
+                alert('กรุณาเข้าสู่ระบบเพื่อบันทึกทริป');
+            } else {
+                alert('เปิดหน้าต่างเข้าสู่ระบบ');
+            }
         }
     </script>
 </body>
