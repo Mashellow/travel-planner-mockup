@@ -155,7 +155,6 @@
             box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
         }
 
-        /* Moment Active Tag Style */
         .moment-tag-active {
             background-color: #ec4899 !important;
             color: #ffffff !important;
@@ -163,7 +162,6 @@
             box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);
         }
 
-        /* ซ่อน Scrollbar ของหมวดหมู่ */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
@@ -304,7 +302,8 @@
                         </div>
 
                         <div class="pt-2 grid grid-cols-2 gap-2">
-                            <button onclick="startPlanning('auto')" class="w-full bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5">
+                            <!-- เรียกใช้งาน Modal สำหรับ Auto Plan -->
+                            <button onclick="openAutoPlanModal()" class="w-full bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i><span>Auto Plan</span>
                             </button>
                             <button onclick="startPlanning('diy')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-xs border border-slate-200 transition flex items-center justify-center gap-1.5">
@@ -403,8 +402,6 @@
 
         <!-- ================= PAGE 3: MOMENTS ================= -->
         <section id="page-moment" class="hidden space-y-6">
-            
-            <!-- Hero Banner -->
             <div class="bg-gradient-to-r from-purple-700 via-pink-600 to-rose-500 text-white p-6 md:p-8 rounded-3xl shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div class="space-y-2 z-10 max-w-2xl">
                     <span class="bg-white/20 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-md border border-white/30">
@@ -421,9 +418,7 @@
                 </button>
             </div>
 
-            <!-- SEARCH BAR & CATEGORY FILTER SECTION -->
             <div class="space-y-3 border-b border-slate-200 pb-4">
-                
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div class="relative w-full sm:w-80">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
@@ -475,11 +470,131 @@
                 </div>
             </div>
 
-            <!-- Moments Grid Feed -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="moment-feed-container"></div>
         </section>
 
     </main>
+
+    <!-- MODAL: AUTO PLAN POPUP (เพิ่มใหม่ตามตรรกะที่กำหนด) -->
+    <div id="modal-auto-plan" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
+            <div class="bg-gradient-to-r from-sky-600 to-indigo-600 p-5 text-white flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-lg">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-base leading-tight">วิเคราะห์และจัดแพลนอัตโนมัติ (Auto Plan)</h3>
+                        <p class="text-[11px] text-sky-100 font-normal">ระบุสถานะที่พักเพื่อคำนวณงบประมาณและเส้นทางท่องเที่ยวที่แม่นยำ</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('modal-auto-plan')" class="text-white/80 hover:text-white text-lg transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4 overflow-y-auto flex-grow text-xs text-slate-700">
+                
+                <div class="space-y-3">
+                    <label class="block font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-hotel text-sky-600"></i>
+                        สถานะที่พักสำหรับทริปนี้
+                    </label>
+                    
+                    <!-- กรณีที่ 1 -->
+                    <label class="flex items-start p-3 border rounded-2xl cursor-pointer hover:bg-sky-50/50 transition border-slate-200">
+                        <input type="radio" name="acc_status" value="in_app" onchange="onAccStatusChange()" class="mt-1 text-sky-600 focus:ring-sky-500">
+                        <div class="ml-3">
+                            <span class="font-bold text-slate-800 block text-xs">1. จองที่พักผ่านระบบของเราแล้ว (In-App Booking)</span>
+                            <span class="text-[11px] text-slate-500 block mt-0.5">ระบบจะดึงพิกัดและราคาที่พักมาคำนวณงบ/จัดแพลนใกล้อย่างอัตโนมัติ</span>
+                        </div>
+                    </label>
+
+                    <!-- กรณีที่ 2 -->
+                    <div class="border rounded-2xl overflow-hidden border-slate-200">
+                        <label class="flex items-start p-3 cursor-pointer hover:bg-sky-50/50 transition">
+                            <input type="radio" name="acc_status" value="external" onchange="onAccStatusChange()" class="mt-1 text-sky-600 focus:ring-sky-500">
+                            <div class="ml-3">
+                                <span class="font-bold text-slate-800 block text-xs">2. มีที่พักแล้ว (จองจากเว็บอื่น / ข้างนอก)</span>
+                                <span class="text-[11px] text-slate-500 block mt-0.5">ระบุชื่อที่พักหรือย่าน เพื่อใช้อิงตำแหน่งในการจัดเส้นทาง</span>
+                            </div>
+                        </label>
+
+                        <div id="sub-external-box" class="hidden p-3.5 bg-slate-50 border-t border-slate-200 space-y-3">
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">ชื่อที่พัก หรือ พิกัด/ย่าน *</label>
+                                <input id="auto-ext-hotel-name" type="text" oninput="updateAutoPlanSummary()" placeholder="เช่น โรงแรมอามารี, ย่านนิมมาน..." class="w-full px-3 py-2 border rounded-xl text-xs bg-white border-slate-200 focus:ring-2 focus:ring-sky-500 outline-none">
+                            </div>
+
+                            <div class="space-y-2">
+                                <label class="block font-semibold text-slate-700">ตัวเลือกงบประมาณ:</label>
+                                
+                                <label class="flex items-center gap-2 cursor-pointer text-slate-700">
+                                    <input type="radio" name="ext_budget_type" value="included" onchange="onExtBudgetTypeChange()" checked class="text-sky-600">
+                                    <span>🔘 งบที่กรอกมารวมค่าที่พักแล้ว (มีหักราคาที่พักออกจากงบรวม)</span>
+                                </label>
+                                
+                                <div id="ext-hotel-price-box" class="ml-6 pl-2 border-l-2 border-sky-300">
+                                    <label class="block text-[11px] text-slate-500 mb-0.5">ระบุราคาที่พัก (บาท):</label>
+                                    <input id="auto-ext-hotel-price" type="number" oninput="updateAutoPlanSummary()" placeholder="เช่น 3000" class="w-full px-3 py-1.5 border rounded-xl text-xs bg-white border-slate-200 focus:ring-2 focus:ring-sky-500 outline-none">
+                                </div>
+
+                                <label class="flex items-center gap-2 cursor-pointer text-slate-700 pt-1">
+                                    <input type="radio" name="ext_budget_type" value="excluded" onchange="onExtBudgetTypeChange()" class="text-sky-600">
+                                    <span>🔘 งบที่กรอกมาไม่รวมค่าที่พัก (ใช้งบสำหรับ กิน/เที่ยว 100%)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- กรณีที่ 3 -->
+                    <div class="border rounded-2xl overflow-hidden border-slate-200">
+                        <label class="flex items-start p-3 cursor-pointer hover:bg-sky-50/50 transition">
+                            <input type="radio" name="acc_status" value="none" onchange="onAccStatusChange()" checked class="mt-1 text-sky-600 focus:ring-sky-500">
+                            <div class="ml-3">
+                                <span class="font-bold text-slate-800 block text-xs">3. ยังไม่มีที่พัก</span>
+                                <span class="text-[11px] text-slate-500 block mt-0.5">เลือกให้ระบบช่วยแนะนำที่พักในงบ หรือวางแผนโดยใช้อยู่ย่านยอดนิยม</span>
+                            </div>
+                        </label>
+
+                        <div id="sub-none-box" class="p-3.5 bg-slate-50 border-t border-slate-200 space-y-2">
+                            <p class="font-semibold text-slate-800">ต้องการให้ช่วยแนะนำที่พักในแพลนด้วยไหม?</p>
+                            
+                            <label class="flex items-center gap-2 cursor-pointer text-slate-700">
+                                <input type="radio" name="none_hotel_option" value="recommend" onchange="updateAutoPlanSummary()" checked class="text-sky-600">
+                                <span>ต้องการ (แบ่งงบหาที่พัก ~35% + เที่ยว/กิน ~65%)</span>
+                            </label>
+
+                            <label class="flex items-center gap-2 cursor-pointer text-slate-700">
+                                <input type="radio" name="none_hotel_option" value="self" onchange="updateAutoPlanSummary()" class="text-sky-600">
+                                <span>ไม่ต้องการ / หาเองทีหลัง (ใช้งบกิน/เที่ยว 100% อิงตามย่าน Center Zone)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- สรุปตรรกะงบประมาณก่อนวิเคราะห์ -->
+                <div class="bg-sky-50/80 p-3.5 rounded-2xl border border-sky-200 space-y-1.5 text-[11px] text-sky-900">
+                    <div class="font-bold flex items-center gap-1.5 text-xs text-sky-800">
+                        <i class="fa-solid fa-calculator text-sky-600"></i> สรุปตรรกะการคำนวณงบ Auto Plan
+                    </div>
+                    <div id="summary-budget-text" class="leading-relaxed">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="p-4 bg-slate-50 border-t border-slate-100 shrink-0 flex gap-2">
+                <button onclick="closeModal('modal-auto-plan')" class="w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs py-3 rounded-2xl font-bold transition">
+                    ยกเลิก
+                </button>
+                <button onclick="executeAutoPlan()" class="w-2/3 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs py-3 rounded-2xl font-bold shadow-md transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> วิเคราะห์และจัดแพลน
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL: Full Details Modal -->
     <div id="modal-full-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden flex items-center justify-center p-4">
@@ -799,86 +914,6 @@
                 likes: 189,
                 isLiked: false,
                 hashtags: ['#OsakaEats', '#StreetFood', '#สายกิน']
-            },
-            {
-                id: 'm4',
-                author: 'Max_Diver',
-                avatar: 'https://i.pravatar.cc/150?img=68',
-                timeAgo: '6 ชั่วโมงที่แล้ว',
-                location: 'สุราษฎร์ธานี, ประเทศไทย',
-                tag: 'activity',
-                tagLabel: '🎟️ กิจกรรม',
-                title: 'ทริปดำน้ำลึกเกาะเต่า เจอฝูงปลาและเต่าทะเลตัวใหญ่มาก! 🐢🤿',
-                content: 'ประสบการณ์ดำน้ำ Scuba Diving น้ำใสเห็นปะการังชัดเจน ประทับใจสุดๆ สำหรับสายกิจกรรมทางน้ำ',
-                mediaType: 'image',
-                mediaUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600',
-                likes: 340,
-                isLiked: false,
-                hashtags: ['#KohTao', '#ScubaDiving', '#กิจกรรมทางน้ำ']
-            },
-            {
-                id: 'm5',
-                author: 'Kittisak_Camper',
-                avatar: 'https://i.pravatar.cc/150?img=60',
-                timeAgo: '1 วันที่แล้ว',
-                location: 'กาญจนบุรี, ประเทศไทย',
-                tag: 'camping',
-                tagLabel: '🏕️ แคมป์ปิ้ง / สายลุย',
-                title: 'กางเต็นท์ริมน้ำบรรยากาศสุดชิล นอนฟังเสียงธรรมชาติ ⛺🔥',
-                content: 'ลานกางเต็นท์เงียบสงบ อากาศดีมากตอนเช้ามีหมอกลอยเหนือผิวน้ำ สายแคมป์ปิ้งต้องมาตำ!',
-                mediaType: 'image',
-                mediaUrl: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600',
-                likes: 298,
-                isLiked: false,
-                hashtags: ['#CampingLife', '#กาญจนบุรี', '#สายลุย']
-            },
-            {
-                id: 'm6',
-                author: 'Mu_Lover88',
-                avatar: 'https://i.pravatar.cc/150?img=26',
-                timeAgo: '1 วันที่แล้ว',
-                location: 'เชียงใหม่, ประเทศไทย',
-                tag: 'mu',
-                tagLabel: '🔮 สายมู / วัฒนธรรม',
-                title: 'ไหว้พระขอพรวัดพระธาตุดอยสุเทพ เสริมสิริมงคลรับปีใหม่ 🛕✨',
-                content: 'เดินขึ้นบันไดนาค 306 ขั้น ชมสถาปัตยกรรมล้านนาสวยงาม พร้อมกราบไหว้พระธาตุขอพรเรื่องงานและการเดินทาง',
-                mediaType: 'image',
-                mediaUrl: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=600',
-                likes: 410,
-                isLiked: true,
-                hashtags: ['#สายมู', '#เชียงใหม่', '#วัดสวย']
-            },
-            {
-                id: 'm7',
-                author: 'Doggy_Explorer',
-                avatar: 'https://i.pravatar.cc/150?img=16',
-                timeAgo: '2 วันที่แล้ว',
-                location: 'ชลบุรี, ประเทศไทย',
-                tag: 'pet',
-                tagLabel: '🐕 Pet-Friendly',
-                title: 'พาน้องหมาเที่ยวคาเฟ่ริมหาดบางแสน ต้อนรับสัตว์เลี้ยง 100% 🐾🐶',
-                content: 'มีโซนสนามหญ้ากว้างๆ ให้เด็กๆ วิ่งเล่น แถมมีเมนูขนมสำหรับน้องหมาโดยเฉพาะ เจ้าของแฮปปี้สัตว์เลี้ยงก็แฮปปี้',
-                mediaType: 'image',
-                mediaUrl: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600',
-                likes: 380,
-                isLiked: false,
-                hashtags: ['#PetFriendly', '#พาน้องเที่ยว', '#คาเฟ่สัตว์เลี้ยงเข้าได้']
-            },
-            {
-                id: 'm8',
-                author: 'Solo_Backpacker',
-                avatar: 'https://i.pravatar.cc/150?img=33',
-                timeAgo: '3 วันที่แล้ว',
-                location: 'เกียวโต, ญี่ปุ่น',
-                tag: 'solo',
-                tagLabel: '🎒 Solo Traveler',
-                title: 'ฉายเดี่ยวเที่ยวเกียวโตเดินชมป่าไผ่อาราชิยามะ Safe & Chill 🎋🚲',
-                content: 'เที่ยวคนเดียวแบบไม่ต้องง้อใคร เช่าจักรยานปั่นรอบเมือง ผู้คนเป็นมิตรและเดินทางง่าย ปลอดภัยมากๆ ครับ',
-                mediaType: 'image',
-                mediaUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600',
-                likes: 275,
-                isLiked: false,
-                hashtags: ['#SoloTravel', '#KyotoTrip', '#เที่ยวคนเดียว']
             }
         ];
 
@@ -902,7 +937,6 @@
             renderMomentsFeed();
         };
 
-        // อัปเดตจำนวนวันของหน้าสองแปรผันตรงกับหน้าแรก
         function updateDaysCount() {
             const daysInput = document.getElementById('input-days');
             let days = parseInt(daysInput ? daysInput.value : '4') || 1;
@@ -1108,8 +1142,7 @@
                     className: 'custom-pin-wrapper',
                     html: pinHtml,
                     iconSize: [130, 108],
-                    iconAnchor: [65, 108],
-                    popupAnchor: [0, -108]
+                    iconAnchor: [65, 108]
                 });
 
                 const marker = L.marker([pin.lat, pin.lng], { icon: customIcon }).addTo(map);
@@ -1191,6 +1224,217 @@
             };
 
             document.getElementById('modal-full-detail').classList.remove('hidden');
+        }
+
+        // ================= AUTO PLAN MODAL & BUDGET LOGIC =================
+        function openAutoPlanModal() {
+            const hotelInput = document.getElementById('input-hotel')?.value.trim();
+            if (hotelInput) {
+                document.getElementById('auto-ext-hotel-name').value = hotelInput;
+            }
+            onAccStatusChange();
+            document.getElementById('modal-auto-plan').classList.remove('hidden');
+        }
+
+        function onAccStatusChange() {
+            const status = document.querySelector('input[name="acc_status"]:checked')?.value || 'none';
+            const subExtBox = document.getElementById('sub-external-box');
+            const subNoneBox = document.getElementById('sub-none-box');
+
+            if (status === 'external') {
+                subExtBox.classList.remove('hidden');
+                subNoneBox.classList.add('hidden');
+            } else if (status === 'none') {
+                subExtBox.classList.add('hidden');
+                subNoneBox.classList.remove('hidden');
+            } else {
+                subExtBox.classList.add('hidden');
+                subNoneBox.classList.add('hidden');
+            }
+            updateAutoPlanSummary();
+        }
+
+        function onExtBudgetTypeChange() {
+            const extType = document.querySelector('input[name="ext_budget_type"]:checked')?.value || 'included';
+            const priceBox = document.getElementById('ext-hotel-price-box');
+            if (extType === 'included') {
+                priceBox.classList.remove('hidden');
+            } else {
+                priceBox.classList.add('hidden');
+            }
+            updateAutoPlanSummary();
+        }
+
+        function updateAutoPlanSummary() {
+            const totalBudget = parseInt(document.getElementById('input-budget')?.value || '25000') || 25000;
+            const status = document.querySelector('input[name="acc_status"]:checked')?.value || 'none';
+            const summaryText = document.getElementById('summary-budget-text');
+            if (!summaryText) return;
+
+            const country = document.getElementById('select-country').value;
+            const city = document.getElementById('select-city').value;
+
+            if (status === 'in_app') {
+                let hotel = allPinsData.find(p => p.category === 'hotel' && p.country === country && (city === '-- ทั้งประเทศ --' || p.city === city));
+                let hotelPrice = hotel ? hotel.price : Math.round(totalBudget * 0.35);
+                let hotelName = hotel ? hotel.title : 'โรงแรมในระบบ (In-App Booking)';
+                let travelBudget = Math.max(0, totalBudget - hotelPrice);
+
+                summaryText.innerHTML = `
+                    • <b>ที่พักในระบบ:</b> ${hotelName} (${hotelPrice.toLocaleString()} บาท)<br>
+                    • <b>งบเที่ยว/กิน/กิจกรรม:</b> <span class="text-emerald-600 font-bold">${travelBudget.toLocaleString()} บาท</span> (หักค่าที่พักอัตโนมัติ)<br>
+                    • <b>การเลือกสถานที่:</b> ค้นหาร้านอาหาร และสถานที่ท่องเที่ยวอิงรัศมีจากที่พักที่จองไว้
+                `;
+            } else if (status === 'external') {
+                const extType = document.querySelector('input[name="ext_budget_type"]:checked')?.value || 'included';
+                const extHotelName = document.getElementById('auto-ext-hotel-name')?.value.trim() || 'ที่พักระบุภายนอก';
+
+                if (extType === 'included') {
+                    const extPrice = parseInt(document.getElementById('auto-ext-hotel-price')?.value || '3000') || 0;
+                    const travelBudget = Math.max(0, totalBudget - extPrice);
+                    summaryText.innerHTML = `
+                        • <b>ที่พักภายนอก:</b> ${extHotelName} (หักค่าที่พัก ${extPrice.toLocaleString()} บาท)<br>
+                        • <b>งบเที่ยว/กิน/กิจกรรม:</b> <span class="text-emerald-600 font-bold">${travelBudget.toLocaleString()} บาท</span><br>
+                        • <b>การเลือกสถานที่:</b> อิงตำแหน่งจากที่พักที่กรอกไว้
+                    `;
+                } else {
+                    summaryText.innerHTML = `
+                        • <b>ที่พักภายนอก:</b> ${extHotelName} (ไม่รวมค่าที่พัก)<br>
+                        • <b>งบเที่ยว/กิน/กิจกรรม:</b> <span class="text-emerald-600 font-bold">${totalBudget.toLocaleString()} บาท (ใช้เต็ม 100%)</span><br>
+                        • <b>การเลือกสถานที่:</b> อิงตำแหน่งจากที่พักที่กรอกไว้
+                    `;
+                }
+            } else if (status === 'none') {
+                const noneOpt = document.querySelector('input[name="none_hotel_option"]:checked')?.value || 'recommend';
+                if (noneOpt === 'recommend') {
+                    const hBudget = Math.round(totalBudget * 0.35);
+                    const tBudget = totalBudget - hBudget;
+                    summaryText.innerHTML = `
+                        • <b>ประมาณการค่าที่พัก (~35%):</b> ${hBudget.toLocaleString()} บาท (ช่วยแนะนำที่พักในงบ)<br>
+                        • <b>งบเที่ยว/กิน/กิจกรรม (~65%):</b> <span class="text-emerald-600 font-bold">${tBudget.toLocaleString()} บาท</span><br>
+                        • <b>การเลือกสถานที่:</b> แนะนำที่พัก + ค้นหาสถานที่ใกล้เคียงให้อยู่ในงบ
+                    `;
+                } else {
+                    summaryText.innerHTML = `
+                        • <b>สถานะที่พัก:</b> หาเองทีหลัง<br>
+                        • <b>งบเที่ยว/กิน/กิจกรรม:</b> <span class="text-emerald-600 font-bold">${totalBudget.toLocaleString()} บาท (เต็ม 100%)</span><br>
+                        • <b>การเลือกสถานที่:</b> อิงตามย่านท่องเที่ยวยอดนิยม (Center Zone)
+                    `;
+                }
+            }
+        }
+
+        function executeAutoPlan() {
+            const country = document.getElementById('select-country').value;
+            const city = document.getElementById('select-city').value;
+            const days = parseInt(document.getElementById('input-days').value || '4') || 1;
+            const totalBudget = parseInt(document.getElementById('input-budget').value || '25000') || 25000;
+            const status = document.querySelector('input[name="acc_status"]:checked')?.value || 'none';
+
+            updateDaysCount();
+
+            // ล้างข้อมูลตารางทริป
+            for (let d = 1; d <= days; d++) {
+                itineraryData[d] = [];
+            }
+
+            let travelBudget = totalBudget;
+            let selectedHotelItem = null;
+            let targetLocationName = city && city !== '-- ทั้งประเทศ --' ? city : country;
+
+            if (status === 'in_app') {
+                let hotel = allPinsData.find(p => p.category === 'hotel' && p.country === country && (city === '-- ทั้งประเทศ --' || p.city === city));
+                if (!hotel) {
+                    hotel = {
+                        id: 'inapp_h1',
+                        title: 'โรงแรมที่จองในระบบ (' + targetLocationName + ')',
+                        price: Math.round(totalBudget * 0.35),
+                        city: targetLocationName
+                    };
+                }
+                selectedHotelItem = {
+                    id: hotel.id,
+                    title: '🏨 ' + hotel.title + ' (In-App)',
+                    price: hotel.price,
+                    city: hotel.city
+                };
+                travelBudget = Math.max(0, totalBudget - hotel.price);
+            } else if (status === 'external') {
+                const extName = document.getElementById('auto-ext-hotel-name')?.value.trim() || 'ที่พักระบุภายนอก';
+                const extType = document.querySelector('input[name="ext_budget_type"]:checked')?.value || 'included';
+                let extPrice = 0;
+                if (extType === 'included') {
+                    extPrice = parseInt(document.getElementById('auto-ext-hotel-price')?.value || '0') || 0;
+                    travelBudget = Math.max(0, totalBudget - extPrice);
+                }
+                selectedHotelItem = {
+                    id: 'ext_h_' + Date.now(),
+                    title: '🏨 ' + extName + ' (ที่พักภายนอก)',
+                    price: extPrice,
+                    city: targetLocationName
+                };
+            } else if (status === 'none') {
+                const noneOpt = document.querySelector('input[name="none_hotel_option"]:checked')?.value || 'recommend';
+                if (noneOpt === 'recommend') {
+                    const hBudget = Math.round(totalBudget * 0.35);
+                    travelBudget = totalBudget - hBudget;
+
+                    let hotel = allPinsData.find(p => p.category === 'hotel' && p.country === country && (city === '-- ทั้งประเทศ --' || p.city === city) && p.price <= hBudget);
+                    if (!hotel) {
+                        hotel = allPinsData.find(p => p.category === 'hotel' && p.country === country);
+                    }
+                    
+                    if (hotel) {
+                        selectedHotelItem = {
+                            id: hotel.id,
+                            title: '🏨 [แนะนำ] ' + hotel.title,
+                            price: hotel.price,
+                            city: hotel.city
+                        };
+                    } else {
+                        selectedHotelItem = {
+                            id: 'rec_h_' + Date.now(),
+                            title: '🏨 [แนะนำที่พัก] โรงแรมใกล้ย่านท่องเที่ยว ' + targetLocationName,
+                            price: hBudget,
+                            city: targetLocationName
+                        };
+                    }
+                } else {
+                    travelBudget = totalBudget;
+                }
+            }
+
+            // ใส่ที่พักในแผนทริปวันแรก (ถ้ามี)
+            if (selectedHotelItem) {
+                itineraryData[1].push(selectedHotelItem);
+            }
+
+            // คัดเลือกสถานที่ท่องเที่ยว กิจกรรม และร้านค้าตามงบที่เหลือ
+            let matches = allPinsData.filter(p => p.country === country && p.category !== 'hotel');
+            if (city && city !== '-- ทั้งประเทศ --') {
+                let cityMatches = matches.filter(p => p.city === city);
+                if (cityMatches.length > 0) matches = cityMatches;
+            }
+            if (matches.length === 0) matches = allPinsData.filter(p => p.category !== 'hotel');
+
+            let currentSpent = 0;
+            matches.forEach((p, i) => {
+                if (currentSpent + p.price <= travelBudget || p.price === 0) {
+                    let dayAssigned = (i % days) + 1;
+                    if (itineraryData[dayAssigned]) {
+                        itineraryData[dayAssigned].push({
+                            id: p.id,
+                            title: p.title,
+                            price: p.price,
+                            city: p.city
+                        });
+                        currentSpent += p.price;
+                    }
+                }
+            });
+
+            closeModal('modal-auto-plan');
+            switchTab('plan');
         }
 
         // ---------------- TRIP PLANNER LOGIC ----------------
@@ -1290,39 +1534,13 @@
         }
 
         function startPlanning(mode) {
-            const country = document.getElementById('select-country').value;
-            const city = document.getElementById('select-city').value;
-            const days = parseInt(document.getElementById('input-days').value || '4');
-
-            updateDaysCount();
-
             if (mode === 'auto') {
-                for (let d = 1; d <= days; d++) {
-                    itineraryData[d] = [];
-                }
-                let matches = allPinsData.filter(p => p.country === country);
-                if (city && city !== '-- ทั้งประเทศ --') {
-                    matches = matches.filter(p => p.city === city);
-                }
-                if (matches.length === 0) matches = allPinsData;
-
-                matches.forEach((p, i) => {
-                    let dayAssigned = (i % days) + 1;
-                    if (itineraryData[dayAssigned]) {
-                        itineraryData[dayAssigned].push({
-                            id: p.id,
-                            title: p.title,
-                            price: p.price,
-                            city: p.city
-                        });
-                    }
-                });
-                alert('สร้างแผนทริปอัตโนมัติเรียบร้อยแล้ว!');
+                openAutoPlanModal();
             } else {
+                updateDaysCount();
                 alert('พร้อมให้คุณจัดแผนทริป DIY ตามใจชอบ!');
+                switchTab('plan');
             }
-
-            switchTab('plan');
         }
 
         // ---------------- MOMENTS COMMUNITY LOGIC ----------------
@@ -1555,11 +1773,6 @@
             document.getElementById('page-' + tab).classList.remove('hidden');
             document.getElementById('nav-' + tab).className = "py-5 px-1 tab-active flex items-center space-x-2";
 
-            if (tab === 'search') {
-                if (map) {
-                    setTimeout(() => { map.invalidateSize(); }, 200);
-                }
-            }
             if (tab === 'moment') renderMomentsFeed();
             if (tab === 'plan') {
                 updateDaysCount();
@@ -1567,12 +1780,8 @@
             }
         }
 
-        function triggerLogin(action) {
-            if (action === 'save') {
-                alert('กรุณาเข้าสู่ระบบเพื่อบันทึกทริป');
-            } else {
-                alert('เปิดหน้าต่างเข้าสู่ระบบ');
-            }
+        function triggerLogin() {
+            alert('เปิดหน้าต่างเข้าสู่ระบบ');
         }
     </script>
 </body>
