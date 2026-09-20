@@ -1,1004 +1,396 @@
 <!DOCTYPE html>
-<html lang="th" class="h-full bg-slate-50">
+<html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Let's U Plan - Smart Travel Map</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Kanit', 'sans-serif'],
-                    },
-                    colors: {
-                        attraction: { DEFAULT: '#0284c7', light: '#e0f2fe', dark: '#0369a1' },
-                        hotel: { DEFAULT: '#d97706', light: '#fef3c7', dark: '#b45309' },
-                        activity: { DEFAULT: '#059669', light: '#d1fae5', dark: '#047857' },
-                        shop: { DEFAULT: '#7c3aed', light: '#f3e8ff', dark: '#6d28d9' }
-                    }
-                }
-            }
-        }
-    </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Map Filter & Detail System</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-    <style>
-        body { font-family: 'Kanit', sans-serif; }
-        
-        /* CSS Root Variable for Pin Zoom Scale */
-        :root {
-            --pin-scale: 1;
-        }
+    body {
+      padding: 20px;
+      background-color: #f4f6f8;
+    }
 
-        /* Custom Map Pin Styles */
-        .custom-map-pin {
-            width: 120px;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.25), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
-            position: relative;
-            transform: scale(var(--pin-scale, 1));
-            transform-origin: bottom center;
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
-            cursor: pointer;
-            border: 2px solid #3b82f6;
-            overflow: visible;
-        }
+    /* Filter Container Above Map */
+    .filter-container {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #ffffff;
+      padding: 12px 16px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
 
-        .custom-map-pin:hover {
-            z-index: 9999 !important;
-            transform: scale(calc(var(--pin-scale, 1) * 1.15));
-            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.35);
-        }
+    .filter-container label {
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
 
-        /* Category Specific Colors for Map Pins */
-        .custom-map-pin.category-attraction { border-color: #0284c7; }
-        .custom-map-pin.category-attraction .pin-label { background-color: #e0f2fe; color: #0369a1; }
-        .custom-map-pin.category-attraction .pin-arrow { border-top-color: #0284c7; }
+    .filter-container select {
+      padding: 8px 12px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #dcdfe6;
+      outline: none;
+      cursor: pointer;
+      background-color: #fff;
+      color: #333;
+      transition: border-color 0.2s;
+    }
 
-        .custom-map-pin.category-hotel { border-color: #d97706; }
-        .custom-map-pin.category-hotel .pin-label { background-color: #fef3c7; color: #b45309; }
-        .custom-map-pin.category-hotel .pin-arrow { border-top-color: #d97706; }
+    .filter-container select:focus {
+      border-color: #409eff;
+    }
 
-        .custom-map-pin.category-activity { border-color: #059669; }
-        .custom-map-pin.category-activity .pin-label { background-color: #d1fae5; color: #047857; }
-        .custom-map-pin.category-activity .pin-arrow { border-top-color: #059669; }
+    /* Map Styling */
+    #map {
+      height: 650px;
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      z-index: 1;
+    }
 
-        .custom-map-pin.category-shop { border-color: #7c3aed; }
-        .custom-map-pin.category-shop .pin-label { background-color: #f3e8ff; color: #6d28d9; }
-        .custom-map-pin.category-shop .pin-arrow { border-top-color: #7c3aed; }
+    /* Leaflet Popup Compact Responsive Styling */
+    .leaflet-popup-content-wrapper {
+      padding: 0;
+      overflow: hidden;
+      border-radius: 10px;
+      max-width: 180px !important; /* Controlled size to avoid obscuring countries on zoom-out */
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    }
 
-        .pin-img-container {
-            width: 100%;
-            height: 64px;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-            overflow: hidden;
-            background-color: #f1f5f9;
-        }
+    .leaflet-popup-content {
+      margin: 0 !important;
+      width: 100% !important;
+      line-height: 1.3;
+    }
 
-        .pin-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+    /* Full Image Top layout (No split half price) */
+    .popup-card {
+      width: 100%;
+      background: #ffffff;
+    }
 
-        .pin-label {
-            padding: 4px 6px;
-            text-align: center;
-            font-size: 11px;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            border-bottom-left-radius: 10px;
-            border-bottom-right-radius: 10px;
-        }
+    .popup-card img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      display: block;
+    }
 
-        .pin-arrow {
-            position: absolute;
-            bottom: -8px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 7px solid transparent;
-            border-right: 7px solid transparent;
-            border-top: 8px solid #0284c7;
-        }
+    .popup-info {
+      padding: 8px 10px 10px 10px;
+    }
 
-        /* Leaflet Override Styles */
-        .leaflet-popup-content-wrapper {
-            padding: 0;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
-        }
-        .leaflet-popup-content {
-            margin: 0;
-            width: 260px !important;
-        }
-        .leaflet-popup-tip-container {
-            margin-top: -1px;
-        }
-        
-        /* Scrollbar aesthetics */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-    </style>
+    .popup-title {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .popup-location {
+      font-size: 11px;
+      color: #666666;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .popup-btn {
+      width: 100%;
+      padding: 5px 0;
+      border: none;
+      border-radius: 4px;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .popup-btn:hover {
+      opacity: 0.88;
+    }
+
+    /* Category Specific Colors */
+    .cat-ท่องเที่ยว .popup-title { color: #007bff; }
+    .cat-ท่องเที่ยว .popup-btn { background-color: #007bff; }
+
+    .cat-ที่พัก .popup-title { color: #e83e8c; }
+    .cat-ที่พัก .popup-btn { background-color: #e83e8c; }
+
+    .cat-กิจกรรม .popup-title { color: #fd7e14; }
+    .cat-กิจกรรม .popup-btn { background-color: #fd7e14; }
+
+    .cat-ร้านค้า-ของฝาก .popup-title { color: #28a745; }
+    .cat-ร้านค้า-ของฝาก .popup-btn { background-color: #28a745; }
+
+    /* Detail Modal Window */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 420px;
+      position: relative;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 12px; 
+      right: 16px;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #aaa;
+      transition: color 0.2s;
+    }
+
+    .close-btn:hover {
+      color: #333;
+    }
+
+    .modal-header {
+      font-size: 18px;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 16px;
+      padding-right: 20px;
+      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 8px;
+    }
+
+    .modal-field {
+      margin-bottom: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #444;
+    }
+
+    .modal-field strong {
+      color: #111;
+      display: inline-block;
+      width: 110px;
+    }
+  </style>
 </head>
-<body class="h-full flex flex-col bg-slate-100 text-slate-800 antialiased overflow-x-hidden">
+<body>
 
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <!-- Brand Logo -->
-                <div class="flex items-center space-x-3 cursor-pointer" onclick="resetMapView()">
-                    <div class="bg-gradient-to-tr from-indigo-600 to-sky-500 text-white p-2.5 rounded-xl shadow-md">
-                        <i class="fas fa-compass text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-600 via-sky-600 to-emerald-600 bg-clip-text text-transparent">
-                            Let's U Plan
-                        </h1>
-                        <p class="text-xs text-slate-400 font-medium">Smart Travel Map & Planner</p>
-                    </div>
-                </div>
+  <!-- Category Dropdown Filter -->
+  <div class="filter-container">
+    <label for="categoryFilter">เลือกหมวดหมู่:</label>
+    <select id="categoryFilter" onchange="filterLocations()">
+      <option value="ทั้งหมด">ทั้งหมด</option>
+      <option value="ท่องเที่ยว">ท่องเที่ยว</option>
+      <option value="ที่พัก">ที่พัก</option>
+      <option value="กิจกรรม">กิจกรรม</option>
+      <option value="ร้านค้า/ของฝาก">ร้านค้า/ของฝาก</option>
+    </select>
+  </div>
 
-                <!-- Global Search Input -->
-                <div class="hidden md:flex flex-1 max-w-md mx-6">
-                    <div class="relative w-full">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                            <i class="fas fa-search"></i>
-                        </span>
-                        <input type="text" id="searchInput" oninput="handleSearch()" 
-                            placeholder="ค้นหาชื่อสถานที่ เมือง หรือประเทศ..." 
-                            class="w-full pl-10 pr-4 py-2 bg-slate-100 border border-transparent rounded-xl text-sm focus:bg-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition">
-                    </div>
-                </div>
+  <!-- Map Display -->
+  <div id="map"></div>
 
-                <!-- Right Action Buttons & Itinerary Badge -->
-                <div class="flex items-center space-x-3">
-                    <button onclick="toggleItineraryModal()" class="relative inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm shadow-md shadow-indigo-200 transition active:scale-95">
-                        <i class="fas fa-map-marked-alt text-base"></i>
-                        <span>แผนทริปของฉัน</span>
-                        <span id="itineraryBadge" class="bg-rose-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shadow">0</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-        <!-- LEFT COLUMN: Interactive Map Section -->
-        <section class="lg:col-span-8 flex flex-col space-y-4">
-            
-            <!-- Map Control Header & Category Dropdown Filter -->
-            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                <div class="flex items-center space-x-2">
-                    <i class="fas fa-globe-asia text-indigo-600 text-lg"></i>
-                    <h2 class="font-bold text-slate-800 text-base">แผนที่ท่องเที่ยวแบบมีปฏิสัมพันธ์</h2>
-                    <span id="pinCountTag" class="text-xs bg-slate-100 text-slate-600 font-semibold px-2.5 py-1 rounded-full border border-slate-200">
-                        12 สถานที่
-                    </span>
-                </div>
-
-                <!-- Dropdown Category Filter above Map -->
-                <div class="flex items-center space-x-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200">
-                    <label for="categoryDropdown" class="text-xs font-semibold text-slate-600 pl-2 whitespace-nowrap">
-                        <i class="fas fa-filter text-indigo-500 mr-1"></i>หมวดหมู่:
-                    </label>
-                    <select id="categoryDropdown" onchange="filterByCategory(this.value)" class="bg-white text-slate-700 text-sm font-medium rounded-lg border border-slate-300 px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer shadow-sm">
-                        <option value="all">🌐 ทั้งหมด (All)</option>
-                        <option value="attraction">🏖️ ท่องเที่ยว (Attractions)</option>
-                        <option value="hotel">🏨 ที่พัก (Hotels)</option>
-                        <option value="activity">🏄‍♂️ กิจกรรม (Activities)</option>
-                        <option value="shop">🛍️ ร้านค้า/ของฝาก (Shops)</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Leaflet Map Container -->
-            <div class="relative w-full h-[520px] rounded-2xl overflow-hidden border border-slate-200 shadow-md bg-slate-200">
-                <div id="map" class="w-full h-full z-10"></div>
-
-                <!-- Country Quick Zoom Chips Overlay -->
-                <div class="absolute bottom-4 left-4 z-20 flex flex-wrap gap-1.5 bg-white/90 backdrop-blur-md p-2 rounded-xl shadow-lg border border-white/50 max-w-[90%]">
-                    <span class="text-xs font-semibold text-slate-500 self-center px-1">ซูมด่วน:</span>
-                    <button onclick="zoomToCountry('thailand')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 font-medium px-2.5 py-1 rounded-lg border border-slate-200 shadow-sm transition">
-                        🇹🇭 ไทย
-                    </button>
-                    <button onclick="zoomToCountry('japan')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 font-medium px-2.5 py-1 rounded-lg border border-slate-200 shadow-sm transition">
-                        🇯🇵 ญี่ปุ่น
-                    </button>
-                    <button onclick="zoomToCountry('france')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 font-medium px-2.5 py-1 rounded-lg border border-slate-200 shadow-sm transition">
-                        🇫🇷 ฝรั่งเศส
-                    </button>
-                    <button onclick="zoomToCountry('switzerland')" class="text-xs bg-white hover:bg-slate-100 text-slate-700 font-medium px-2.5 py-1 rounded-lg border border-slate-200 shadow-sm transition">
-                        🇨🇭 สวิตเซอร์แลนด์
-                    </button>
-                    <button onclick="resetMapView()" class="text-xs bg-indigo-50 text-indigo-600 font-semibold px-2.5 py-1 rounded-lg border border-indigo-200 hover:bg-indigo-100 transition">
-                        <i class="fas fa-expand mr-1"></i>มองเห็นทั้งหมด
-                    </button>
-                </div>
-            </div>
-
-            <!-- Category Legend Indicator -->
-            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-around gap-2 text-xs">
-                <div class="flex items-center gap-1.5">
-                    <span class="w-3.5 h-3.5 rounded-full bg-sky-500 border border-sky-600 inline-block"></span>
-                    <span class="font-medium text-slate-700">ท่องเที่ยว (Sky Blue)</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <span class="w-3.5 h-3.5 rounded-full bg-amber-500 border border-amber-600 inline-block"></span>
-                    <span class="font-medium text-slate-700">ที่พัก (Amber)</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 border border-emerald-600 inline-block"></span>
-                    <span class="font-medium text-slate-700">กิจกรรม (Emerald)</span>
-                </div>
-                <div class="flex items-center gap-1.5">
-                    <span class="w-3.5 h-3.5 rounded-full bg-purple-500 border border-purple-600 inline-block"></span>
-                    <span class="font-medium text-slate-700">ร้านค้า/ของฝาก (Purple)</span>
-                </div>
-            </div>
-        </section>
-
-        <!-- RIGHT COLUMN: Places Directory Section -->
-        <section class="lg:col-span-4 flex flex-col space-y-4">
-            
-            <!-- Category Tabs Sync -->
-            <div class="bg-white p-2 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between overflow-x-auto gap-1">
-                <button onclick="filterByCategory('all')" id="tab-all" class="category-tab active flex-1 py-2 px-2 text-center text-xs font-semibold rounded-xl transition bg-indigo-600 text-white shadow-sm">
-                    ทั้งหมด
-                </button>
-                <button onclick="filterByCategory('attraction')" id="tab-attraction" class="category-tab flex-1 py-2 px-2 text-center text-xs font-semibold rounded-xl text-slate-600 hover:bg-sky-50 transition">
-                    🏖️ เที่ยว
-                </button>
-                <button onclick="filterByCategory('hotel')" id="tab-hotel" class="category-tab flex-1 py-2 px-2 text-center text-xs font-semibold rounded-xl text-slate-600 hover:bg-amber-50 transition">
-                    🏨 ที่พัก
-                </button>
-                <button onclick="filterByCategory('activity')" id="tab-activity" class="category-tab flex-1 py-2 px-2 text-center text-xs font-semibold rounded-xl text-slate-600 hover:bg-emerald-50 transition">
-                    🏄‍♂️ กิจกรรม
-                </button>
-                <button onclick="filterByCategory('shop')" id="tab-shop" class="category-tab flex-1 py-2 px-2 text-center text-xs font-semibold rounded-xl text-slate-600 hover:bg-purple-50 transition">
-                    🛍️ ร้านค้า
-                </button>
-            </div>
-
-            <!-- Places List Container -->
-            <div id="placesList" class="space-y-3 overflow-y-auto max-h-[580px] pr-1">
-                <!-- JavaScript will populate place cards here -->
-            </div>
-        </section>
-
-    </main>
-
-    <div id="detailModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-        <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-100 transform transition-all relative animate-in fade-in zoom-in duration-200">
-            
-            <!-- Close Modal Button -->
-            <button onclick="closeDetailModal()" class="absolute top-4 right-4 z-20 bg-black/40 hover:bg-black/60 text-white w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition">
-                <i class="fas fa-times"></i>
-            </button>
-
-            <!-- Detail Modal Hero Image -->
-            <div class="relative h-64 w-full bg-slate-200">
-                <img id="modalImage" src="" alt="" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                
-                <div class="absolute bottom-4 left-4 right-4 text-white">
-                    <div class="flex items-center gap-2 mb-1">
-                        <span id="modalCategoryBadge" class="text-xs font-bold px-2.5 py-1 rounded-full shadow">
-                            Category
-                        </span>
-                        <span class="text-xs font-medium bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-full flex items-center gap-1 border border-white/20">
-                            <i class="fas fa-star text-amber-400"></i> <span id="modalRating">4.8</span> (<span id="modalReviews">1,200</span> รีวิว)
-                        </span>
-                    </div>
-                    <h3 id="modalTitle" class="text-2xl font-bold leading-tight">Place Name</h3>
-                </div>
-            </div>
-
-            <!-- Detail Modal Body Content -->
-            <div class="p-6 space-y-5">
-                
-                <!-- Location & Country Badge -->
-                <div class="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-100">
-                    <div class="flex items-center space-x-2 text-slate-700">
-                        <i class="fas fa-map-pin text-rose-500 text-lg"></i>
-                        <div>
-                            <p class="text-xs text-slate-400 font-medium">เมือง และ ประเทศ</p>
-                            <p id="modalLocation" class="text-sm font-semibold">Bangkok, Thailand</p>
-                        </div>
-                    </div>
-                    <!-- Rate / Price Box -->
-                    <div class="text-right pl-3 border-l border-slate-200">
-                        <p class="text-xs text-slate-400 font-medium">เรทราคา / ค่าใช้จ่าย</p>
-                        <p id="modalPrice" class="text-base font-extrabold text-indigo-600">฿0 / คน</p>
-                    </div>
-                </div>
-
-                <!-- Description -->
-                <div>
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5 flex items-center gap-1.5">
-                        <i class="fas fa-align-left text-indigo-500"></i> รายละเอียดสถานที่
-                    </h4>
-                    <p id="modalDescription" class="text-sm text-slate-600 leading-relaxed bg-slate-50/50 p-3.5 rounded-2xl border border-slate-100">
-                        Description content goes here...
-                    </p>
-                </div>
-
-                <!-- Action Footer Buttons -->
-                <div class="pt-2 flex items-center gap-3">
-                    <button onclick="closeDetailModal()" class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-2xl text-sm transition text-center">
-                        ปิดหน้าต่าง
-                    </button>
-                    <button id="modalAddBtn" onclick="" class="flex-1 py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-2xl text-sm shadow-lg shadow-indigo-200 transition text-center flex items-center justify-center gap-2">
-                        <i class="fas fa-plus-circle"></i> ใส่แพลนทริป
-                    </button>
-                </div>
-
-            </div>
-        </div>
+  <!-- Detail Modal -->
+  <div id="detailModal" class="modal-overlay">
+    <div class="modal-card">
+      <span class="close-btn" onclick="closeDetailModal()">&times;</span>
+      <div id="modalTitle" class="modal-header"></div>
+      <div class="modal-field"><strong>ชื่อ:</strong> <span id="modalName"></span></div>
+      <div class="modal-field"><strong>ประเทศ / เมือง:</strong> <span id="modalLocation"></span></div>
+      <div class="modal-field"><strong>เรทราคา:</strong> <span id="modalPrice"></span></div>
+      <div class="modal-field"><strong>สถานที่:</strong> <span id="modalAddress"></span></div>
     </div>
+  </div>
 
-    <div id="itineraryModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-100 overflow-hidden">
-            
-            <div class="p-5 bg-gradient-to-r from-indigo-600 to-sky-600 text-white flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <i class="fas fa-map-marked-alt text-2xl"></i>
-                    <div>
-                        <h3 class="text-lg font-bold">ตารางตระเวนเที่ยวของฉัน</h3>
-                        <p class="text-xs text-indigo-100">สรุปสถานที่และประมาณการงบประมาณทริป</p>
-                    </div>
-                </div>
-                <button onclick="toggleItineraryModal()" class="text-white/80 hover:text-white text-xl">
-                    <i class="fas fa-times"></i>
-                </button>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // Sample Data Set
+    const locationsData = [
+      {
+        id: 1,
+        name: "วัดพระแก้ว",
+        category: "ท่องเที่ยว",
+        country: "ไทย",
+        city: "กรุงเทพฯ",
+        price: "500 บาท",
+        address: "ถนนหน้าพระลาน แขวงพระบรมมหาราชวัง เขตพระนคร กรุงเทพมหานคร",
+        imageUrl: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=400&q=80",
+        lat: 13.7516,
+        lng: 100.4927
+      },
+      {
+        id: 2,
+        name: "รีสอร์ทริมน้ำ luxury",
+        category: "ที่พัก",
+        country: "ไทย",
+        city: "กรุงเทพฯ",
+        price: "3,500 - 8,500 บาท / คืน",
+        address: "ริมแม่น้ำเจ้าพระยา กรุงเทพมหานคร",
+        imageUrl: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=400&q=80",
+        lat: 13.7231,
+        lng: 100.5144
+      },
+      {
+        id: 3,
+        name: "ล่องเรือทานอาหารค่ำ",
+        category: "กิจกรรม",
+        country: "ไทย",
+        city: "กรุงเทพฯ",
+        price: "1,200 บาท / ท่าน",
+        address: "ท่าเรือไอคอนสยาม กรุงเทพมหานคร",
+        imageUrl: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=400&q=80",
+        lat: 13.7266,
+        lng: 100.5110
+      },
+      {
+        id: 4,
+        name: "ร้านของฝากหัตถกรรมไทย",
+        category: "ร้านค้า/ของฝาก",
+        country: "ไทย",
+        city: "กรุงเทพฯ",
+        price: "100 - 2,000 บาท",
+        address: "ตลาดนัดจตุจักร กรุงเทพมหานคร",
+        imageUrl: "https://images.unsplash.com/photo-1533900298318-6b8da08a523e?auto=format&fit=crop&w=400&q=80",
+        lat: 13.7999,
+        lng: 100.5502
+      }
+    ];
+
+    // Color theme mapping per category
+    const categoryColors = {
+      "ท่องเที่ยว": "#007bff",
+      "ที่พัก": "#e83e8c",
+      "กิจกรรม": "#fd7e14",
+      "ร้านค้า/ของฝาก": "#28a745"
+    };
+
+    // Map Initialization
+    const map = L.map('map').setView([13.7563, 100.5018], 11);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    let activeMarkers = [];
+
+    // Custom Icon SVG generator for colored pins
+    function createColorMarkerIcon(color) {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="30px" height="30px"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`;
+      return L.divIcon({
+        className: 'custom-pin-icon',
+        html: svg,
+        iconSize: [30, 30],
+        iconAnchor: [15, 30],
+        popupAnchor: [0, -26]
+      });
+    }
+
+    // Render markers to map
+    function renderMarkers(dataList) {
+      activeMarkers.forEach(m => map.removeLayer(m));
+      activeMarkers = [];
+
+      dataList.forEach(item => {
+        const catClass = 'cat-' + item.category.replace('/', '-');
+        const pinColor = categoryColors[item.category] || '#333333';
+
+        // Popup Layout: Full Image Top, No Price Shown
+        const popupHTML = `
+          <div class="popup-card ${catClass}">
+            <img src="${item.imageUrl}" alt="${item.name}">
+            <div class="popup-info">
+              <div class="popup-title">${item.name}</div>
+              <div class="popup-location">${item.country}, ${item.city}</div>
+              <button class="popup-btn" onclick="showDetailModal(${item.id})">ดูข้อมูลเพิ่มเติม</button>
             </div>
+          </div>
+        `;
 
-            <!-- Itinerary Items List -->
-            <div id="itineraryItemsList" class="flex-1 p-5 overflow-y-auto space-y-3">
-                <!-- JavaScript will populate itinerary list -->
-            </div>
+        const marker = L.marker([item.lat, item.lng], {
+          icon: createColorMarkerIcon(pinColor)
+        }).addTo(map);
 
-            <!-- Itinerary Budget Summary Footer -->
-            <div class="p-5 bg-slate-50 border-t border-slate-200 space-y-3">
-                <div class="flex items-center justify-between text-slate-700 font-bold">
-                    <span>งบประมาณประมาณการรวม:</span>
-                    <span id="totalBudgetDisplay" class="text-xl font-extrabold text-emerald-600">฿0</span>
-                </div>
-                <div class="flex items-center justify-between gap-3 pt-2">
-                    <button onclick="clearItinerary()" class="py-2.5 px-4 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold rounded-xl border border-rose-200 transition">
-                        <i class="fas fa-trash-alt mr-1"></i> ล้างข้อมูลทั้งหมด
-                    </button>
-                    <button onclick="toggleItineraryModal()" class="py-2.5 px-6 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl shadow-md transition">
-                        เรียบร้อย
-                    </button>
-                </div>
-            </div>
+        marker.bindPopup(popupHTML, {
+          maxWidth: 180,
+          minWidth: 150,
+          autoPan: true
+        });
 
-        </div>
-    </div>
+        activeMarkers.push(marker);
+      });
+    }
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        const placesData = [
-            {
-                id: 1,
-                name: "วัดพระศรีรัตนศาสดาราม (วัดพระแก้ว)",
-                category: "attraction",
-                country: "Thailand",
-                city: "กรุงเทพมหานคร",
-                lat: 13.7516,
-                lng: 100.4927,
-                price: 500,
-                priceFormatted: "฿500 / คน (ชาวต่างชาติ)",
-                rating: 4.8,
-                reviews: 12400,
-                image: "https://images.unsplash.com/photo-1563492065599-3520f775eeed?auto=format&fit=crop&w=800&q=80",
-                description: "พระอารามหลวงอันทรงคุณค่าทางประวัติศาสตร์และศิลปสถาปัตยกรรมไทยอันประณีต ประดิษฐานพระพุทธมหามณีรัตนปฏิมากร (พระแก้วมรกต) ศูนย์รวมจิตใจของชาวไทย",
-                address: "ถนนหน้าพระลาน แขวงพระบรมมหาราชวัง เขตพระนคร กรุงเทพมหานคร"
-            },
-            {
-                id: 2,
-                name: "Mandarin Oriental Bangkok",
-                category: "hotel",
-                country: "Thailand",
-                city: "กรุงเทพมหานคร",
-                lat: 13.7233,
-                lng: 100.5146,
-                price: 14500,
-                priceFormatted: "฿14,500 / คืน",
-                rating: 4.9,
-                reviews: 3200,
-                image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
-                description: "โรงแรมระดับ 5 ดาวริมแม่น้ำเจ้าพระยาที่มีประวัติศาสตร์ยาวนานกว่า 140 ปี มอบประสบการณ์การพักผ่อนระดับพรีเมียมพร้อมบริการและการตกแต่งสุดหรูหรา",
-                address: "48 ซอยเจริญกรุง 40 แขวงบางรัก เขตบางรัก กรุงเทพมหานคร"
-            },
-            {
-                id: 3,
-                name: "ล่องเรือหางยาวชมวิถีคลองบางกอกน้อย",
-                category: "activity",
-                country: "Thailand",
-                city: "กรุงเทพมหานคร",
-                lat: 13.7583,
-                lng: 100.4850,
-                price: 1200,
-                priceFormatted: "฿1,200 / เหมาลำ",
-                rating: 4.7,
-                reviews: 850,
-                image: "https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=800&q=80",
-                description: "สัมผัสวิถีชีวิตริมน้ำแบบไทยเดิม ชมวัดเก่าแก่ บ้านเรือนไม้ริมคลอง และตลาดน้ำโบราณในบรรยากาศร่มรื่นและเป็นกันเอง",
-                address: "ท่าเรือมหาราช / ท่าเรือช้าง เขตพระนคร กรุงเทพมหานคร"
-            },
-            {
-                id: 4,
-                name: "ตลาดนัดจตุจักร (Chatuchak Market)",
-                category: "shop",
-                country: "Thailand",
-                city: "กรุงเทพมหานคร",
-                lat: 13.7999,
-                lng: 100.5506,
-                price: 0,
-                priceFormatted: "เข้าชมฟรี (ช้อปปิ้งตามจริง)",
-                rating: 4.6,
-                reviews: 28900,
-                image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
-                description: "ตลาดนัดจตุจักรกลางแจ้งที่ใหญ่ที่สุดแห่งหนึ่งในโลก รวบรวมเสื้อผ้า สินค้าแฮนด์เมด ของฝาก งานศิลปะ และอาหารไทยสตรีทฟู้ดมากกว่า 15,000 แผงค้า",
-                address: "ถนนพหลโยธิน แขวงจตุจักร เขตจตุจักร กรุงเทพมหานคร"
-            },
-            {
-                id: 5,
-                name: "Mount Fuji Panoramic Ropeway",
-                category: "activity",
-                country: "Japan",
-                city: "Yamanashi",
-                lat: 35.5034,
-                lng: 138.7719,
-                price: 1000,
-                priceFormatted: "¥1,000 (~฿240) / คน",
-                rating: 4.8,
-                reviews: 9400,
-                image: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80",
-                description: "กระเช้าลอยฟ้าชมทัศนียภาพตระการตาของภูเขาไฟฟูจิและทะเลสาบคาวากุจิโกะแบบ 360 องศา สวยงามตระการตาทุกฤดูกาล",
-                address: "Azagawa, Fujikawaguchiko, Minamitsuru District, Yamanashi, Japan"
-            },
-            {
-                id: 6,
-                name: "Hoshinoya Kyoto",
-                category: "hotel",
-                country: "Japan",
-                city: "Kyoto",
-                lat: 35.0116,
-                lng: 135.6777,
-                price: 28000,
-                priceFormatted: "฿28,000 / คืน",
-                rating: 4.9,
-                reviews: 1100,
-                image: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=800&q=80",
-                description: "เรียวกังระดับลักชัวรีริมแม่น้ำโออิในอาราชิยามะ ต้องเดินทางเข้าพักด้วยเรือไม้โบราณ ดื่มด่ำกับธรรมชาติและสถาปัตยกรรมญี่ปุ่นดั้งเดิม",
-                address: "Arashiyama, Ukyo Ward, Kyoto, Japan"
-            },
-            {
-                id: 7,
-                name: "ย่านโดทงโบริ & ชินไซบาชิ (Dotonbori)",
-                category: "shop",
-                country: "Japan",
-                city: "Osaka",
-                lat: 34.6687,
-                lng: 135.5013,
-                price: 0,
-                priceFormatted: "เข้าชมฟรี (ช้อปปิ้งตามจริง)",
-                rating: 4.7,
-                reviews: 41000,
-                image: "https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=800&q=80",
-                description: "ศูนย์กลางความบันเทิง ช้อปปิ้ง และสตรีทฟู้ดชื่อดังของโอซาก้า ตระการตาด้วยป้ายไฟนีออนกูลิโกะแมน ร้านทาโกะยากิ และร้านค้าของฝากนับร้อย",
-                address: "Dotonbori, Chuo Ward, Osaka, Japan"
-            },
-            {
-                id: 8,
-                name: "หอไอเฟล (Eiffel Tower)",
-                category: "attraction",
-                country: "France",
-                city: "Paris",
-                lat: 48.8584,
-                lng: 2.2945,
-                price: 1100,
-                priceFormatted: "€28.30 (~฿1,100) / คน",
-                rating: 4.7,
-                reviews: 310000,
-                image: "https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&w=800&q=80",
-                description: "สัญลักษณ์อันทรงเสน่ห์ของกรุงปารีสและประเทศฝรั่งเศส หอคอยโครงเหล็กความสูง 330 เมตร ขึ้นชมทัศนียภาพอันงดงามของเมืองแห่งแสงไฟ",
-                address: "Champ de Mars, 5 Av. Anatole France, 75007 Paris, France"
-            },
-            {
-                id: 9,
-                name: "Hôtel Plaza Athénée Paris",
-                category: "hotel",
-                country: "France",
-                city: "Paris",
-                lat: 48.8661,
-                lng: 2.3045,
-                price: 45000,
-                priceFormatted: "฿45,000 / คืน",
-                rating: 4.8,
-                reviews: 2100,
-                image: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=800&q=80",
-                description: "โรงแรมหรูระดับพรีเมียมบนถนน Avenue Montaigne มองเห็นวิวหอไอเฟลอย่างงดงาม ตกแต่งสไตล์ปารีเซียงคลาสสิกโดดเด่นด้วยระเบียงดอกไม้สีแดง",
-                address: "25 Avenue Montaigne, 75008 Paris, France"
-            },
-            {
-                id: 10,
-                name: "Jungfraujoch - Top of Europe",
-                category: "activity",
-                country: "Switzerland",
-                city: "Interlaken",
-                lat: 46.5475,
-                lng: 7.9820,
-                price: 8500,
-                priceFormatted: "CHF 220 (~฿8,500) / คน",
-                rating: 4.9,
-                reviews: 18500,
-                image: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=800&q=80",
-                description: "สถานีรถไฟที่อยู่สูงที่สุดในยุโรป ความสูง 3,454 เมตรเหนือระดับน้ำทะเล สัมผัสหิมะตลอดปี ลานน้ำแข็ง Sphinx Observatory และธารน้ำแข็ง Aletsch Glacier",
-                address: "Jungfraujoch, Bernese Alps, Switzerland"
-            },
-            {
-                id: 11,
-                name: "The Dolder Grand Zurich",
-                category: "hotel",
-                country: "Switzerland",
-                city: "Zurich",
-                lat: 47.3719,
-                lng: 8.5728,
-                price: 32000,
-                priceFormatted: "฿32,000 / คืน",
-                rating: 4.9,
-                reviews: 1450,
-                image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80",
-                description: "รีสอร์ตสปาหรูหราดั่งปราสาทเทพนิยายบนยอดเขาโฮนเซกก์ มองเห็นวิวทิวทัศน์เมืองซูริก ทะเลสาบ และเทือกเขาแอลป์ได้อย่างเต็มตา",
-                address: "Kurhausstrasse 65, 8032 Zürich, Switzerland"
-            },
-            {
-                id: 12,
-                name: "Bahnhofstrasse Shopping Street",
-                category: "shop",
-                country: "Switzerland",
-                city: "Zurich",
-                lat: 47.3712,
-                lng: 8.5397,
-                price: 0,
-                priceFormatted: "เข้าชมฟรี (สินค้าแบรนด์เนม)",
-                rating: 4.7,
-                reviews: 16200,
-                image: "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&w=800&q=80",
-                description: "ถนนช้อปปิ้งสินค้าแบรนด์เนมและนาฬิกาสวิสระดับไฮเอนด์ที่มีชื่อเสียงที่สุดแห่งหนึ่งของโลก ทอดยาวจากสถานีรถไฟกลางสู่ทะเลสาบซูริก",
-                address: "Bahnhofstrasse, 8001 Zürich, Switzerland"
-            }
-        ];
+    // Dropdown Filter Handler
+    function filterLocations() {
+      const selectedCat = document.getElementById('categoryFilter').value;
+      if (selectedCat === 'ทั้งหมด') {
+        renderMarkers(locationsData);
+      } else {
+        const filtered = locationsData.filter(loc => loc.category === selectedCat);
+        renderMarkers(filtered);
+      }
+    }
 
-        let map;
-        let markersGroup = [];
-        let currentCategory = 'all';
-        let searchQuery = '';
-        let itinerary = [];
+    // Modal View Functions
+    function showDetailModal(id) {
+      const item = locationsData.find(loc => loc.id === id);
+      if (!item) return;
 
-        window.onload = function() {
-            initMap();
-            renderPlacesList();
-            updateItineraryBadge();
-        };
+      document.getElementById('modalTitle').innerText = item.name;
+      document.getElementById('modalName').innerText = item.name;
+      document.getElementById('modalLocation').innerText = `${item.country} / ${item.city}`;
+      document.getElementById('modalPrice').innerText = item.price;
+      document.getElementById('modalAddress').innerText = item.address;
 
-        function initMap() {
-            // Default center on world view
-            map = L.map('map', {
-                zoomControl: true,
-                minZoom: 2,
-                maxZoom: 18
-            }).setView([25.0000, 70.0000], 3);
+      document.getElementById('detailModal').classList.add('active');
+    }
 
-            // High Quality OSM Tile Layer
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(map);
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.remove('active');
+    }
 
-            // Zoom Scaling Listener for Map Pins
-            map.on('zoomend', updatePinScales);
-
-            // Initial render of markers
-            renderMarkers();
-            
-            // Set initial scale
-            updatePinScales();
-        }
-
-        function updatePinScales() {
-            if (!map) return;
-            const zoom = map.getZoom();
-            let scale = 1;
-
-            // Dynamically calculate scale ratio to prevent overlap in zoomed-out views
-            if (zoom <= 3) {
-                scale = 0.45;
-            } else if (zoom === 4) {
-                scale = 0.55;
-            } else if (zoom === 5) {
-                scale = 0.68;
-            } else if (zoom === 6) {
-                scale = 0.80;
-            } else if (zoom === 7) {
-                scale = 0.90;
-            } else {
-                scale = 1.0;
-            }
-
-            document.documentElement.style.setProperty('--pin-scale', scale);
-        }
-
-        function renderMarkers() {
-            // Clear existing markers
-            markersGroup.forEach(m => map.removeLayer(m));
-            markersGroup = [];
-
-            const filteredPlaces = getFilteredPlaces();
-
-            filteredPlaces.forEach(place => {
-                // Custom Icon HTML (Image full top, place name bottom, themed color, NO price on pin)
-                const pinHtml = `
-                    <div class="custom-map-pin category-${place.category}" onclick="onPinClick(${place.id})">
-                        <div class="pin-img-container">
-                            <img src="${place.image}" alt="${place.name}" class="pin-img" onerror="this.src='https://placehold.co/200x120/e2e8f0/64748b?text=Travel'"/>
-                        </div>
-                        <div class="pin-label">
-                            <span>${place.name}</span>
-                        </div>
-                        <div class="pin-arrow"></div>
-                    </div>
-                `;
-
-                const customIcon = L.divIcon({
-                    html: pinHtml,
-                    className: 'custom-leaflet-div-icon',
-                    iconSize: [120, 90],
-                    iconAnchor: [60, 90],
-                    popupAnchor: [0, -90]
-                });
-
-                // Create Leaflet Popup HTML (NO price displayed)
-                const popupHtml = `
-                    <div class="p-0 overflow-hidden rounded-2xl bg-white font-sans">
-                        <div class="h-32 w-full overflow-hidden relative">
-                            <img src="${place.image}" class="w-full h-full object-cover"/>
-                            <span class="absolute top-2 left-2 ${getCategoryBadgeColor(place.category)} text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">
-                                ${getCategoryThaiName(place.category)}
-                            </span>
-                        </div>
-                        <div class="p-3">
-                            <h4 class="font-bold text-slate-800 text-sm leading-snug mb-1 line-clamp-1">${place.name}</h4>
-                            <p class="text-xs text-slate-500 mb-3 flex items-center gap-1">
-                                <i class="fas fa-map-marker-alt text-rose-500"></i> ${place.city}, ${place.country}
-                            </p>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button onclick="openDetailModal(${place.id})" class="py-1.5 px-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl text-center transition flex items-center justify-center gap-1">
-                                    <i class="fas fa-info-circle text-indigo-500"></i> ข้อมูลเพิ่มเติม
-                                </button>
-                                <button onclick="addToItinerary(${place.id})" class="py-1.5 px-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl text-center transition flex items-center justify-center gap-1 shadow-sm">
-                                    <i class="fas fa-plus"></i> ใส่แพลน
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                const marker = L.marker([place.lat, place.lng], { icon: customIcon })
-                    .bindPopup(popupHtml, { closeButton: false })
-                    .addTo(map);
-
-                markersGroup.push(marker);
-            });
-
-            // Update badge count tag
-            document.getElementById('pinCountTag').innerText = `${filteredPlaces.length} สถานที่`;
-        }
-
-        function getFilteredPlaces() {
-            return placesData.filter(place => {
-                const matchCategory = currentCategory === 'all' || place.category === currentCategory;
-                const matchQuery = searchQuery === '' || 
-                    place.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    place.country.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    place.city.toLowerCase().includes(searchQuery.toLowerCase());
-                return matchCategory && matchQuery;
-            });
-        }
-
-        function filterByCategory(category) {
-            currentCategory = category;
-
-            // Sync Dropdown select element
-            document.getElementById('categoryDropdown').value = category;
-
-            // Sync Tab buttons UI
-            document.querySelectorAll('.category-tab').forEach(tab => {
-                tab.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
-                tab.classList.add('text-slate-600', 'hover:bg-slate-100');
-            });
-
-            const activeTab = document.getElementById(`tab-${category}`);
-            if (activeTab) {
-                activeTab.classList.remove('text-slate-600', 'hover:bg-slate-100');
-                activeTab.classList.add('bg-indigo-600', 'text-white', 'shadow-sm');
-            }
-
-            renderMarkers();
-            renderPlacesList();
-        }
-
-        function handleSearch() {
-            searchQuery = document.getElementById('searchInput').value.trim();
-            renderMarkers();
-            renderPlacesList();
-        }
-
-        function renderPlacesList() {
-            const container = document.getElementById('placesList');
-            const filteredPlaces = getFilteredPlaces();
-
-            if (filteredPlaces.length === 0) {
-                container.innerHTML = `
-                    <div class="p-8 text-center bg-white rounded-2xl border border-slate-200">
-                        <i class="fas fa-search-location text-4xl text-slate-300 mb-2"></i>
-                        <p class="text-sm font-semibold text-slate-500">ไม่พบสถานที่ตามเงื่อนไขที่เลือก</p>
-                        <button onclick="filterByCategory('all')" class="mt-3 text-xs bg-indigo-50 text-indigo-600 font-semibold px-3 py-1.5 rounded-xl">
-                            ดูสถานที่ทั้งหมด
-                        </button>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = filteredPlaces.map(place => `
-                <div class="bg-white rounded-2xl border border-slate-200 p-3 shadow-sm hover:shadow-md transition flex flex-col sm:flex-row gap-3 relative group">
-                    <div class="w-full sm:w-28 h-28 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0 relative">
-                        <img src="${place.image}" alt="${place.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" onerror="this.src='https://placehold.co/300x200/e2e8f0/64748b?text=Place'"/>
-                        <span class="absolute top-1.5 left-1.5 ${getCategoryBadgeColor(place.category)} text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
-                            ${getCategoryThaiName(place.category)}
-                        </span>
-                    </div>
-
-                    <div class="flex-1 flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-start justify-between gap-1">
-                                <h3 class="font-bold text-slate-800 text-sm leading-snug line-clamp-1">${place.name}</h3>
-                                <button onclick="flyToPlace(${place.lat}, ${place.lng})" class="text-slate-400 hover:text-indigo-600 text-xs p-1" title="ส่องบนแผนที่">
-                                    <i class="fas fa-crosshairs"></i>
-                                </button>
-                            </div>
-                            <p class="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                                <i class="fas fa-map-marker-alt text-rose-500 text-[10px]"></i> ${place.city}, ${place.country}
-                            </p>
-                            <p class="text-xs text-indigo-600 font-bold mt-1">
-                                ${place.priceFormatted}
-                            </p>
-                        </div>
-
-                        <div class="flex items-center gap-2 mt-3 pt-2 border-t border-slate-100">
-                            <button onclick="openDetailModal(${place.id})" class="flex-1 py-1.5 px-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs rounded-xl transition text-center flex items-center justify-center gap-1">
-                                <i class="fas fa-circle-info text-indigo-500"></i> รายละเอียด
-                            </button>
-                            <button onclick="addToItinerary(${place.id})" class="flex-1 py-1.5 px-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-xl transition text-center flex items-center justify-center gap-1 shadow-sm">
-                                <i class="fas fa-plus"></i> ใส่แพลน
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function openDetailModal(placeId) {
-            const place = placesData.find(p => p.id === placeId);
-            if (!place) return;
-
-            document.getElementById('modalImage').src = place.image;
-            document.getElementById('modalTitle').innerText = place.name;
-            document.getElementById('modalLocation').innerText = `${place.city}, ${place.country}`;
-            document.getElementById('modalPrice').innerText = place.priceFormatted;
-            document.getElementById('modalDescription').innerText = place.description;
-            document.getElementById('modalRating').innerText = place.rating;
-            document.getElementById('modalReviews').innerText = place.reviews.toLocaleString();
-
-            const badge = document.getElementById('modalCategoryBadge');
-            badge.className = `text-xs font-bold px-3 py-1 rounded-full shadow ${getCategoryBadgeColor(place.category)}`;
-            badge.innerText = getCategoryThaiName(place.category);
-
-            const addBtn = document.getElementById('modalAddBtn');
-            addBtn.onclick = function() {
-                addToItinerary(place.id);
-                closeDetailModal();
-            };
-
-            document.getElementById('detailModal').classList.remove('hidden');
-        }
-
-        function closeDetailModal() {
-            document.getElementById('detailModal').classList.add('hidden');
-        }
-
-        function addToItinerary(placeId) {
-            const place = placesData.find(p => p.id === placeId);
-            if (!place) return;
-
-            if (itinerary.some(item => item.id === placeId)) {
-                showToast(`"${place.name}" อยู่ในตารางแพลนเรียบร้อยแล้ว`, 'info');
-                return;
-            }
-
-            itinerary.push(place);
-            updateItineraryBadge();
-            showToast(`เพิ่ม "${place.name}" เข้าตารางทริปแล้ว!`, 'success');
-        }
-
-        function removeFromItinerary(placeId) {
-            itinerary = itinerary.filter(item => item.id !== placeId);
-            updateItineraryBadge();
-            renderItineraryModal();
-            showToast("ลบสถานที่ออกจากตารางทริปเรียบร้อย", 'info');
-        }
-
-        function clearItinerary() {
-            if (itinerary.length === 0) return;
-            itinerary = [];
-            updateItineraryBadge();
-            renderItineraryModal();
-            showToast("ล้างตารางทริปเรียบร้อยแล้ว", 'info');
-        }
-
-        function updateItineraryBadge() {
-            document.getElementById('itineraryBadge').innerText = itinerary.length;
-        }
-
-        function toggleItineraryModal() {
-            const modal = document.getElementById('itineraryModal');
-            if (modal.classList.contains('hidden')) {
-                renderItineraryModal();
-                modal.classList.remove('hidden');
-            } else {
-                modal.classList.add('hidden');
-            }
-        }
-
-        function renderItineraryModal() {
-            const container = document.getElementById('itineraryItemsList');
-            
-            if (itinerary.length === 0) {
-                container.innerHTML = `
-                    <div class="p-10 text-center text-slate-400">
-                        <i class="fas fa-calendar-plus text-5xl mb-3 text-slate-300"></i>
-                        <p class="font-semibold text-slate-600">ยังไม่มีสถานที่ในแพลนทริปของคุณ</p>
-                        <p class="text-xs text-slate-400 mt-1">กดปุ่ม "+ ใส่แพลน" เพื่อสะสมสถานที่ท่องเที่ยวได้ทันที</p>
-                    </div>
-                `;
-                document.getElementById('totalBudgetDisplay').innerText = '฿0';
-                return;
-            }
-
-            let totalBudget = 0;
-
-            container.innerHTML = itinerary.map((item, index) => {
-                totalBudget += item.price;
-                return `
-                    <div class="flex items-center justify-between p-3 bg-slate-50 rounded-2xl border border-slate-200 hover:bg-slate-100 transition">
-                        <div class="flex items-center space-x-3">
-                            <span class="w-6 h-6 rounded-full bg-indigo-600 text-white text-xs font-bold flex items-center justify-center shadow-sm">
-                                ${index + 1}
-                            </span>
-                            <img src="${item.image}" class="w-12 h-12 rounded-xl object-cover" />
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-xs sm:text-sm line-clamp-1">${item.name}</h4>
-                                <p class="text-[11px] text-slate-500">${item.city}, ${item.country}</p>
-                                <p class="text-xs font-bold text-indigo-600">${item.priceFormatted}</p>
-                            </div>
-                        </div>
-                        <button onclick="removeFromItinerary(${item.id})" class="text-rose-500 hover:text-rose-700 p-2 text-sm transition">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </div>
-                `;
-            }).join('');
-
-            document.getElementById('totalBudgetDisplay').innerText = `฿${totalBudget.toLocaleString()}`;
-        }
-
-        function flyToPlace(lat, lng) {
-            if (!map) return;
-            map.flyTo([lat, lng], 12, {
-                duration: 1.5
-            });
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function zoomToCountry(countryKey) {
-            if (!map) return;
-            const countryCoords = {
-                'thailand': { center: [13.7563, 100.5018], zoom: 6 },
-                'japan': { center: [36.2048, 138.2529], zoom: 5 },
-                'france': { center: [46.2276, 2.2137], zoom: 5 },
-                'switzerland': { center: [46.8182, 8.2275], zoom: 7 }
-            };
-
-            const target = countryCoords[countryKey];
-            if (target) {
-                map.flyTo(target.center, target.zoom, { duration: 1.2 });
-            }
-        }
-
-        function resetMapView() {
-            if (!map) return;
-            map.flyTo([25.0000, 70.0000], 3, { duration: 1.2 });
-        }
-
-        function onPinClick(placeId) {
-            // Placeholder for click telemetry or pin focus if needed
-        }
-
-        function getCategoryBadgeColor(category) {
-            switch (category) {
-                case 'attraction': return 'bg-sky-100 text-sky-800 border border-sky-300';
-                case 'hotel': return 'bg-amber-100 text-amber-800 border border-amber-300';
-                case 'activity': return 'bg-emerald-100 text-emerald-800 border border-emerald-300';
-                case 'shop': return 'bg-purple-100 text-purple-800 border border-purple-300';
-                default: return 'bg-slate-100 text-slate-800 border border-slate-300';
-            }
-        }
-
-        function getCategoryThaiName(category) {
-            switch (category) {
-                case 'attraction': return '🏖️ ท่องเที่ยว';
-                case 'hotel': return '🏨 ที่พัก';
-                case 'activity': return '🏄‍♂️ กิจกรรม';
-                case 'shop': return '🛍️ ร้านค้า/ของฝาก';
-                default: return 'สถานที่';
-            }
-        }
-
-        function showToast(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.className = `fixed bottom-5 right-5 z-50 px-4 py-3 rounded-2xl shadow-xl font-medium text-xs text-white flex items-center space-x-2 transition transform translate-y-10 opacity-0 duration-300 ${
-                type === 'success' ? 'bg-emerald-600' : 'bg-indigo-600'
-            }`;
-            toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-info-circle'} text-sm"></i> <span>${message}</span>`;
-            document.body.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.remove('translate-y-10', 'opacity-0');
-            }, 50);
-
-            setTimeout(() => {
-                toast.classList.add('translate-y-10', 'opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 2500);
-        }
-    </script>
+    // Initial Load
+    renderMarkers(locationsData);
+  </script>
 </body>
 </html>
