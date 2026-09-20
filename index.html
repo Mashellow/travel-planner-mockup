@@ -24,34 +24,36 @@
             border: none !important;
         }
 
-        /* 🟢 Custom Card Pin ดีไซน์รูปที่ 1 + สีแบ่งตามรูปที่ 2 */
+        /* 🟢 Custom Card Pin: รูปภาพเต็มช่องชิดขอบ ไร้ช่องว่างคั่น */
         .custom-map-pin {
-            width: 120px;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.3);
+            width: 130px;
+            border-radius: 16px;
+            overflow: hidden !important; /* บังคับตัดขอบภาพเต็มช่อง */
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.35);
             transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: pointer;
             background: var(--pin-bg);
-            border: 3px solid var(--pin-bg);
+            border: 3.5px solid var(--pin-bg); /* กรอบสีหนารอบการ์ด */
             position: relative;
+            padding: 0 !important;
+            margin: 0 !important;
         }
 
         .custom-map-pin:hover {
             transform: scale(1.12) translateY(-6px);
             z-index: 9999 !important;
-            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.4);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.45);
         }
 
-        /* รูปภาพด้านบนการ์ด */
+        /* กล่องใส่รูปภาพเต็มพื้นที่ส่วนบน */
         .pin-photo-wrapper {
             position: relative;
             width: 100%;
-            height: 58px;
+            height: 72px; /* ความสูงภาพพอดีการ์ด */
             background: #cbd5e1;
             overflow: hidden;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
+            margin: 0;
+            padding: 0;
         }
 
         .pin-photo {
@@ -59,47 +61,48 @@
             height: 100%;
             object-fit: cover;
             display: block;
+            border: none;
         }
 
         /* แท็กแสดงราคาตรงมุมขวาล่างของรูปภาพ */
         .pin-price-tag {
             position: absolute;
-            bottom: 3px;
-            right: 3px;
-            background: rgba(15, 23, 42, 0.78);
+            bottom: 4px;
+            right: 4px;
+            background: rgba(15, 23, 42, 0.85);
             color: #ffffff;
-            font-size: 9px;
+            font-size: 9.5px;
             font-weight: 700;
-            padding: 1.5px 6px;
-            border-radius: 8px;
-            backdrop-filter: blur(2px);
+            padding: 2px 8px;
+            border-radius: 12px;
             letter-spacing: 0.2px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            line-height: 1.2;
         }
 
         /* กล่องชื่อสถานที่ด้านล่างการ์ด */
         .pin-title-box {
             background: var(--pin-bg);
             color: #ffffff;
-            padding: 4px 6px;
-            font-size: 10px;
+            padding: 5px 6px;
+            font-size: 10.5px;
             font-weight: 700;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: 1.3;
+            line-height: 1.2;
         }
 
         /* ปลายแหลมชี้ตำแหน่งด้านล่างการ์ด */
         .pin-pointer {
             width: 0;
             height: 0;
-            border-left: 7px solid transparent;
-            border-right: 7px solid transparent;
-            border-top: 8px solid var(--pin-bg);
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 9px solid var(--pin-bg);
             margin: -1px auto 0 auto;
-            filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.15));
+            filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.2));
         }
 
         /* Leaflet Popup Override */
@@ -730,7 +733,7 @@
             }).join('');
         }
 
-        /* 🟢 REFRESH MAP PINS - ปรับดีไซน์หมุดตามรูปที่ 1 และใช้สีตามรูปที่ 2 */
+        /* 🟢 REFRESH MAP PINS - หมุดการ์ดภาพเต็มช่อง ไร้ขอบคั่น */
         function refreshMapPins() {
             activeMarkers.forEach(m => map.removeLayer(m));
             activeMarkers = [];
@@ -760,7 +763,7 @@
                 const theme = categoryThemeMap[pin.category] || categoryThemeMap['attraction'];
                 const priceDisplay = pin.price === 0 ? 'เข้าฟรี' : `${pin.price.toLocaleString()} B`;
 
-                /* HTML โครงสร้างหมุด: ขอบหนา + รูปบน + แท็กราคา + ชื่อล่าง + ปลายแหลม */
+                /* โครงสร้างหมุดการ์ด: รูปภาพเต็มส่วนบน ชิดขอบสีการ์ด ไม่เว้นช่องว่าง */
                 const pinHtml = `
                     <div class="custom-map-pin" style="--pin-bg: ${theme.hex}; border-color: ${theme.hex};">
                         <div class="pin-photo-wrapper">
@@ -775,8 +778,8 @@
                 const customIcon = L.divIcon({
                     className: 'custom-pin-wrapper',
                     html: pinHtml,
-                    iconSize: [120, 92],
-                    iconAnchor: [60, 92]
+                    iconSize: [130, 105],
+                    iconAnchor: [65, 105]
                 });
 
                 const marker = L.marker([pin.lat, pin.lng], { icon: customIcon }).addTo(map);
