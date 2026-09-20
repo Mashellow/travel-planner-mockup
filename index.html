@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Let's U Plan - Interactive Travel Planner Prototype</title>
+    <title>Let's U Plan - Interactive Map & Travel Planner</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome Icons -->
@@ -15,6 +15,26 @@
         .globe-spin { animation: spin 40s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
         .tab-active { border-bottom: 3px solid #0284c7; color: #0284c7; font-weight: 600; }
+        
+        /* Custom Speech Bubble Pin Animation & Tail */
+        .pin-bubble {
+            animation: floatPin 3s ease-in-out infinite;
+            filter: drop-shadow(0 10px 8px rgba(0,0,0,0.25));
+        }
+        @keyframes floatPin {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        .bubble-tail {
+            position: absolute;
+            bottom: -8px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 10px solid white;
+        }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col">
@@ -56,30 +76,50 @@
     <!-- MAIN CONTENT CONTAINER -->
     <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
 
-        <!-- ================= PAGE 1: SEARCH & LANDING (GLOBE) ================= -->
+        <!-- ================= PAGE 1: SEARCH & LANDING ================= -->
         <section id="page-search" class="space-y-8">
-            <!-- Hero with Globe Simulation -->
-            <div class="relative bg-slate-900 rounded-3xl overflow-hidden shadow-2xl text-white p-8 md:p-12 flex flex-col md:flex-row items-center justify-between">
-                <!-- Background Globe Graphic -->
+            <!-- Hero with Country/City Selection -->
+            <div class="relative bg-slate-900 rounded-3xl overflow-hidden shadow-2xl text-white p-6 md:p-10 flex flex-col md:flex-row items-center justify-between">
                 <div class="absolute -right-20 -top-20 opacity-20 pointer-events-none">
                     <i class="fa-solid fa-globe text-[350px] text-sky-400 globe-spin"></i>
                 </div>
 
-                <div class="z-10 max-w-xl space-y-4 text-center md:text-left">
+                <div class="z-10 max-w-xl space-y-4 text-center md:text-left mb-6 md:mb-0">
                     <span class="bg-sky-500/20 text-sky-300 text-xs px-3 py-1 rounded-full border border-sky-400/30">AI Travel Planner for Everyone</span>
                     <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">วางแผนทริปท่องเที่ยวทั่วโลก ง่ายในไม่กี่คลิก</h1>
-                    <p class="text-slate-300 text-sm md:text-base">ค้นหาที่พัก สถานที่ท่องเที่ยว ร้านอาหารท้องถิ่น และคำนวณงบประมาณให้อัตโนมัติ</p>
+                    <p class="text-slate-300 text-sm md:text-base">เลือกจุดหมายบนแผนที่ สัมผัสป๊อปอัปสถานที่ท่องเที่ยว และคำนวณงบประมาณให้อัตโนมัติ</p>
                 </div>
 
-                <!-- Quick Input Card -->
-                <div class="z-10 bg-white/95 backdrop-blur text-slate-800 p-6 rounded-2xl shadow-xl w-full md:w-96 mt-6 md:mt-0 space-y-4">
+                <!-- Input Card -->
+                <div class="z-10 bg-white/95 backdrop-blur text-slate-800 p-6 rounded-2xl shadow-xl w-full md:w-96 space-y-4">
                     <h3 class="font-bold text-lg border-b pb-2 text-slate-700"><i class="fa-solid fa-sliders text-sky-600 mr-2"></i>เริ่มสร้างทริปของคุณ</h3>
                     
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">จุดหมายปลายทาง *</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-location-dot absolute left-3 top-3 text-slate-400"></i>
-                            <input id="input-destination" type="text" value="ประเทศไทย, กระบี่" class="w-full pl-9 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-sky-500 outline-none">
+                    <!-- Destination Selection -->
+                    <div class="space-y-2">
+                        <label class="block text-xs font-semibold text-slate-600">จุดหมายปลายทาง *</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] text-slate-400 mb-0.5">เลือกประเทศ</label>
+                                <select id="select-country" onchange="onCountryChange()" class="w-full px-2.5 py-2 border rounded-lg text-xs bg-white text-slate-700 focus:ring-2 focus:ring-sky-500 outline-none font-medium">
+                                    <option value="ประเทศไทย">🇹🇭 ประเทศไทย</option>
+                                    <option value="ญี่ปุ่น">🇯🇵 ญี่ปุ่น</option>
+                                    <option value="เกาหลีใต้">🇰🇷 เกาหลีใต้</option>
+                                    <option value="เวียดนาม">🇻🇳 เวียดนาม</option>
+                                    <option value="สิงคโปร์">🇸🇬 สิงคโปร์</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-400 mb-0.5">เลือกเมือง / จังหวัด</label>
+                                <select id="select-city" onchange="onCityChange()" class="w-full px-2.5 py-2 border rounded-lg text-xs bg-white text-slate-700 focus:ring-2 focus:ring-sky-500 outline-none font-medium">
+                                    <!-- Dynamic Options from JS -->
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Custom Destination Search Field -->
+                        <div class="relative pt-1">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-400 text-xs"></i>
+                            <input id="input-destination-custom" type="text" placeholder="หรือพิมพ์ระบุสถานที่เอง (เช่น อ่าวนาง)..." class="w-full pl-8 pr-3 py-1.5 border rounded-lg text-xs focus:ring-2 focus:ring-sky-500 outline-none">
                         </div>
                     </div>
 
@@ -110,29 +150,85 @@
                 </div>
             </div>
 
-            <!-- Category Recommendation List -->
-            <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-hotel text-sky-600 mr-2"></i>ACCOMMODATION (ที่พักแนะนำ)</h2>
-                    <span class="text-xs text-sky-600 font-semibold cursor-pointer">More <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="accommodation-list">
-                    <!-- Dynamic Cards JS -->
+            <!-- INTERACTIVE MAP & POPUP PIN SECTION -->
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-200 space-y-4">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                    <div>
+                        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-map-location-dot text-sky-600"></i>
+                            แผนที่แสดงสถานที่แนะนำ: <span id="map-target-title" class="text-sky-600 font-extrabold">กระบี่ (ประเทศไทย)</span>
+                        </h2>
+                        <p class="text-xs text-slate-500 mt-0.5">คลิกที่หมุดป๊อปอัปบนแผนที่เพื่อดูรายละเอียดและกดเพิ่มสถานที่ลงในแพลนของคุณได้ทันที</p>
+                    </div>
+                    <span class="text-xs bg-sky-50 text-sky-700 border border-sky-200 px-3 py-1 rounded-full font-medium w-fit">
+                        <i class="fa-solid fa-circle-info mr-1"></i>หมุดป๊อปอัปจำลองตำแหน่งกิจกรรม
+                    </span>
                 </div>
 
-                <div class="flex items-center justify-between pt-6">
-                    <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-umbrella-beach text-sky-600 mr-2"></i>Tourist Attraction (สถานที่ท่องเที่ยว & กิจกรรม)</h2>
-                    <span class="text-xs text-sky-600 font-semibold cursor-pointer">More <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                <!-- Map Container Canvas -->
+                <div class="relative w-full h-[480px] bg-sky-100 rounded-2xl overflow-hidden border border-slate-200 shadow-inner flex items-center justify-center">
+                    <!-- Dynamic Map Background Image -->
+                    <img id="map-bg-img" src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200" class="w-full h-full object-cover filter brightness-[0.9] contrast-[1.05]" alt="Map Preview">
+
+                    <!-- Overlay Gradient & Grid Lines simulation -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-transparent to-black/10 pointer-events-none"></div>
+
+                    <!-- Dynamic Pins Container (Rendered via JS) -->
+                    <div id="map-pins-container" class="absolute inset-0 pointer-events-auto"></div>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="attraction-list">
-                    <!-- Dynamic Cards JS -->
+            </div>
+
+            <!-- Category Lists (5 Categories) -->
+            <div class="space-y-8">
+                <!-- 1. ACCOMMODATION -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-hotel text-sky-600 mr-2"></i>ACCOMMODATION (ที่พักแนะนำ)</h2>
+                        <span class="text-xs text-sky-600 font-semibold cursor-pointer">More <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="accommodation-list"></div>
+                </div>
+
+                <!-- 2. TOURIST ATTRACTION -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-umbrella-beach text-sky-600 mr-2"></i>TOURIST ATTRACTION (สถานที่ท่องเที่ยว)</h2>
+                        <span class="text-xs text-sky-600 font-semibold cursor-pointer">More <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="attraction-list"></div>
+                </div>
+
+                <!-- 3. ACTIVITIES -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-person-hiking text-sky-600 mr-2"></i>ACTIVITIES (กิจกรรมท่องเที่ยว)</h2>
+                        <span class="text-xs text-sky-600 font-semibold cursor-pointer">More <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="activity-list"></div>
+                </div>
+
+                <!-- 4. LOCAL SHOPS & FOOD -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-utensils text-sky-600 mr-2"></i>LOCAL SHOPS & FOOD (ร้านค้า & อาหารท้องถิ่น)</h2>
+                        <span class="text-xs text-sky-600 font-semibold cursor-pointer">More <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="localshop-list"></div>
+                </div>
+
+                <!-- 5. SOUVENIR SHOPS -->
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-gift text-sky-600 mr-2"></i>SOUVENIR SHOPS (ร้านของฝากท้องถิ่น)</h2>
+                        <span class="text-xs text-sky-600 font-semibold cursor-pointer">More <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="souvenir-list"></div>
                 </div>
             </div>
         </section>
 
-        <!-- ================= PAGE 2: TRIP PLANNER & SUMMARY ================= -->
+        <!-- ================= PAGE 2: TRIP PLANNER ================= -->
         <section id="page-plan" class="hidden space-y-6">
-            <!-- Trip Header Summary Banner -->
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <span class="text-xs font-semibold uppercase tracking-wider text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-100">สรุปแพลนทริป</span>
@@ -149,7 +245,6 @@
                     <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
                         <div id="budget-progress-bar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-300" style="width: 100%"></div>
                     </div>
-                    <p class="text-[10px] text-slate-400 text-right">*ระบบจะตัดคำนวณงบอัตโนมัติตามกิจกรรมที่เลือก</p>
                 </div>
 
                 <div class="flex gap-2">
@@ -164,7 +259,6 @@
 
             <!-- Day Tabs & Itinerary Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Itinerary Timeline (Left 2 Cols) -->
                 <div class="lg:col-span-2 space-y-4">
                     <div class="flex space-x-2 border-b border-slate-200 pb-2">
                         <button onclick="switchDay(1)" id="day-btn-1" class="px-4 py-2 rounded-lg font-semibold text-sm bg-sky-600 text-white shadow-sm">DAY 1</button>
@@ -172,152 +266,182 @@
                         <button onclick="switchDay(3)" id="day-btn-3" class="px-4 py-2 rounded-lg font-semibold text-sm bg-white text-slate-600 hover:bg-slate-100">DAY 3</button>
                     </div>
 
-                    <!-- Timeline Content -->
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4" id="itinerary-container">
-                        <!-- Dynamic Day Timeline JS -->
-                    </div>
-
-                    <!-- Transit Integration Section -->
-                    <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white p-6 rounded-2xl shadow-lg space-y-3">
-                        <div class="flex items-center justify-between">
-                            <h3 class="font-bold text-base flex items-center gap-2">
-                                <i class="fa-solid fa-car-side text-sky-400"></i> ตัวเลือกการเดินทาง (Transit Integration)
-                            </h3>
-                            <span class="text-[11px] bg-indigo-500/30 text-indigo-200 px-2.5 py-0.5 rounded-full border border-indigo-400/20">สะดวกสบายยิ่งขึ้น</span>
-                        </div>
-                        <p class="text-xs text-slate-300">เลือกบริการเรียกรถเดินทางสำหรับทริปนี้ ระบบจะส่ง Deep Link เปิดแอปพลิเคชันพร้อมปักหมุดตำแหน่งปลายทางให้ทันที</p>
-                        
-                        <div class="grid grid-cols-3 gap-3 pt-2">
-                            <button onclick="launchTransit('Grab')" class="bg-white/10 hover:bg-white/20 border border-white/10 p-3 rounded-xl flex flex-col items-center justify-center space-y-1 transition">
-                                <i class="fa-solid fa-taxi text-emerald-400 text-xl"></i>
-                                <span class="text-xs font-semibold">Grab Taxi</span>
-                            </button>
-                            <button onclick="launchTransit('Local Taxi')" class="bg-white/10 hover:bg-white/20 border border-white/10 p-3 rounded-xl flex flex-col items-center justify-center space-y-1 transition">
-                                <i class="fa-solid fa-van-shuttle text-amber-400 text-xl"></i>
-                                <span class="text-xs font-semibold">แท็กซี่ท้องถิ่น</span>
-                            </button>
-                            <button onclick="launchTransit('Public Transit')" class="bg-white/10 hover:bg-white/20 border border-white/10 p-3 rounded-xl flex flex-col items-center justify-center space-y-1 transition">
-                                <i class="fa-solid fa-bus text-sky-400 text-xl"></i>
-                                <span class="text-xs font-semibold">รถสองแถว/ประจำทาง</span>
-                            </button>
-                        </div>
-                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4" id="itinerary-container"></div>
                 </div>
 
-                <!-- Wishlist / Saved Items Drawer (Right 1 Col) -->
+                <!-- Wishlist / Saved Items Drawer -->
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4 h-fit">
                     <h3 class="font-bold text-slate-800 flex items-center justify-between border-b pb-3">
                         <span><i class="fa-solid fa-heart text-rose-500 mr-2"></i>รายการที่กดใจไว้ (Wishlist)</span>
                         <span id="wishlist-count" class="text-xs bg-rose-100 text-rose-600 px-2 py-0.5 rounded-full font-bold">0</span>
                     </h3>
-                    <p class="text-xs text-slate-500">คุณสามารถดึงสถานที่จากรายการกดใจมาใส่ในตารางแพลน DIY ได้เลย</p>
-                    
-                    <div id="wishlist-items-container" class="space-y-3 max-h-[400px] overflow-y-auto pr-1">
-                        <!-- Dynamic Wishlist Cards -->
-                    </div>
+                    <div id="wishlist-items-container" class="space-y-3 max-h-[400px] overflow-y-auto pr-1"></div>
                 </div>
             </div>
         </section>
 
-        <!-- ================= PAGE 3: MOMENTS (COMMUNITY FEED) ================= -->
+        <!-- ================= PAGE 3: MOMENTS ================= -->
         <section id="page-moment" class="hidden space-y-6">
             <div class="bg-gradient-to-r from-pink-500 via-rose-500 to-purple-600 text-white p-8 rounded-2xl shadow-lg flex justify-between items-center">
                 <div>
                     <h2 class="text-2xl font-bold"><i class="fa-solid fa-camera-retro mr-2"></i>Travel Moments</h2>
                     <p class="text-sm text-rose-100 mt-1">แบ่งปันประสบการณ์ และค้นหาไอเดียท่องเที่ยวจากนักเดินทางทั่วโลก</p>
                 </div>
-                <button onclick="alert('ฟีเจอร์โพสต์ Moment พร้อมใช้งานในเวอร์ชันเต็ม')" class="bg-white text-rose-600 px-4 py-2 rounded-xl font-bold text-sm shadow hover:bg-rose-50 transition">
-                    + สร้างโพสต์
-                </button>
             </div>
-
-            <!-- Feed Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="moment-feed-container">
-                <!-- Dynamic Moment Cards JS -->
-            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="moment-feed-container"></div>
         </section>
 
     </main>
 
-    <!-- MODAL: Share Link -->
+    <!-- MODAL: Share -->
     <div id="modal-share" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
         <div class="bg-white rounded-2xl p-6 max-w-md w-full space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b pb-2">
                 <h3 class="font-bold text-slate-800"><i class="fa-solid fa-share-nodes text-sky-600 mr-2"></i>แชร์แพลนการท่องเที่ยว</h3>
                 <button onclick="closeShareModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <p class="text-xs text-slate-600">คัดลอกลิงก์ด้านล่างเพื่อส่งต่อให้เพื่อนร่วมทริปเข้ามาดูหรือแก้ไขแพลนนี้ได้</p>
-            <div class="flex gap-2">
-                <input type="text" readonly value="https://letsuplan.com/trip/share?id=krabi-3d2n-99812" class="w-full bg-slate-100 border text-xs px-3 py-2 rounded-lg font-mono text-slate-600">
-                <button onclick="alert('คัดลอกลิงก์เรียบร้อยแล้ว!')" class="bg-sky-600 text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-sky-700">คัดลอก</button>
-            </div>
+            <input type="text" readonly value="https://letsuplan.com/trip/share?id=krabi-3d2n-99812" class="w-full bg-slate-100 border text-xs px-3 py-2 rounded-lg font-mono text-slate-600">
         </div>
     </div>
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // DATA STORES
+        const cityMap = {
+            'ประเทศไทย': ['กระบี่', 'เชียงใหม่', 'ภูเก็ต', 'กรุงเทพมหานคร', 'พัทยา / ชลบุรี'],
+            'ญี่ปุ่น': ['โตเกียว (Tokyo)', 'โอซาก้า (Osaka)', 'เกียวโต (Kyoto)'],
+            'เกาหลีใต้': ['โซล (Seoul)', 'ปูซาน (Busan)'],
+            'เวียดนาม': ['ฮานอย (Hanoi)', 'ดานัง (Da Nang)'],
+            'สิงคโปร์': ['สิงคโปร์ (Singapore)']
+        };
+
+        // MOCK MAP DATA & POPUP PINS BY CITY
+        const cityMapInteractiveData = {
+            'กระบี่': {
+                mapBg: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200',
+                pins: [
+                    { id: 't1', title: 'เกาะพีพี & ทะเลแหวก', price: 1500, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', top: '22%', left: '55%' },
+                    { id: 't2', title: 'สระมรกต & ถ้ำน้ำใส', price: 400, img: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400', top: '48%', left: '32%' },
+                    { id: 't3', title: 'อนุสาวรีย์ปูดำ เมืองกระบี่', price: 0, img: 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=400', top: '28%', left: '20%' }
+                ]
+            },
+            'เชียงใหม่': {
+                mapBg: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=1200',
+                pins: [
+                    { id: 'cm1', title: 'วัดพระธาตุดอยสุเทพ', price: 50, img: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=400', top: '20%', left: '25%' },
+                    { id: 'cm2', title: 'ประตูท่าแพ & ถนนคนเดิน', price: 0, img: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=400', top: '52%', left: '48%' },
+                    { id: 'cm3', title: 'ม่อนแจ่ม สวนดอกไม้', price: 100, img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400', top: '30%', left: '70%' }
+                ]
+            },
+            'โตเกียว (Tokyo)': {
+                mapBg: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=1200',
+                pins: [
+                    { id: 'tk1', title: 'วัดเซ็นโซจิ (อาซากุสะ)', price: 0, img: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400', top: '25%', left: '60%' },
+                    { id: 'tk2', title: 'ย่านชิบูย่า (Shibuya)', price: 0, img: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400', top: '55%', left: '35%' },
+                    { id: 'tk3', title: 'โตเกียวทาวเวอร์', price: 1200, img: 'https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?w=400', top: '42%', left: '48%' }
+                ]
+            }
+        };
+
+        // Fallback for cities not explicitly listed in interactive mock
+        const defaultMapData = {
+            mapBg: 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200',
+            pins: [
+                { id: 'def1', title: 'จุดชมวิวแลนด์มาร์กประจำเมือง', price: 0, img: 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=400', top: '30%', left: '30%' },
+                { id: 'def2', title: 'ย่านร้านค้า & อาหารท้องถิ่น', price: 250, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', top: '50%', left: '60%' }
+            ]
+        };
+
         let currentBudgetTotal = 15000;
         let wishlist = [];
         let activeDay = 1;
 
         const mockAccommodations = [
             { id: 'a1', title: 'ชมสวนที่พัก กระบี่', rating: 4.6, price: 800, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500' },
-            { id: 'a2', title: 'อ่าวนาง วิลล่า รีสอร์ท', rating: 4.8, price: 2200, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=500' },
-            { id: 'a3', title: 'ไร่เลย์ เบย์ รีสอร์ท', rating: 4.7, price: 3100, img: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=500' },
-            { id: 'a4', title: 'โฮสเทล ตัวเมืองกระบี่', rating: 4.3, price: 450, img: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=500' }
+            { id: 'a2', title: 'อ่าวนาง วิลล่า รีสอร์ท', rating: 4.8, price: 2200, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=500' }
         ];
 
         const mockAttractions = [
-            { id: 't1', title: 'เกาะพีพี & ทะเลแหวก', rating: 4.9, price: 1500, category: 'ทัวร์เรือ', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500' },
-            { id: 't2', title: 'สระมรกต & น้ำตกร้อน', rating: 4.5, price: 400, category: 'ธรรมชาติ', img: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=500' },
-            { id: 't3', title: 'พายคายัค อ่าวท่าเลน', rating: 4.7, price: 700, category: 'กิจกรรม', img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500' },
-            { id: 't4', title: 'ร้านอาหารโรตีหน้าไทยพาณิชย์', rating: 4.6, price: 150, category: 'อาหารท้องถิ่น', img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500' }
+            { id: 't1', title: 'เกาะพีพี & ทะเลแหวก', rating: 4.9, price: 1500, category: 'ธรรมชาติ', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500' },
+            { id: 't2', title: 'สระมรกต & น้ำตกร้อน', rating: 4.5, price: 400, category: 'ธรรมชาติ', img: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=500' }
+        ];
+
+        const mockActivities = [
+            { id: 'act1', title: 'พายคายัค อ่าวท่าเลน', rating: 4.7, price: 700, category: 'กิจกรรมพายเรือ', img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=500' }
+        ];
+
+        const mockLocalShops = [
+            { id: 's1', title: 'โรตีหน้าธนาคารไทยพาณิชย์', rating: 4.6, price: 100, category: 'สตรีทฟู้ด', img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500' }
+        ];
+
+        const mockSouvenirs = [
+            { id: 'sou1', title: 'ร้านจี้ออ ของฝากเมืองกระบี่', rating: 4.8, price: 300, category: 'ขนมเต้าส้อ/ของฝาก', img: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=500' }
         ];
 
         let itineraryData = {
-            1: [
-                { id: 't2', title: 'สระมรกต & น้ำตกร้อน', price: 400, time: '09:00 - 12:00' },
-                { id: 'a1', title: 'ชมสวนที่พัก กระบี่ (Check-in)', price: 800, time: '14:00' }
-            ],
-            2: [
-                { id: 't1', title: 'เกาะพีพี & ทะเลแหวก', price: 1500, time: '08:30 - 16:30' }
-            ],
-            3: [
-                { id: 't4', title: 'ร้านอาหารโรตีหน้าไทยพาณิชย์', price: 150, time: '10:00' }
-            ]
+            1: [{ id: 't2', title: 'สระมรกต & ถ้ำน้ำใส', price: 400, time: '09:00 - 12:00' }],
+            2: [{ id: 't1', title: 'เกาะพีพี & ทะเลแหวก', price: 1500, time: '08:30 - 16:30' }],
+            3: [{ id: 's1', title: 'โรตีหน้าธนาคารไทยพาณิชย์', price: 100, time: '10:00' }]
         };
 
-        const mockMoments = [
-            {
-                id: 'm1',
-                author: 'Sarah_Traveler',
-                avatar: 'https://i.pravatar.cc/100?img=32',
-                image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600',
-                title: 'แจกแพลนเที่ยวกระบี่ 3 วัน 2 คืน แบบประหยัด!',
-                desc: 'ทะเลแหวกสวยมาก แนะนำให้ไปช่วงเช้าคนจะไม่เยอะเลยค่ะ!',
-                likes: 124,
-                place: { id: 't1', title: 'เกาะพีพี & ทะเลแหวก', price: 1500 }
-            },
-            {
-                id: 'm2',
-                author: 'Mike_Adventure',
-                avatar: 'https://i.pravatar.cc/100?img=12',
-                image: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600',
-                title: 'พายคายัคชมป่าชายเลนอ่าวท่าเลน สนุกมากกก',
-                desc: 'ใครชอบสายลุย ห้ามพลาดกิจกรรมนี้เด็ดขาด ค่าเช่าเรือไม่แพง',
-                likes: 89,
-                place: { id: 't3', title: 'พายคายัค อ่าวท่าเลน', price: 700 }
-            }
-        ];
-
-        // INIT RENDER
         window.onload = function() {
+            onCountryChange();
             renderExploreCards();
             renderItinerary();
-            renderMoments();
             updateBudgetTracker();
         };
+
+        // EVENT HANDLERS FOR COUNTRY & CITY CHANGE
+        function onCountryChange() {
+            const country = document.getElementById('select-country').value;
+            const citySelect = document.getElementById('select-city');
+            const cities = cityMap[country] || [];
+            
+            citySelect.innerHTML = cities.map(c => `<option value="${c}">${c}</option>`).join('');
+            onCityChange();
+        }
+
+        function onCityChange() {
+            const country = document.getElementById('select-country').value;
+            const city = document.getElementById('select-city').value;
+            
+            document.getElementById('map-target-title').innerText = `${city} (${country})`;
+            renderMapPins(city);
+        }
+
+        // RENDER INTERACTIVE MAP PINS
+        function renderMapPins(city) {
+            const data = cityMapInteractiveData[city] || defaultMapData;
+            
+            // Update Map Background Image
+            document.getElementById('map-bg-img').src = data.mapBg;
+
+            // Render Pins Container
+            const container = document.getElementById('map-pins-container');
+            container.innerHTML = data.pins.map(pin => `
+                <div class="absolute pin-bubble hover:z-30 transition cursor-pointer" style="top: ${pin.top}; left: ${pin.left};">
+                    <!-- Speech Bubble Pin Box -->
+                    <div class="bg-white/95 backdrop-blur-sm p-2 rounded-2xl shadow-2xl border border-slate-100 w-44 md:w-52 relative group">
+                        <div class="relative h-24 md:h-28 rounded-xl overflow-hidden mb-2">
+                            <img src="${pin.img}" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+                            <span class="absolute top-1.5 right-1.5 bg-black/60 text-white text-[9px] px-2 py-0.5 rounded-full backdrop-blur">
+                                ${pin.price === 0 ? 'เข้าฟรี' : pin.price.toLocaleString() + ' B'}
+                            </span>
+                        </div>
+                        <h4 class="font-bold text-xs text-slate-800 truncate">${pin.title}</h4>
+                        
+                        <div class="flex items-center justify-between mt-1.5 pt-1 border-t border-slate-100">
+                            <span class="text-[10px] text-sky-600 font-semibold"><i class="fa-solid fa-location-dot mr-1"></i>หมุดแนะนำ</span>
+                            <button onclick="addToItinerary('${pin.id}', '${pin.title}', ${pin.price})" class="text-[10px] bg-sky-600 hover:bg-sky-700 text-white px-2 py-0.5 rounded-md font-medium shadow-sm flex items-center gap-1">
+                                <i class="fa-solid fa-plus text-[8px]"></i> ใส่แพลน
+                            </button>
+                        </div>
+
+                        <!-- Tail Pointer -->
+                        <div class="bubble-tail"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
 
         // NAVIGATION TABS
         function switchTab(tab) {
@@ -333,123 +457,55 @@
             document.getElementById('nav-' + tab).className = "py-5 px-1 tab-active flex items-center space-x-2";
         }
 
-        // RENDER CARDS IN EXPLORE PAGE
-        function renderExploreCards() {
-            const accContainer = document.getElementById('accommodation-list');
-            accContainer.innerHTML = mockAccommodations.map(item => `
+        function createCardHTML(item, isAcc = false) {
+            return `
                 <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col">
                     <div class="relative h-40 bg-slate-200">
                         <img src="${item.img}" class="w-full h-full object-cover">
-                        <button onclick="toggleWishlist('${item.id}', '${item.title}', ${item.price})" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 backdrop-blur flex items-center justify-center text-slate-400 hover:text-rose-500 transition">
-                            <i class="fa-solid fa-heart ${wishlist.some(w => w.id === item.id) ? 'text-rose-500' : ''}"></i>
-                        </button>
                     </div>
                     <div class="p-4 flex-grow flex flex-col justify-between space-y-2">
                         <div>
-                            <h4 class="font-bold text-slate-800 text-sm">${item.title}</h4>
-                            <p class="text-xs text-amber-500 font-semibold mt-1"><i class="fa-solid fa-star"></i> ${item.rating}</p>
-                        </div>
-                        <div class="flex items-center justify-between border-t pt-2">
-                            <span class="text-xs font-bold text-slate-700">${item.price.toLocaleString()} B / คืน</span>
-                            <button onclick="addToItinerary('${item.id}', '${item.title}', ${item.price})" class="text-xs bg-sky-50 text-sky-600 hover:bg-sky-100 font-semibold px-2.5 py-1 rounded-md">
-                                + ใส่แพลน
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-
-            const attContainer = document.getElementById('attraction-list');
-            attContainer.innerHTML = mockAttractions.map(item => `
-                <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col">
-                    <div class="relative h-40 bg-slate-200">
-                        <img src="${item.img}" class="w-full h-full object-cover">
-                        <button onclick="toggleWishlist('${item.id}', '${item.title}', ${item.price})" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/80 backdrop-blur flex items-center justify-center text-slate-400 hover:text-rose-500 transition">
-                            <i class="fa-solid fa-heart ${wishlist.some(w => w.id === item.id) ? 'text-rose-500' : ''}"></i>
-                        </button>
-                    </div>
-                    <div class="p-4 flex-grow flex flex-col justify-between space-y-2">
-                        <div>
-                            <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${item.category}</span>
                             <h4 class="font-bold text-slate-800 text-sm mt-1">${item.title}</h4>
                             <p class="text-xs text-amber-500 font-semibold mt-0.5"><i class="fa-solid fa-star"></i> ${item.rating}</p>
                         </div>
                         <div class="flex items-center justify-between border-t pt-2">
-                            <span class="text-xs font-bold text-slate-700">~${item.price.toLocaleString()} B</span>
+                            <span class="text-xs font-bold text-slate-700">${item.price === 0 ? 'เข้าฟรี' : item.price.toLocaleString() + ' B'}</span>
                             <button onclick="addToItinerary('${item.id}', '${item.title}', ${item.price})" class="text-xs bg-sky-50 text-sky-600 hover:bg-sky-100 font-semibold px-2.5 py-1 rounded-md">
                                 + ใส่แพลน
                             </button>
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `;
         }
 
-        // START PLANNING ACTION
+        function renderExploreCards() {
+            document.getElementById('accommodation-list').innerHTML = mockAccommodations.map(item => createCardHTML(item, true)).join('');
+            document.getElementById('attraction-list').innerHTML = mockAttractions.map(item => createCardHTML(item)).join('');
+            document.getElementById('activity-list').innerHTML = mockActivities.map(item => createCardHTML(item)).join('');
+            document.getElementById('localshop-list').innerHTML = mockLocalShops.map(item => createCardHTML(item)).join('');
+            document.getElementById('souvenir-list').innerHTML = mockSouvenirs.map(item => createCardHTML(item)).join('');
+        }
+
         function startPlanning(mode) {
-            const dest = document.getElementById('input-destination').value || 'กระบี่';
-            const budget = parseInt(document.getElementById('input-budget').value) || 15000;
-            const hotel = document.getElementById('input-hotel').value || 'ยังไม่ได้ระบุ';
-
-            currentBudgetTotal = budget;
+            const country = document.getElementById('select-country').value;
+            const city = document.getElementById('select-city').value;
+            const custom = document.getElementById('input-destination-custom').value.trim();
+            const dest = custom ? custom : `${country}, ${city}`;
+            
             document.getElementById('trip-title-display').innerText = `${dest} (${document.getElementById('input-days').value} วัน)`;
-            document.getElementById('hotel-display').innerText = hotel;
-
-            if (mode === 'auto') {
-                alert('ระบบ Auto Plan กำลังประมวลผลจัดทริปให้อัตโนมัติตามงบประมาณ...');
-            }
-
             switchTab('plan');
             updateBudgetTracker();
         }
 
-        // WISHLIST LOGIC (กดใจ)
-        function toggleWishlist(id, title, price) {
-            const index = wishlist.findIndex(w => w.id === id);
-            if (index > -1) {
-                wishlist.splice(index, 1);
-            } else {
-                wishlist.push({ id, title, price });
-            }
-            renderExploreCards();
-            renderWishlistDrawer();
-        }
-
-        function renderWishlistDrawer() {
-            document.getElementById('wishlist-count').innerText = wishlist.length;
-            const container = document.getElementById('wishlist-items-container');
-            
-            if (wishlist.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-6">ยังไม่มีรายการที่กดใจไว้</p>`;
-                return;
-            }
-
-            container.innerHTML = wishlist.map(item => `
-                <div class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200">
-                    <div class="truncate max-w-[150px]">
-                        <h5 class="text-xs font-bold text-slate-800 truncate">${item.title}</h5>
-                        <p class="text-[10px] text-slate-500">${item.price.toLocaleString()} B</p>
-                    </div>
-                    <button onclick="addToItinerary('${item.id}', '${item.title}', ${item.price})" class="text-[11px] bg-sky-600 text-white px-2 py-1 rounded-lg hover:bg-sky-700">
-                        + เข้า Day ${activeDay}
-                    </button>
-                </div>
-            `).join('');
-        }
-
-        // ITINERARY MANAGEMENT
         function switchDay(day) {
             activeDay = day;
             [1, 2, 3].forEach(d => {
-                const btn = document.getElementById(`day-btn-${d}`);
-                if (d === day) {
-                    btn.className = "px-4 py-2 rounded-lg font-semibold text-sm bg-sky-600 text-white shadow-sm";
-                } else {
-                    btn.className = "px-4 py-2 rounded-lg font-semibold text-sm bg-white text-slate-600 hover:bg-slate-100";
-                }
+                document.getElementById(`day-btn-${d}`).className = (d === day) ? 
+                    "px-4 py-2 rounded-lg font-semibold text-sm bg-sky-600 text-white shadow-sm" : 
+                    "px-4 py-2 rounded-lg font-semibold text-sm bg-white text-slate-600 hover:bg-slate-100";
             });
             renderItinerary();
-            renderWishlistDrawer();
         }
 
         function renderItinerary() {
@@ -457,7 +513,7 @@
             const items = itineraryData[activeDay] || [];
 
             if (items.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">ยังไม่มีกิจกรรมในวันนี้ สามารถเลือกเพิ่มจากรายการข้างขวาได้</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">ยังไม่มีกิจกรรมในวันนี้ กดเลือกเพิ่มจากหมุดบนแผนที่ได้เลย!</p>`;
                 return;
             }
 
@@ -482,6 +538,7 @@
         function addToItinerary(id, title, price) {
             if (!itineraryData[activeDay]) itineraryData[activeDay] = [];
             itineraryData[activeDay].push({ id, title, price, time: 'กำหนดเวลาเอง' });
+            alert(`เพิ่ม "${title}" เข้าสู่แพลน Day ${activeDay} เรียบร้อยแล้ว!`);
             renderItinerary();
         }
 
@@ -490,7 +547,6 @@
             renderItinerary();
         }
 
-        // REAL-TIME BUDGET TRACKER
         function updateBudgetTracker() {
             let used = 0;
             Object.values(itineraryData).forEach(dayItems => {
@@ -500,87 +556,13 @@
             const remaining = currentBudgetTotal - used;
             const percentage = Math.max(0, Math.min(100, (remaining / currentBudgetTotal) * 100));
 
-            const textEl = document.getElementById('budget-remaining-text');
-            const barEl = document.getElementById('budget-progress-bar');
-
-            textEl.innerText = `${remaining.toLocaleString()} / ${currentBudgetTotal.toLocaleString()} B`;
-
-            if (remaining < 0) {
-                textEl.className = "text-rose-600 font-bold";
-                barEl.className = "bg-rose-500 h-2.5 rounded-full transition-all duration-300";
-                barEl.style.width = '100%';
-            } else {
-                textEl.className = "text-emerald-600 font-bold";
-                barEl.className = "bg-emerald-500 h-2.5 rounded-full transition-all duration-300";
-                barEl.style.width = `${percentage}%`;
-            }
+            document.getElementById('budget-remaining-text').innerText = `${remaining.toLocaleString()} / ${currentBudgetTotal.toLocaleString()} B`;
+            document.getElementById('budget-progress-bar').style.width = `${percentage}%`;
         }
 
-        // MOMENTS FEED LOGIC
-        function renderMoments() {
-            const container = document.getElementById('moment-feed-container');
-            container.innerHTML = mockMoments.map(m => `
-                <div class="bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex flex-col">
-                    <div class="p-3 flex items-center space-x-2 border-b">
-                        <img src="${m.avatar}" class="w-8 h-8 rounded-full">
-                        <span class="text-xs font-bold text-slate-700">${m.author}</span>
-                    </div>
-                    <div class="h-48 bg-slate-100">
-                        <img src="${m.image}" class="w-full h-full object-cover">
-                    </div>
-                    <div class="p-4 flex-grow space-y-2">
-                        <h4 class="font-bold text-sm text-slate-800">${m.title}</h4>
-                        <p class="text-xs text-slate-600 line-clamp-2">${m.desc}</p>
-                    </div>
-                    <div class="p-3 bg-slate-50 border-t flex items-center justify-between">
-                        <button onclick="likeMoment(this)" class="text-xs text-slate-500 hover:text-rose-500 flex items-center gap-1">
-                            <i class="fa-regular fa-heart text-sm"></i> <span>${m.likes}</span>
-                        </button>
-                        <button onclick="toggleWishlist('${m.place.id}', '${m.place.title}', ${m.place.price})" class="text-xs bg-sky-600 text-white font-semibold px-2.5 py-1 rounded-lg hover:bg-sky-700">
-                            + บันทึกสถานที่ลงแพลน
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function likeMoment(btn) {
-            const icon = btn.querySelector('i');
-            const span = btn.querySelector('span');
-            let count = parseInt(span.innerText);
-            if (icon.classList.contains('fa-regular')) {
-                icon.className = 'fa-solid fa-heart text-rose-500 text-sm';
-                span.innerText = count + 1;
-            } else {
-                icon.className = 'fa-regular fa-heart text-sm';
-                span.innerText = count - 1;
-            }
-        }
-
-        // TRANSIT DEEP LINK SIMULATION
-        function launchTransit(provider) {
-            alert(`[Deep Link Triggered]\nเปิดแอปพลิเคชัน ${provider} บนโทรศัพท์ของผู้ใช้ พร้อมส่งพิกัดจุดหมายในทริปนี้แล้ว!`);
-        }
-
-        // AUTHENTICATION FLOW
-        function triggerLogin(action) {
-            if (action === 'save') {
-                alert('โปรดเข้าสู่ระบบก่อนทำการ "บันทึกทริป" ลงในบัญชีของคุณ');
-            } else {
-                alert('เปิดหน้าต่าง เข้าสู่ระบบ / ลงทะเบียน');
-            }
-        }
-
-        // SHARE MODAL
-        function openShareModal() {
-            document.getElementById('modal-share').classList.remove('hidden');
-            document.getElementById('modal-share').classList.add('flex');
-        }
-
-        function closeShareModal() {
-            document.getElementById('modal-share').classList.add('hidden');
-            document.getElementById('modal-share').classList.remove('flex');
-        }
+        function triggerLogin(action) { alert('เปิดหน้าต่าง เข้าสู่ระบบ'); }
+        function openShareModal() { document.getElementById('modal-share').classList.remove('hidden'); document.getElementById('modal-share').classList.add('flex'); }
+        function closeShareModal() { document.getElementById('modal-share').classList.add('hidden'); document.getElementById('modal-share').classList.remove('flex'); }
     </script>
 </body>
 </html>
