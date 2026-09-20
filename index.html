@@ -24,77 +24,90 @@
             border: none !important;
         }
 
-        /* 🟢 Seamless Modern Floating Pin (รูปเต็มข้างบน - ชื่อข้างล่าง ไร้ราคาแบ่งครึ่ง) */
-        .modern-card-pin {
-            width: 110px;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.25), 0 0 0 1px rgba(226, 232, 240, 0.9);
+        /* 🟢 Custom Card Pin ดีไซน์รูปที่ 1 + สีแบ่งตามรูปที่ 2 */
+        .custom-map-pin {
+            width: 120px;
+            border-radius: 14px;
             overflow: hidden;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.3);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: var(--pin-bg);
+            border: 3px solid var(--pin-bg);
             position: relative;
-            border-top: 4px solid #0284c7; /* สีป๊อปอัพขอบบนตามหมวดหมู่ */
         }
 
-        .modern-card-pin:hover {
+        .custom-map-pin:hover {
             transform: scale(1.12) translateY(-6px);
             z-index: 9999 !important;
-            box-shadow: 0 18px 30px -8px rgba(15, 23, 42, 0.35);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.4);
         }
 
-        /* รูปภาพด้านบนแบบเต็มพื้นที่ */
-        .modern-card-photo-wrapper {
+        /* รูปภาพด้านบนการ์ด */
+        .pin-photo-wrapper {
             position: relative;
             width: 100%;
             height: 58px;
-            background: #f1f5f9;
+            background: #cbd5e1;
             overflow: hidden;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
         }
 
-        .modern-card-photo {
+        .pin-photo {
             width: 100%;
             height: 100%;
             object-fit: cover;
             display: block;
-            transition: transform 0.4s ease;
         }
 
-        .modern-card-pin:hover .modern-card-photo {
-            transform: scale(1.08);
+        /* แท็กแสดงราคาตรงมุมขวาล่างของรูปภาพ */
+        .pin-price-tag {
+            position: absolute;
+            bottom: 3px;
+            right: 3px;
+            background: rgba(15, 23, 42, 0.78);
+            color: #ffffff;
+            font-size: 9px;
+            font-weight: 700;
+            padding: 1.5px 6px;
+            border-radius: 8px;
+            backdrop-filter: blur(2px);
+            letter-spacing: 0.2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* ส่วนชื่อสถานที่ด้านล่าง */
-        .modern-card-label {
-            padding: 5px 6px;
+        /* กล่องชื่อสถานที่ด้านล่างการ์ด */
+        .pin-title-box {
+            background: var(--pin-bg);
+            color: #ffffff;
+            padding: 4px 6px;
             font-size: 10px;
-            font-weight: 600;
-            color: #0f172a;
+            font-weight: 700;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            background: #ffffff;
             line-height: 1.3;
         }
 
-        /* ปลายแหลมชี้ตำแหน่งด้านล่าง */
-        .modern-card-pointer {
+        /* ปลายแหลมชี้ตำแหน่งด้านล่างการ์ด */
+        .pin-pointer {
             width: 0;
             height: 0;
-            border-left: 6px solid transparent;
-            border-right: 6px solid transparent;
-            border-top: 7px solid #ffffff;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 8px solid var(--pin-bg);
             margin: -1px auto 0 auto;
-            filter: drop-shadow(0 3px 2px rgba(15, 23, 42, 0.12));
+            filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.15));
         }
 
-        /* 🔴 Leaflet Popup Styling Override */
+        /* Leaflet Popup Override */
         .leaflet-popup-content-wrapper {
             border-radius: 18px !important;
             padding: 0 !important;
             overflow: hidden !important;
-            box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.8) !important;
+            box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.35) !important;
             background: #ffffff !important;
         }
         .leaflet-popup-tip-container {
@@ -102,7 +115,6 @@
         }
         .leaflet-popup-tip {
             background: #ffffff !important;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
         }
         .leaflet-popup-content {
             margin: 0 !important;
@@ -123,9 +135,6 @@
             backdrop-filter: blur(4px);
             border: 1px solid rgba(255,255,255,0.3) !important;
             transition: all 0.2s ease;
-        }
-        .leaflet-container a.leaflet-popup-close-button:hover {
-            background: rgba(15, 23, 42, 0.8) !important;
         }
 
         /* Category Filter Active Style */
@@ -175,7 +184,7 @@
         </div>
     </header>
 
-    <!-- MAIN CONTENT CONTAINER -->
+    <!-- MAIN CONTAINER -->
     <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
 
         <!-- ================= PAGE 1: SEARCH & INTERACTIVE MAP HERO ================= -->
@@ -195,11 +204,11 @@
                                 </h2>
                             </div>
                             <span class="text-[11px] text-slate-400 bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700">
-                                <i class="fa-solid fa-magnifying-glass-plus text-sky-400 mr-1"></i>ซูมเข้านิดเดียวเพื่อปลดล็อกสถานที่
+                                <i class="fa-solid fa-magnifying-glass-plus text-sky-400 mr-1"></i>ซูมแผนที่เพื่อแสดงสถานที่
                             </span>
                         </div>
 
-                        <!-- 🟢 DROPDOWN LIST ข้างบนแผนที่ (ตรงขอบข้างบน นอกแผนที่) -->
+                        <!-- Dropdown กรองหมวดหมู่เหนือขอบแผนที่ -->
                         <div class="flex items-center justify-between bg-slate-800/90 p-3 rounded-2xl border border-slate-700 shadow-md">
                             <label for="map-category-select" class="text-xs font-bold text-slate-200 flex items-center gap-2">
                                 <i class="fa-solid fa-filter text-sky-400"></i>
@@ -207,10 +216,10 @@
                             </label>
                             <select id="map-category-select" onchange="onMapCategorySelectChange(this.value)" class="bg-slate-900 text-slate-100 text-xs font-semibold px-3.5 py-2 rounded-xl border border-slate-600 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer">
                                 <option value="all">🌐 ทั้งหมด</option>
-                                <option value="attraction">🏖️ ท่องเที่ยว</option>
-                                <option value="hotel">🏨 ที่พัก</option>
-                                <option value="activity">🏄‍♂️ กิจกรรม</option>
-                                <option value="shop">🛍️ ร้านค้า/ของฝาก</option>
+                                <option value="attraction">🏖️ ท่องเที่ยว (สีฟ้า)</option>
+                                <option value="hotel">🏨 ที่พัก (สีส้ม/ทอง)</option>
+                                <option value="activity">🏄‍♂️ กิจกรรม (สีเขียว)</option>
+                                <option value="shop">🛍️ ร้านค้า/ของฝาก (สีม่วง)</option>
                             </select>
                         </div>
 
@@ -226,7 +235,7 @@
                             <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
                                 <i class="fa-solid fa-sliders text-sky-600"></i>ค้นหาจุดหมาย & วางแผน
                             </h3>
-                            <p class="text-xs text-slate-500">ซูมแผนที่ หรือคลิกการ์ดเพื่อดูรายละเอียดและใส่ทริป</p>
+                            <p class="text-xs text-slate-500">คลิกการ์ดบนแผนที่เพื่อดูรายละเอียดและใส่ทริป</p>
                         </div>
                         
                         <!-- Destination Selection -->
@@ -287,7 +296,7 @@
                 </div>
             </div>
 
-            <!-- CATEGORIZED RECOMMENDATION SECTION -->
+            <!-- RECOMMENDATIONS SECTION -->
             <div class="space-y-4">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b pb-3">
                     <div>
@@ -365,7 +374,7 @@
                     <h3 class="font-bold text-slate-800 flex items-center justify-between border-b pb-3">
                         <span><i class="fa-solid fa-list-check text-sky-600 mr-2"></i>รายการกิจกรรมในทริป</span>
                     </h3>
-                    <p class="text-xs text-slate-500">กดปุ่ม "+ ใส่แพลน" หรือปุ่มในป๊อปอัพเพื่อเพิ่มกิจกรรมเข้าตารางในแต่ละวัน</p>
+                    <p class="text-xs text-slate-500">กดปุ่มรายละเอียดการ์ดเพื่อดูข้อมูลและกดเพิ่มเข้าตารางทริป</p>
                 </div>
             </div>
         </section>
@@ -380,7 +389,7 @@
 
     </main>
 
-    <!-- 🟢 MODAL 1: Quick Details Modal (แสดงเมื่อกดดูรายละเอียดจากแผนที่) -->
+    <!-- 🟢 MODAL 1: Quick Details Modal -->
     <div id="modal-quick-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden border border-slate-100 animate-in fade-in zoom-in duration-200">
             <div class="relative h-44 w-full bg-slate-900">
@@ -416,7 +425,7 @@
         </div>
     </div>
 
-    <!-- 🟢 MODAL 2: Full Details Modal (แสดงเมื่อกดดูข้อมูลเพิ่มเติม) -->
+    <!-- 🟢 MODAL 2: Full Details Modal -->
     <div id="modal-full-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col animate-in fade-in zoom-in duration-200">
             <div class="relative h-52 w-full bg-slate-900 shrink-0">
@@ -526,6 +535,7 @@
             'ลอสแอนเจลิส (Los Angeles)': { lat: 34.052, lng: -118.243, zoom: 10 }
         };
 
+        /* 🟢 การแบ่งกลุ่มสีตามรูปที่ 2 */
         const categoryThemeMap = {
             'attraction': { bg: 'bg-sky-600', text: 'text-sky-600', hex: '#0284c7', name: 'ท่องเที่ยว' },
             'hotel': { bg: 'bg-amber-500', text: 'text-amber-500', hex: '#f59e0b', name: 'ที่พัก' },
@@ -539,7 +549,7 @@
                 id: 'th_1', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ประเพณียี่เป็ง โคมลอย', price: 0, img: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=400', lat: 18.790, lng: 98.985, tier: 1,
                 address: 'สะพานนวรัฐ และพื้นที่จัดกิจกรรมรอบเมืองเชียงใหม่ จ.เชียงใหม่', rating: 4.9, reviewCount: 320,
                 description: 'ประเพณีลอยโคมไฟตระการตาของชาวล้านนาในเทศกาลยี่เป็ง สัมผัสความสวยงามระดับโลกยามค่ำคืน',
-                reviews: [{ author: 'Somchai T.', rating: 5, comment: 'ประทับใจมาก บรรยากาศตระการตาที่สุด' }, { author: 'Mei Ling', rating: 5, comment: 'An amazing festival in Chiang Mai!' }]
+                reviews: [{ author: 'Somchai T.', rating: 5, comment: 'ประทับใจมาก บรรยากาศตระการตาที่สุด' }]
             },
             { 
                 id: 'th_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'ภูเก็ต', title: 'ทะเลภูเก็ต หาดป่าตอง', price: 0, img: 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400', lat: 7.892, lng: 98.298, tier: 1,
@@ -571,12 +581,6 @@
                 description: 'ตลาดเก่าแก่คู่เมืองเชียงใหม่ แหล่งรวมของฝากขึ้นชื่อ เช่น แคบหมู น้ำพริกหนุ่ม ไส้อั่ว และของกินพื้นเมืองมากมาย',
                 reviews: [{ author: 'ปรียาภรณ์', rating: 5, comment: 'ของฝากครบครัน ไส้อั่วอร่อยมาก' }]
             },
-            { 
-                id: 'th_7', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'ตลาดนัดจตุจักร', price: 400, img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400', lat: 13.799, lng: 100.550, tier: 3,
-                address: 'ถนนพหลโยธิน แขวงจตุจักร เขตจตุจักร กรุงเทพมหานคร', rating: 4.7, reviewCount: 1200,
-                description: 'ตลาดนัดจตุจักร ตลาดนัดวันหยุดที่ใหญ่ที่สุดในโลก สินค้าหลากหลายทั้งเสื้อผ้า ของแต่งบ้าน งานแฮนด์เมด และของกิน',
-                reviews: [{ author: 'Alex M.', rating: 5, comment: 'Huge market with everything you could ask for!' }]
-            },
 
             // --- 🇯🇵 ญี่ปุ่น ---
             { 
@@ -586,19 +590,7 @@
                 reviews: [{ author: 'Kenji S.', rating: 5, comment: 'Breathtaking iconic views of Japan.' }]
             },
             { 
-                id: 'jp_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'วัดเซ็นโซจิ อาซากุสะ', price: 0, img: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400', lat: 35.714, lng: 139.796, tier: 2,
-                address: '2 Chome-3-1 Asakusa, Taito City, Tokyo, Japan', rating: 4.8, reviewCount: 980,
-                description: 'วัดพุทธที่เก่าแก่ที่สุดในโตเกียว มีโคมแดงยักษ์อันเป็นเอกลักษณ์ที่ประตูคามินาริมง และถนนช้อปปิ้งนากามิเสะ',
-                reviews: [{ author: 'ธนากร', rating: 5, comment: 'โคมแดงสวยมาก ขนมข้างวัดอร่อย' }]
-            },
-            { 
-                id: 'jp_3', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'โอซาก้า (Osaka)', title: 'ปราสาทโอซาก้า (Osaka Castle)', price: 160, img: 'https://images.unsplash.com/photo-1590559899731-a382839e5549?w=400', lat: 34.687, lng: 135.526, tier: 1,
-                address: '1-1 Osakajo, Chuo Ward, Osaka, Japan', rating: 4.8, reviewCount: 740,
-                description: 'ปราสาทโบราณอันยิ่งใหญ่ล้อมรอบด้วยสวนและคูเมือง สัญลักษณ์แห่งประวัติศาสตร์อันรุ่งเรืองของเมืองโอซาก้า',
-                reviews: [{ author: 'Sora K.', rating: 5, comment: 'Beautiful park and impressive castle building.' }]
-            },
-            { 
-                id: 'jp_4', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ญี่ปุ่น', city: 'โอซาก้า (Osaka)', title: 'ย่านโดทงโบริ (Dotonbori)', price: 500, img: 'https://images.unsplash.com/photo-1565031491910-e57fac031c41?w=400', lat: 34.668, lng: 135.501, tier: 2,
+                id: 'jp_2', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ญี่ปุ่น', city: 'โอซาก้า (Osaka)', title: 'ย่านโดทงโบริ (Dotonbori)', price: 500, img: 'https://images.unsplash.com/photo-1565031491910-e57fac031c41?w=400', lat: 34.668, lng: 135.501, tier: 2,
                 address: 'Dotonbori, Chuo Ward, Osaka, Japan', rating: 4.9, reviewCount: 1100,
                 description: 'ศูนย์รวมสตรีทฟู้ด คาเฟ่ ร้านค้าแฟชั่น และป้ายไฟกูลิโกะอันเป็นสัญลักษณ์สำคัญของโอซาก้า',
                 reviews: [{ author: 'Yuki M.', rating: 5, comment: 'Amazing street food and vibrant night life!' }]
@@ -607,8 +599,8 @@
 
         let map;
         let activeMarkers = [];
-        let selectedMapCategoryFilter = 'all'; // กรองหมวดหมู่บนแผนที่
-        let selectedCategoryFilter = 'all';    // กรองหมวดหมู่การ์ดด้านล่าง
+        let selectedMapCategoryFilter = 'all';
+        let selectedCategoryFilter = 'all';
         let activeDay = 1;
         let itineraryData = { 1: [], 2: [], 3: [], 4: [] };
 
@@ -664,7 +656,6 @@
             }, 300);
         }
 
-        /* 🟢 เมื่อเลือกเปลี่ยน Dropdown บนแผนที่ */
         function onMapCategorySelectChange(category) {
             selectedMapCategoryFilter = category;
             refreshMapPins();
@@ -672,7 +663,6 @@
 
         function setCategoryFilter(category) {
             selectedCategoryFilter = category;
-            
             const categories = ['all', 'attraction', 'hotel', 'activity', 'shop'];
             categories.forEach(cat => {
                 const btn = document.getElementById(`cat-btn-${cat}`);
@@ -684,7 +674,6 @@
                     }
                 }
             });
-
             renderExploreCards();
         }
 
@@ -720,7 +709,7 @@
                     <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 hover:shadow-md transition flex flex-col group">
                         <div class="relative h-36 bg-slate-100 overflow-hidden">
                             <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
-                            <span class="absolute top-2.5 left-2.5 ${theme.bg} text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm">
+                            <span class="absolute top-2.5 left-2.5 ${theme.bg} text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md shadow-sm">
                                 ${item.catName}
                             </span>
                         </div>
@@ -741,7 +730,7 @@
             }).join('');
         }
 
-        /* 🟢 REFRESH MAP PINS & POPUPS (รูปเต็มด้านบน - ไร้ราคาซ้อนทับ - สีป๊อปอัพแยกตามหมวดหมู่) */
+        /* 🟢 REFRESH MAP PINS - ปรับดีไซน์หมุดตามรูปที่ 1 และใช้สีตามรูปที่ 2 */
         function refreshMapPins() {
             activeMarkers.forEach(m => map.removeLayer(m));
             activeMarkers = [];
@@ -756,7 +745,6 @@
                 visiblePins = visiblePins.filter(pin => pin.city === city);
             }
 
-            // กรองด้วย Dropdown เลือกหมวดหมู่ข้างบนแผนที่
             if (selectedMapCategoryFilter !== 'all') {
                 visiblePins = visiblePins.filter(pin => pin.category === selectedMapCategoryFilter);
             }
@@ -770,28 +758,30 @@
 
             visiblePins.forEach(pin => {
                 const theme = categoryThemeMap[pin.category] || categoryThemeMap['attraction'];
+                const priceDisplay = pin.price === 0 ? 'เข้าฟรี' : `${pin.price.toLocaleString()} B`;
 
-                /* HTML โครงสร้างหมุด: รูปเต็มด้านบน - ชื่อด้านล่าง (ไม่มีราคาแปะทับ) */
+                /* HTML โครงสร้างหมุด: ขอบหนา + รูปบน + แท็กราคา + ชื่อล่าง + ปลายแหลม */
                 const pinHtml = `
-                    <div class="modern-card-pin" style="border-top-color: ${theme.hex}">
-                        <div class="modern-card-photo-wrapper">
-                            <img class="modern-card-photo" src="${pin.img}" alt="${pin.title}">
+                    <div class="custom-map-pin" style="--pin-bg: ${theme.hex}; border-color: ${theme.hex};">
+                        <div class="pin-photo-wrapper">
+                            <img class="pin-photo" src="${pin.img}" alt="${pin.title}">
+                            <div class="pin-price-tag">${priceDisplay}</div>
                         </div>
-                        <div class="modern-card-label">${pin.title}</div>
+                        <div class="pin-title-box" style="background: ${theme.hex};">${pin.title}</div>
                     </div>
-                    <div class="modern-card-pointer"></div>
+                    <div class="pin-pointer" style="border-top-color: ${theme.hex};"></div>
                 `;
 
                 const customIcon = L.divIcon({
-                    className: 'modern-card-wrapper',
+                    className: 'custom-pin-wrapper',
                     html: pinHtml,
-                    iconSize: [110, 82],
-                    iconAnchor: [55, 82]
+                    iconSize: [120, 92],
+                    iconAnchor: [60, 92]
                 });
 
                 const marker = L.marker([pin.lat, pin.lng], { icon: customIcon }).addTo(map);
 
-                /* 🟢 POPUP MAP: ซ่อนราคาไว้ ให้กดปุ่ม "ดูรายละเอียด" ก่อนโชว์ราคา */
+                /* POPUP MAP เมื่อคลิกการ์ดบนแผนที่ */
                 const popupContent = `
                     <div class="w-56 font-sans bg-white overflow-hidden rounded-2xl border-t-4" style="border-top-color: ${theme.hex}">
                         <div class="relative h-32 w-full overflow-hidden bg-slate-900">
@@ -825,7 +815,7 @@
             });
         }
 
-        /* 🟢 เปิดป๊อปอัพดูรายละเอียด (ขั้นที่ 1) */
+        /* 🟢 เปิดป๊อปอัพรายละเอียด */
         function openQuickDetailModal(pinId) {
             const pin = allPinsData.find(p => p.id === pinId);
             if (!pin) return;
@@ -854,7 +844,6 @@
             document.getElementById('modal-quick-detail').classList.remove('hidden');
         }
 
-        /* 🟢 เปิดป๊อปอัพดูข้อมูลเพิ่มเติมทั้งหมด (ขั้นที่ 2) */
         function openFullDetailModal(pinId) {
             const pin = allPinsData.find(p => p.id === pinId);
             if (!pin) return;
@@ -873,7 +862,6 @@
             badge.innerText = pin.catName;
             badge.className = `absolute top-3 left-3 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md ${theme.bg}`;
 
-            // Render Reviews List
             const reviewsContainer = document.getElementById('modal-full-reviews-list');
             document.getElementById('modal-full-review-count').innerText = `จากผู้ใช้ทั้งหมด ${pin.reviewCount || 100} รายการ`;
             
