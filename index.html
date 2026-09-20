@@ -18,63 +18,54 @@
         body { font-family: 'Prompt', sans-serif; }
         .tab-active { border-bottom: 3px solid #0284c7; color: #0284c7; font-weight: 600; }
         
-        /* Custom Leaflet DivIcon - WeChat Style Avatar Pin */
+        /* Custom Leaflet DivIcon - Rectangular Card Pin */
         .leaflet-div-icon {
             background: transparent !important;
             border: none !important;
         }
-        .wechat-pin-container {
+        .rect-pin-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             cursor: pointer;
+        }
+        .rect-pin-card {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            padding: 3px 8px 3px 3px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            border: 1px solid #cbd5e1;
             transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .wechat-pin-container:hover {
-            transform: scale(1.15) translateY(-3px);
-            z-index: 999;
-        }
-        .wechat-avatar-box {
-            position: relative;
-            border-radius: 50%;
-            background: white;
-            padding: 2px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-        }
-        .wechat-avatar-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .wechat-badge-tag {
-            font-size: 10px;
-            font-weight: 600;
-            padding: 1px 6px;
-            border-radius: 10px;
             white-space: nowrap;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            margin-top: -4px;
-            z-index: 2;
         }
-        .wechat-pin-pointer {
+        .rect-pin-wrapper:hover .rect-pin-card {
+            transform: scale(1.1) translateY(-2px);
+            border-color: #0284c7;
+            z-index: 1000;
+        }
+        .rect-pin-img {
+            width: 26px;
+            height: 26px;
+            border-radius: 5px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .rect-pin-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-left: 6px;
+        }
+        .rect-pin-pointer {
             width: 0;
             height: 0;
             border-left: 5px solid transparent;
             border-right: 5px solid transparent;
-            border-top: 6px solid #1e293b;
+            border-top: 6px solid #ffffff;
             margin-top: -1px;
         }
-
-        /* Tier Border Colors */
-        .border-vip { border: 2.5px solid #f59e0b; }
-        .border-premium { border: 2.5px solid #0284c7; }
-        .border-standard { border: 2px solid #94a3b8; }
-
-        .bg-vip-tag { background: #f59e0b; color: white; }
-        .bg-premium-tag { background: #0284c7; color: white; }
-        .bg-standard-tag { background: #334155; color: white; }
 
         /* Category Filter Pills Active Style */
         .cat-pill-active {
@@ -132,16 +123,11 @@
                     <div class="lg:col-span-7 space-y-3">
                         <div class="flex items-center justify-between px-1">
                             <div>
-                                <span class="bg-sky-500/20 text-sky-300 text-[11px] px-2.5 py-0.5 rounded-full border border-sky-400/30">WeChat Style Map Engine</span>
+                                <span class="bg-sky-500/20 text-sky-300 text-[11px] px-2.5 py-0.5 rounded-full border border-sky-400/30">Interactive Travel Map</span>
                                 <h2 class="text-lg font-bold text-white mt-1 flex items-center gap-2">
                                     <i class="fa-solid fa-map-location-dot text-sky-400"></i>
                                     สำรวจแผนที่: <span id="map-target-title" class="text-sky-400">ประเทศไทย</span>
                                 </h2>
-                            </div>
-                            <div class="text-[10px] text-slate-300 bg-slate-800 px-2 py-1 rounded border border-slate-700 flex gap-2">
-                                <span class="text-amber-400 font-bold">⭐ VIP</span>
-                                <span class="text-sky-400 font-bold">🔷 PRO</span>
-                                <span class="text-slate-400">⚪ Standard</span>
                             </div>
                         </div>
 
@@ -212,7 +198,7 @@
                 </div>
             </div>
 
-            <!-- ================= REVISED: CATEGORIZED RECOMMENDATION SECTION ================= -->
+            <!-- CATEGORIZED RECOMMENDATION SECTION -->
             <div class="space-y-4">
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b pb-3">
                     <div>
@@ -330,25 +316,25 @@
             'ปูซาน (Busan)': { lat: 35.17, lng: 129.07, zoom: 11 }
         };
 
-        // ENHANCED DATABASE WITH CATEGORIES: attraction, hotel, activity, shop
+        // DATABASE (tier: 1 = High visibility on Zoom Out, tier: 2/3 = Visibility on Zoom In)
         const allPinsData = [
             // --- กระบี่ ---
-            { id: 'kr1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'อนุสาวรีย์ปูดำ เมืองกระบี่', price: 0, img: 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=400', lat: 8.065, lng: 98.917, tier: 'vip' },
-            { id: 'kr2', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'เกาะพีพี & ทะเลแหวก', price: 1500, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', lat: 7.740, lng: 98.778, tier: 'premium' },
-            { id: 'kr3', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'สระมรกต & น้ำตกร้อน', price: 400, img: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400', lat: 7.924, lng: 99.258, tier: 'standard' },
-            { id: 'kr4', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'หาดไร่เลย์ & ถ้ำพระนาง', price: 0, img: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400', lat: 8.011, lng: 98.837, tier: 'standard' },
-            { id: 'kr_h1', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'กระบี่', title: 'Rayavadee Resort Railay', price: 12500, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 8.010, lng: 98.839, tier: 'vip' },
-            { id: 'kr_act1', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'กระบี่', title: 'พายเรือคายัค อ่าวท่าเลน', price: 800, img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400', lat: 8.143, lng: 98.784, tier: 'premium' },
-            { id: 'kr_shop1', category: 'shop', catName: 'ร้านค้า & ของฝาก', country: 'ประเทศไทย', city: 'กระบี่', title: 'ถนนคนเดินกระบี่ & เม็ดมะม่วงหิมพานต์ OTOP', price: 250, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', lat: 8.064, lng: 98.916, tier: 'standard' },
+            { id: 'kr1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'อนุสาวรีย์ปูดำ เมืองกระบี่', price: 0, img: 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=400', lat: 8.065, lng: 98.917, tier: 1 },
+            { id: 'kr2', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'เกาะพีพี & ทะเลแหวก', price: 1500, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', lat: 7.740, lng: 98.778, tier: 1 },
+            { id: 'kr3', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'สระมรกต & น้ำตกร้อน', price: 400, img: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400', lat: 7.924, lng: 99.258, tier: 2 },
+            { id: 'kr4', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'หาดไร่เลย์ & ถ้ำพระนาง', price: 0, img: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400', lat: 8.011, lng: 98.837, tier: 2 },
+            { id: 'kr_h1', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'กระบี่', title: 'Rayavadee Resort Railay', price: 12500, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 8.010, lng: 98.839, tier: 1 },
+            { id: 'kr_act1', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'กระบี่', title: 'พายเรือคายัค อ่าวท่าเลน', price: 800, img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400', lat: 8.143, lng: 98.784, tier: 2 },
+            { id: 'kr_shop1', category: 'shop', catName: 'ร้านค้า & ของฝาก', country: 'ประเทศไทย', city: 'กระบี่', title: 'ถนนคนเดินกระบี่ & ของฝาก OTOP', price: 250, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', lat: 8.064, lng: 98.916, tier: 3 },
 
             // --- เชียงใหม่ ---
-            { id: 'cm1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'วัดพระธาตุดอยสุเทพ', price: 50, img: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=400', lat: 18.804, lng: 98.921, tier: 'vip' },
-            { id: 'cm_h1', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'Anantara Chiang Mai Resort', price: 6500, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 18.781, lng: 98.999, tier: 'vip' },
-            { id: 'cm_shop1', category: 'shop', catName: 'ร้านค้า & ของฝาก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ตลาดวโรรส (กาดหลวง) - แคบหมู น้ำพริกหนุ่ม', price: 300, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400', lat: 18.789, lng: 99.001, tier: 'premium' },
+            { id: 'cm1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'วัดพระธาตุดอยสุเทพ', price: 50, img: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=400', lat: 18.804, lng: 98.921, tier: 1 },
+            { id: 'cm_h1', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'Anantara Chiang Mai Resort', price: 6500, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 18.781, lng: 98.999, tier: 1 },
+            { id: 'cm_shop1', category: 'shop', catName: 'ร้านค้า & ของฝาก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ตลาดวโรรส (กาดหลวง)', price: 300, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400', lat: 18.789, lng: 99.001, tier: 2 },
 
             // --- กรุงเทพฯ ---
-            { id: 'bk1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'วัดพระศรีรัตนศาสดาราม (วัดพระแก้ว)', price: 500, img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400', lat: 13.750, lng: 100.491, tier: 'vip' },
-            { id: 'bk_shop1', category: 'shop', catName: 'ร้านค้า & ของฝาก', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'ตลาดนัดจตุจักร & ของที่ระลึก', price: 500, img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400', lat: 13.799, lng: 100.550, tier: 'premium' }
+            { id: 'bk1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'วัดพระแก้ว', price: 500, img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400', lat: 13.750, lng: 100.491, tier: 1 },
+            { id: 'bk_shop1', category: 'shop', catName: 'ร้านค้า & ของฝาก', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'ตลาดนัดจตุจักร', price: 500, img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400', lat: 13.799, lng: 100.550, tier: 2 }
         ];
 
         let map;
@@ -375,6 +361,7 @@
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
 
+            // Re-eval pins visibility on zoom change
             map.on('zoomend', function() {
                 refreshMapPins();
             });
@@ -413,7 +400,6 @@
         function setCategoryFilter(category) {
             selectedCategoryFilter = category;
             
-            // Update Tab UI States
             const categories = ['all', 'attraction', 'hotel', 'activity', 'shop'];
             categories.forEach(cat => {
                 const btn = document.getElementById(`cat-btn-${cat}`);
@@ -434,6 +420,7 @@
             const country = document.getElementById('select-country').value;
             const city = document.getElementById('select-city').value;
 
+            // Search/Filter displays ALL items regardless of Tier
             let filtered = allPinsData.filter(item => item.country === country);
 
             if (city && city !== '-- ทั้งประเทศ --') {
@@ -474,7 +461,7 @@
                                 <h4 class="font-bold text-slate-800 text-xs mt-1 truncate">${item.title}</h4>
                             </div>
                             <div class="flex items-center justify-between border-t pt-2">
-                                <span class="text-xs font-bold text-slate-700">${item.price === 0 ? 'เข้าฟรี / ไม่มีค่าบริการ' : item.price.toLocaleString() + ' B'}</span>
+                                <span class="text-xs font-bold text-slate-700">${item.price === 0 ? 'เข้าฟรี' : item.price.toLocaleString() + ' B'}</span>
                                 <button onclick="addToItinerary('${item.id}', '${item.title}', ${item.price})" class="text-xs bg-sky-50 text-sky-600 hover:bg-sky-100 font-semibold px-2.5 py-1 rounded-md transition">
                                     + ใส่แพลน
                                 </button>
@@ -485,7 +472,7 @@
             }).join('');
         }
 
-        // WECHAT-STYLE DYNAMIC AVATAR PINS ENGINE
+        // MAP PINS ENGINE (Rectangular Pins + Internal Tier Zoom Scaling)
         function refreshMapPins() {
             activeMarkers.forEach(m => map.removeLayer(m));
             activeMarkers = [];
@@ -500,77 +487,57 @@
                 visiblePins = visiblePins.filter(pin => pin.city === city);
             }
 
+            // INTERNAL TIER VISIBILITY LOGIC (Hidden from front-end)
             visiblePins = visiblePins.filter(pin => {
-                if (currentZoom < 8) {
-                    return pin.tier === 'vip';
-                } else if (currentZoom >= 8 && currentZoom < 11) {
-                    return pin.tier === 'vip' || pin.tier === 'premium';
+                if (currentZoom < 7) {
+                    return pin.tier === 1; // ภาพรวมประเทศ = โชว์เฉพาะผู้จ่ายมาก (Tier 1)
+                } else if (currentZoom < 10) {
+                    return pin.tier <= 2; // ซูมเข้าปานกลาง = โชว์ Tier 1 + 2
                 } else {
-                    return true;
+                    return true; // ซูมเข้าใกล้ = โชว์ทั้งหมด
                 }
             });
 
+            // RENDER RECTANGULAR CARD PINS
             visiblePins.forEach(pin => {
-                let avatarSize = 36;
-                let borderClass = "border-standard";
-                let tagClass = "bg-standard-tag";
-                let labelPrefix = "";
-
-                if (pin.tier === 'vip') {
-                    avatarSize = currentZoom >= 11 ? 46 : (currentZoom >= 8 ? 40 : 36);
-                    borderClass = "border-vip";
-                    tagClass = "bg-vip-tag";
-                    labelPrefix = "⭐ ";
-                } else if (pin.tier === 'premium') {
-                    avatarSize = currentZoom >= 11 ? 40 : 32;
-                    borderClass = "border-premium";
-                    tagClass = "bg-premium-tag";
-                    labelPrefix = "🔷 ";
-                } else {
-                    avatarSize = 28;
-                    borderClass = "border-standard";
-                    tagClass = "bg-standard-tag";
-                }
-
                 const pinHtml = `
-                    <div class="wechat-pin-container">
-                        <div class="wechat-avatar-box ${borderClass}" style="width: ${avatarSize}px; height: ${avatarSize}px;">
-                            <img src="${pin.img}" class="wechat-avatar-img">
+                    <div class="rect-pin-wrapper">
+                        <div class="rect-pin-card">
+                            <img src="${pin.img}" class="rect-pin-img">
+                            <span class="rect-pin-title">${pin.title}</span>
                         </div>
-                        <span class="wechat-badge-tag ${tagClass}">
-                            ${labelPrefix}${pin.title}
-                        </span>
-                        <div class="wechat-pin-pointer"></div>
+                        <div class="rect-pin-pointer"></div>
                     </div>
                 `;
 
                 const customIcon = L.divIcon({
-                    className: 'wechat-pin-wrapper',
+                    className: 'rect-pin-container',
                     html: pinHtml,
-                    iconSize: [avatarSize + 30, avatarSize + 25],
-                    iconAnchor: [(avatarSize + 30) / 2, avatarSize + 20]
+                    iconSize: [160, 36],
+                    iconAnchor: [80, 36]
                 });
 
                 const marker = L.marker([pin.lat, pin.lng], { icon: customIcon }).addTo(map);
 
+                // POPUP SHOWS DETAILS & ACTIVITIES ON CLICK
                 const popupContent = `
-                    <div class="p-1 w-44 text-slate-800 font-sans">
-                        <div class="relative h-24 rounded-lg overflow-hidden mb-2">
+                    <div class="p-1.5 w-48 text-slate-800 font-sans">
+                        <div class="relative h-28 rounded-lg overflow-hidden mb-2">
                             <img src="${pin.img}" class="w-full h-full object-cover">
-                            <span class="absolute bottom-1 right-1 bg-black/80 text-white text-[9px] px-1.5 py-0.5 rounded font-bold">
+                            <span class="absolute bottom-1.5 right-1.5 bg-black/80 text-white text-[9px] px-1.5 py-0.5 rounded font-bold">
                                 ${pin.price === 0 ? 'เข้าฟรี' : pin.price.toLocaleString() + ' B'}
                             </span>
                         </div>
-                        <span class="text-[9px] bg-sky-100 text-sky-700 font-bold px-1.5 py-0.5 rounded mb-1 inline-block">${pin.catName}</span>
+                        <span class="text-[9px] bg-sky-100 text-sky-700 font-bold px-2 py-0.5 rounded mb-1 inline-block">${pin.catName}</span>
                         <h4 class="font-bold text-xs text-slate-800 leading-tight mb-1">${pin.title}</h4>
-                        <p class="text-[10px] text-slate-500 mb-2"><i class="fa-solid fa-location-dot text-sky-600 mr-1"></i>${pin.city}, ${pin.country}</p>
-                        <button onclick="addToItinerary('${pin.id}', '${pin.title}', ${pin.price})" class="w-full bg-sky-600 hover:bg-sky-700 text-white text-xs py-1 rounded-md font-semibold shadow transition">
-                            + ใส่แพลน
+                        <p class="text-[10px] text-slate-500 mb-2.5"><i class="fa-solid fa-location-dot text-sky-600 mr-1"></i>${pin.city}, ${pin.country}</p>
+                        <button onclick="addToItinerary('${pin.id}', '${pin.title}', ${pin.price})" class="w-full bg-sky-600 hover:bg-sky-700 text-white text-xs py-1.5 rounded-md font-semibold shadow transition flex items-center justify-center gap-1">
+                            <i class="fa-solid fa-plus text-[10px]"></i> เพิ่มเข้าแพลนทริป
                         </button>
                     </div>
                 `;
 
-                marker.bindPopup(popupContent, { maxWidth: 200, closeButton: true });
+                marker.bindPopup(popupContent, { maxWidth: 220, closeButton: true });
                 activeMarkers.push(marker);
             });
         }
