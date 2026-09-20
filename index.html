@@ -24,13 +24,13 @@
             border: none !important;
         }
 
-        /* 🟢 Modern Sleek Floating Card Pin Design */
+        /* 🟢 Seamless Modern Floating Pin (รูปข้างบน - ชื่อข้างล่าง) */
         .modern-card-pin {
-            width: 100px;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(8px);
+            width: 108px;
+            background: #ffffff;
             border-radius: 14px;
-            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.35), 0 0 0 2px rgba(255, 255, 255, 0.9);
+            /* เงาลอยแบบ Multi-layer ละมุนสายตา */
+            box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.22), 0 0 0 1px rgba(226, 232, 240, 0.9);
             overflow: hidden;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -38,20 +38,40 @@
         }
 
         .modern-card-pin:hover {
-            transform: scale(1.15) translateY(-8px);
+            transform: scale(1.12) translateY(-6px);
             z-index: 9999 !important;
-            box-shadow: 0 20px 30px -10px rgba(2, 132, 199, 0.45), 0 0 0 2.5px #0284c7;
+            box-shadow: 0 18px 30px -8px rgba(2, 132, 199, 0.35), 0 0 0 2px #0284c7;
         }
 
-        /* Photo Banner */
+        /* รูปภาพด้านบน */
+        .modern-card-photo-wrapper {
+            position: relative;
+            width: 100%;
+            height: 54px;
+            background: #f1f5f9;
+            overflow: hidden;
+        }
+
         .modern-card-photo {
             width: 100%;
-            height: 52px;
+            height: 100%;
             object-fit: cover;
             display: block;
+            transition: transform 0.4s ease;
         }
 
-        /* Floating Badge Over Image */
+        .modern-card-pin:hover .modern-card-photo {
+            transform: scale(1.08);
+        }
+
+        /* Gradient ซ้อนบนรูป ให้ป้ายราคาอ่านง่ายขึ้น */
+        .modern-card-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(15,23,42,0.35) 0%, transparent 60%);
+        }
+
+        /* ป้ายราคาติดมุมบน */
         .modern-card-badge {
             position: absolute;
             top: 4px;
@@ -61,14 +81,15 @@
             color: #ffffff;
             font-size: 8px;
             font-weight: 700;
-            padding: 1.5px 5px;
-            border-radius: 6px;
-            letter-spacing: 0.3px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            letter-spacing: 0.2px;
         }
 
-        /* Bottom Text Label */
+        /* ส่วนชื่อสถานที่ด้านล่าง */
         .modern-card-label {
-            padding: 4px 6px;
+            padding: 5px 6px;
             font-size: 10px;
             font-weight: 600;
             color: #0f172a;
@@ -77,47 +98,57 @@
             overflow: hidden;
             text-overflow: ellipsis;
             background: #ffffff;
-            line-height: 1.25;
+            line-height: 1.3;
         }
 
-        /* Pointer Tip Arrow */
+        /* ปลายแหลมชี้ตำแหน่งด้านล่างแบบสมูท */
         .modern-card-pointer {
             width: 0;
             height: 0;
-            border-left: 7px solid transparent;
-            border-right: 7px solid transparent;
-            border-top: 8px solid #ffffff;
-            margin: 0 auto;
-            position: relative;
-            top: -1px;
-            filter: drop-shadow(0 3px 3px rgba(0,0,0,0.2));
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 7px solid #ffffff;
+            margin: -1px auto 0 auto;
+            filter: drop-shadow(0 3px 2px rgba(15, 23, 42, 0.12));
         }
 
-        /* Leaflet Popup Styling Override */
+        /* 🔴 Leaflet Popup Styling Override (ลบกรอบตัดแปะเดิมออก) */
         .leaflet-popup-content-wrapper {
             border-radius: 18px !important;
             padding: 0 !important;
             overflow: hidden !important;
-            box-shadow: 0 20px 35px -10px rgba(15, 23, 42, 0.3) !important;
-            border: 1px solid rgba(226, 232, 240, 0.8) !important;
+            box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.8) !important;
+            background: #ffffff !important;
+        }
+        .leaflet-popup-tip-container {
+            margin-top: -1px;
+        }
+        .leaflet-popup-tip {
+            background: #ffffff !important;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15) !important;
         }
         .leaflet-popup-content {
             margin: 0 !important;
             line-height: 1.4 !important;
         }
         .leaflet-container a.leaflet-popup-close-button {
-            top: 8px !important;
-            right: 8px !important;
-            background: rgba(0, 0, 0, 0.5) !important;
+            top: 10px !important;
+            right: 10px !important;
+            background: rgba(15, 23, 42, 0.5) !important;
             color: white !important;
             border-radius: 50% !important;
             width: 22px !important;
             height: 22px !important;
-            font-size: 13px !important;
+            font-size: 12px !important;
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.3) !important;
+            transition: all 0.2s ease;
+        }
+        .leaflet-container a.leaflet-popup-close-button:hover {
+            background: rgba(15, 23, 42, 0.8) !important;
         }
 
         /* Category Filter Active Style */
@@ -203,7 +234,7 @@
                             <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
                                 <i class="fa-solid fa-sliders text-sky-600"></i>ค้นหาจุดหมาย & วางแผน
                             </h3>
-                            <p class="text-xs text-slate-500">ซูมแผนที่ หรือคลิกการ์ดสี่เหลี่ยมขอบมนเพื่อดูรายละเอียดและใส่ทริป</p>
+                            <p class="text-xs text-slate-500">ซูมแผนที่ หรือคลิกการ์ดเพื่อดูรายละเอียดและใส่ทริป</p>
                         </div>
                         
                         <!-- Destination Selection -->
@@ -401,13 +432,6 @@
             'ลอสแอนเจลิส (Los Angeles)': { lat: 34.052, lng: -118.243, zoom: 10 }
         };
 
-        /*
-           MOCK DATA WITH BACKEND TIERS (ข้อมูลหลังบ้าน):
-           Tier 1 = จุดเด่นหลักระดับประเทศ (เห็นตอน Zoom ออกภาพรวมประเทศ)
-           Tier 2 = สถานที่ใหญ่ / ที่พักหรู (เห็นเมื่อซูมเข้านิดเดียว Zoom >= 5)
-           Tier 3 = ร้านค้า / ร้านอาหาร / ของฝากยอดนิยม (เห็นเมื่อ Zoom >= 7)
-           Tier 4 = ร้านค้าและสถานที่ชุมชนท้องถิ่น (เห็นเมื่อ Zoom >= 9)
-        */
         const allPinsData = [
             // --- 🇹🇭 ประเทศไทย ---
             { id: 'th_1', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ประเพณียี่เป็ง โคมลอย', price: 0, img: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=400', lat: 18.790, lng: 98.985, tier: 1 },
@@ -474,7 +498,6 @@
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
 
-            // เมื่อมีการซูมแผนที่ ให้ประมวลผลหมุดทันที
             map.on('zoomend', function() {
                 refreshMapPins();
             });
@@ -584,7 +607,7 @@
             }).join('');
         }
 
-        // ⚡ MAP PINS ENGINE: Modern Card Pin + Ultra-Responsive Zoom Tiers
+        // ⚡ REFRESH MAP PINS & POPUPS (ปรับปรุงการ์ดรูปบน-ชื่อล่าง ไร้รอยต่อ)
         function refreshMapPins() {
             activeMarkers.forEach(m => map.removeLayer(m));
             activeMarkers = [];
@@ -599,13 +622,6 @@
                 visiblePins = visiblePins.filter(pin => pin.city === city);
             }
 
-            /*
-               🟢 NEW EASIER ZOOM THRESHOLDS (โชว์หมุดเร็วขึ้นมาก):
-               - Zoom < 5: โชว์ Tier 1 (ภาพรวมกว้าง)
-               - Zoom 5-6: โชว์ Tier 1 + Tier 2 (ซูมเข้านิดเดียวโผล่ทันที)
-               - Zoom 7-8: โชว์ Tier 1 + Tier 2 + Tier 3
-               - Zoom >= 9: โชว์ครบทุก Tier ( Tier 1 - 4 )
-            */
             visiblePins = visiblePins.filter(pin => {
                 if (zoom < 5) {
                     return pin.tier === 1;
@@ -618,14 +634,17 @@
                 }
             });
 
-            // RENDER MODERN FLOATING CARD PINS
             visiblePins.forEach(pin => {
                 const badgeLabel = pin.price === 0 ? 'ฟรี' : `${pin.price.toLocaleString()}B`;
 
+                /* 🟢 HTML โครงสร้างหมุด: รูปอยู่ด้านบน - ชื่ออยู่ด้านล่าง */
                 const pinHtml = `
                     <div class="modern-card-pin">
-                        <img class="modern-card-photo" src="${pin.img}" alt="${pin.title}">
-                        <div class="modern-card-badge">${badgeLabel}</div>
+                        <div class="modern-card-photo-wrapper">
+                            <img class="modern-card-photo" src="${pin.img}" alt="${pin.title}">
+                            <div class="modern-card-overlay"></div>
+                            <div class="modern-card-badge">${badgeLabel}</div>
+                        </div>
                         <div class="modern-card-label">${pin.title}</div>
                     </div>
                     <div class="modern-card-pointer"></div>
@@ -634,35 +653,47 @@
                 const customIcon = L.divIcon({
                     className: 'modern-card-wrapper',
                     html: pinHtml,
-                    iconSize: [100, 76],
-                    iconAnchor: [50, 76]
+                    iconSize: [108, 78],
+                    iconAnchor: [54, 78]
                 });
 
                 const marker = L.marker([pin.lat, pin.lng], { icon: customIcon }).addTo(map);
 
-                // ULTRA MODERN POPUP CARD ON CLICK
+                /* 🔴 HTML POPUP (การ์ดเมื่อคลิก): ดีไซน์รูปบน-ชื่อล่าง หรูหรา ไร้ขอบตัดแปะ */
                 const popupContent = `
-                    <div class="w-52 text-slate-800 font-sans pb-3">
-                        <div class="relative h-32 bg-slate-200">
+                    <div class="w-56 font-sans bg-white overflow-hidden rounded-2xl">
+                        <!-- รูปภาพส่วนบน พร้อม Overlay ไล่เฉดสี -->
+                        <div class="relative h-36 w-full overflow-hidden bg-slate-900">
                             <img src="${pin.img}" class="w-full h-full object-cover">
-                            <span class="absolute top-2.5 left-2.5 bg-black/60 backdrop-blur-md text-white text-[9px] font-bold px-2 py-0.5 rounded-full">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20"></div>
+                            
+                            <span class="absolute top-2.5 left-2.5 bg-white/20 backdrop-blur-md text-white border border-white/30 text-[9px] font-bold px-2 py-0.5 rounded-full">
                                 ${pin.catName}
                             </span>
-                            <span class="absolute bottom-2.5 right-2.5 bg-emerald-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow">
-                                ${pin.price === 0 ? 'เข้าฟรี' : pin.price.toLocaleString() + ' บาท'}
+                            <span class="absolute top-2.5 right-2.5 bg-emerald-500 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-md shadow-md">
+                                ${pin.price === 0 ? 'เข้าฟรี' : pin.price.toLocaleString() + ' ฿'}
                             </span>
+
+                            <div class="absolute bottom-2 left-3 right-3 text-white">
+                                <h4 class="font-bold text-xs leading-tight drop-shadow-md truncate">${pin.title}</h4>
+                            </div>
                         </div>
-                        <div class="px-3 pt-2.5 space-y-1">
-                            <h4 class="font-bold text-xs text-slate-900 leading-snug">${pin.title}</h4>
-                            <p class="text-[10px] text-slate-500"><i class="fa-solid fa-location-dot text-sky-500 mr-1"></i>${pin.city}, ${pin.country}</p>
-                            <button onclick="addToItinerary('${pin.id}', '${pin.title}', ${pin.price})" class="w-full mt-2 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white text-xs py-2 rounded-xl font-bold shadow-md transition flex items-center justify-center gap-1.5">
+
+                        <!-- เนื้อหาส่วนล่าง -->
+                        <div class="p-3 space-y-2 bg-white">
+                            <div class="flex items-center text-[10px] text-slate-500 font-medium">
+                                <i class="fa-solid fa-location-dot text-sky-500 mr-1 text-xs"></i>
+                                <span class="truncate">${pin.city}, ${pin.country}</span>
+                            </div>
+
+                            <button onclick="addToItinerary('${pin.id}', '${pin.title}', ${pin.price})" class="w-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white text-xs py-2 rounded-xl font-bold shadow-md shadow-sky-500/20 active:scale-95 transition flex items-center justify-center gap-1.5">
                                 <i class="fa-solid fa-plus text-[10px]"></i> เพิ่มเข้าแพลนทริป
                             </button>
                         </div>
                     </div>
                 `;
 
-                marker.bindPopup(popupContent, { maxWidth: 240, closeButton: true });
+                marker.bindPopup(popupContent, { maxWidth: 260, closeButton: true });
                 activeMarkers.push(marker);
             });
         }
