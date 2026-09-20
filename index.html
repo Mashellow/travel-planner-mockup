@@ -18,61 +18,69 @@
         body { font-family: 'Prompt', sans-serif; }
         .tab-active { border-bottom: 3px solid #0284c7; color: #0284c7; font-weight: 600; }
         
-        /* Custom Leaflet DivIcon - Speech Bubble Marker (ตามรูปตัวอย่างแรก) */
+        /* Custom Leaflet DivIcon - Sleek Rounded Rect Mini Card Pin */
         .leaflet-div-icon {
             background: transparent !important;
             border: none !important;
         }
-        .speech-bubble-container {
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.35));
-        }
-        .speech-bubble-container:hover {
-            transform: scale(1.15) translateY(-5px);
-            z-index: 1000 !important;
-        }
-        .speech-bubble-box {
+
+        /* กล่องสี่เหลี่ยมขอบมน โชว์รูปบน + ชื่อล่าง */
+        .mini-card-pin {
+            width: 92px;
             background: #ffffff;
-            border: 2px solid #0f172a;
-            border-radius: 14px;
-            padding: 4px;
-            width: 84px;
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+            border: 2px solid #ffffff;
             overflow: hidden;
-        }
-        .speech-bubble-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 9px;
-        }
-        /* หางกล่องคำพูดชี้ลงตำแหน่ง */
-        .speech-bubble-tail {
-            position: absolute;
-            bottom: -11px;
-            left: 18px;
-            width: 0;
-            height: 0;
-            border-top: 12px solid #0f172a;
-            border-right: 12px solid transparent;
-        }
-        .speech-bubble-tail-inner {
-            position: absolute;
-            bottom: -8px;
-            left: 19px;
-            width: 0;
-            height: 0;
-            border-top: 10px solid #ffffff;
-            border-right: 10px solid transparent;
-            z-index: 1;
+            cursor: pointer;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+            position: relative;
         }
 
-        /* Category Filter Pills Active Style */
+        .mini-card-pin:hover {
+            transform: scale(1.18) translateY(-6px);
+            z-index: 9999 !important;
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.4);
+        }
+
+        /* รูปภาพด้านบน */
+        .mini-card-photo {
+            width: 100%;
+            height: 48px;
+            object-fit: cover;
+            display: block;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        /* กรอบชื่อสถานที่/กิจกรรม ด้านล่างรูป */
+        .mini-card-label {
+            padding: 3px 4px;
+            font-size: 9.5px;
+            font-weight: 600;
+            color: #0f172a;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: #ffffff;
+            line-height: 1.2;
+        }
+
+        /* เข็มปักตำแหน่งชี้ลงแผนที่ด้านล่าง */
+        .mini-card-pointer {
+            width: 0;
+            height: 0;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 8px solid #ffffff;
+            margin: 0 auto;
+            position: relative;
+            top: -1px;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.15));
+        }
+
+        /* Category Filter Active Style */
         .cat-pill-active {
             background-color: #0284c7 !important;
             color: #ffffff !important;
@@ -106,7 +114,7 @@
             </nav>
 
             <div class="flex items-center space-x-3">
-                <span id="guest-tag" class="text-xs bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-medium">โหมดทดลองใช้งาน</span>
+                <span class="text-xs bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full font-medium">โหมดทดลองใช้งาน</span>
                 <button onclick="triggerLogin()" class="bg-sky-600 hover:bg-sky-700 text-white text-sm px-4 py-2 rounded-lg font-medium shadow transition">
                     <i class="fa-solid fa-user-circle mr-1.5"></i> เข้าสู่ระบบ
                 </button>
@@ -120,7 +128,6 @@
         <!-- ================= PAGE 1: SEARCH & INTERACTIVE MAP HERO ================= -->
         <section id="page-search" class="space-y-8">
             
-            <!-- Hero Layout: Grid 2 Columns -->
             <div class="bg-slate-900 rounded-3xl p-4 md:p-6 shadow-2xl border border-slate-800 text-white">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                     
@@ -134,9 +141,10 @@
                                     สำรวจแผนที่: <span id="map-target-title" class="text-sky-400">ประเทศไทย</span>
                                 </h2>
                             </div>
+                            <span class="text-[11px] text-slate-400"><i class="fa-solid fa-magnifying-glass-plus mr-1"></i>ซูมเข้าเพื่อดูสถานที่เพิ่มเติม</span>
                         </div>
 
-                        <!-- Leaflet Real Interactive Map View Container -->
+                        <!-- Leaflet Map Container -->
                         <div class="relative w-full h-[420px] md:h-[480px] rounded-2xl overflow-hidden shadow-inner border border-slate-700/60 z-10">
                             <div id="map" class="w-full h-full bg-slate-800"></div>
                         </div>
@@ -146,7 +154,7 @@
                     <div class="lg:col-span-5 bg-white text-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
                         <div class="border-b pb-3">
                             <h3 class="font-bold text-lg text-slate-800"><i class="fa-solid fa-sliders text-sky-600 mr-2"></i>เริ่มสร้างทริปของคุณ</h3>
-                            <p class="text-xs text-slate-500">คลิกที่หมุดรูปภาพบนแผนที่เพื่อดูรายละเอียดสถานที่และเพิ่มเข้าแพลน</p>
+                            <p class="text-xs text-slate-500">คลิกที่การ์ดสี่เหลี่ยมบนแผนที่เพื่อเปิดดูรายละเอียดและเพิ่มลงทริป</p>
                         </div>
                         
                         <!-- Destination Selection -->
@@ -157,8 +165,9 @@
                                     <label class="block text-[10px] text-slate-400 mb-0.5">เลือกประเทศ</label>
                                     <select id="select-country" onchange="onCountryChange()" class="w-full px-2.5 py-2 border rounded-lg text-xs bg-white text-slate-700 focus:ring-2 focus:ring-sky-500 outline-none font-medium">
                                         <option value="ประเทศไทย">🇹🇭 ประเทศไทย</option>
+                                        <option value="ฝรั่งเศส">🇫🇷 ฝรั่งเศส</option>
+                                        <option value="สหรัฐอเมริกา">🇺🇸 สหรัฐอเมริกา</option>
                                         <option value="ญี่ปุ่น">🇯🇵 ญี่ปุ่น</option>
-                                        <option value="เกาหลีใต้">🇰🇷 เกาหลีใต้</option>
                                     </select>
                                 </div>
                                 <div>
@@ -170,7 +179,7 @@
 
                             <div class="relative pt-1">
                                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-400 text-xs"></i>
-                                <input id="input-destination-custom" type="text" placeholder="หรือพิมพ์ระบุสถานที่เอง (เช่น อ่าวนาง)..." class="w-full pl-8 pr-3 py-1.5 border rounded-lg text-xs focus:ring-2 focus:ring-sky-500 outline-none">
+                                <input id="input-destination-custom" type="text" placeholder="หรือพิมพ์ระบุสถานที่เอง..." class="w-full pl-8 pr-3 py-1.5 border rounded-lg text-xs focus:ring-2 focus:ring-sky-500 outline-none">
                             </div>
                         </div>
 
@@ -214,7 +223,6 @@
                         <p class="text-xs text-slate-500">เลือกดูสถานที่ท่องเที่ยว ที่พัก กิจกรรม และร้านค้าของฝากแนะนำ</p>
                     </div>
 
-                    <!-- Category Filter Tabs -->
                     <div class="flex flex-wrap gap-1.5" id="category-filter-bar">
                         <button onclick="setCategoryFilter('all')" id="cat-btn-all" class="cat-pill-active px-3 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition">
                             ทั้งหมด
@@ -234,7 +242,6 @@
                     </div>
                 </div>
 
-                <!-- Cards Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="attraction-list"></div>
             </div>
         </section>
@@ -282,7 +289,7 @@
                     <h3 class="font-bold text-slate-800 flex items-center justify-between border-b pb-3">
                         <span><i class="fa-solid fa-list-check text-sky-600 mr-2"></i>รายการกิจกรรมในทริป</span>
                     </h3>
-                    <p class="text-xs text-slate-500">กดปุ่ม "+ ใส่แพลน" จากหมุดบนแผนที่หรือการ์ดเพื่อเพิ่มกิจกรรม</p>
+                    <p class="text-xs text-slate-500">กดปุ่ม "+ ใส่แพลน" จากการ์ดบนแผนที่เพื่อเพิ่มกิจกรรมเข้าตาราง</p>
                 </div>
             </div>
         </section>
@@ -300,46 +307,67 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         const cityMap = {
-            'ประเทศไทย': ['-- ทั้งประเทศ --', 'กระบี่', 'เชียงใหม่', 'กรุงเทพมหานคร', 'ภูเก็ต'],
-            'ญี่ปุ่น': ['-- ทั้งประเทศ --', 'โตเกียว (Tokyo)', 'โอซาก้า (Osaka)'],
-            'เกาหลีใต้': ['-- ทั้งประเทศ --', 'โซล (Seoul)', 'ปูซาน (Busan)']
+            'ประเทศไทย': ['-- ทั้งประเทศ --', 'เชียงใหม่', 'ภูเก็ต', 'กรุงเทพมหานคร', 'กระบี่'],
+            'ฝรั่งเศส': ['-- ทั้งประเทศ --', 'ปารีส (Paris)'],
+            'สหรัฐอเมริกา': ['-- ทั้งประเทศ --', 'นิวยอร์ก (New York)'],
+            'ญี่ปุ่น': ['-- ทั้งประเทศ --', 'โตเกียว (Tokyo)', 'โอซาก้า (Osaka)']
         };
 
         const locationConfigs = {
             'ประเทศไทย': { lat: 13.0, lng: 101.5, zoom: 5 },
-            'กระบี่': { lat: 8.08, lng: 98.91, zoom: 10 },
             'เชียงใหม่': { lat: 18.78, lng: 98.98, zoom: 11 },
-            'กรุงเทพมหานคร': { lat: 13.75, lng: 100.50, zoom: 11 },
             'ภูเก็ต': { lat: 7.95, lng: 98.33, zoom: 10 },
+            'กรุงเทพมหานคร': { lat: 13.75, lng: 100.50, zoom: 11 },
+            'กระบี่': { lat: 8.08, lng: 98.91, zoom: 10 },
+
+            'ฝรั่งเศส': { lat: 46.22, lng: 2.21, zoom: 5 },
+            'ปารีส (Paris)': { lat: 48.85, lng: 2.35, zoom: 11 },
+
+            'สหรัฐอเมริกา': { lat: 37.09, lng: -95.71, zoom: 4 },
+            'นิวยอร์ก (New York)': { lat: 40.71, lng: -74.00, zoom: 11 },
 
             'ญี่ปุ่น': { lat: 36.20, lng: 138.25, zoom: 5 },
             'โตเกียว (Tokyo)': { lat: 35.67, lng: 139.65, zoom: 11 },
-            'โอซาก้า (Osaka)': { lat: 34.69, lng: 135.50, zoom: 11 },
-
-            'เกาหลีใต้': { lat: 35.90, lng: 127.76, zoom: 6 },
-            'โซล (Seoul)': { lat: 37.56, lng: 126.97, zoom: 11 },
-            'ปูซาน (Busan)': { lat: 35.17, lng: 129.07, zoom: 11 }
+            'โอซาก้า (Osaka)': { lat: 34.69, lng: 135.50, zoom: 11 }
         };
 
-        // DATABASE (tier logic internal)
+        /*
+           BACKEND TIER CONFIG (ซ่อนระดับเงิน/เทียร์ไว้หลังบ้านเท่านั้น)
+           - Tier 1: โชว์ตอนซูมเห็นภาพรวมประเทศ (จุดเด่นไฮไลท์ของประเทศ)
+           - Tier 2: โชว์เมื่อซูมเข้าใกล้มากขึ้น (สปอนเซอร์ X บาท/ปี)
+           - Tier 3: โชว์เมื่อซูมใกล้เข้าไปอีก (สปอนเซอร์ Y บาท/ปี)
+           - Tier 4: โชว์เมื่อซูมระดับเมือง/ชุมชนละเอียดที่สุด (ช่วยเหลือสถานที่/ร้านค้าท้องถิ่น ฟรี 0 บาท)
+        */
         const allPinsData = [
-            // --- กระบี่ ---
-            { id: 'kr1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'อนุสาวรีย์ปูดำ เมืองกระบี่', price: 0, img: 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=400', lat: 8.065, lng: 98.917, tier: 1 },
-            { id: 'kr2', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'เกาะพีพี & ทะเลแหวก', price: 1500, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', lat: 7.740, lng: 98.778, tier: 1 },
-            { id: 'kr3', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'สระมรกต & น้ำตกร้อน', price: 400, img: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400', lat: 7.924, lng: 99.258, tier: 2 },
-            { id: 'kr4', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'หาดไร่เลย์ & ถ้ำพระนาง', price: 0, img: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400', lat: 8.011, lng: 98.837, tier: 2 },
-            { id: 'kr_h1', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'กระบี่', title: 'Rayavadee Resort Railay', price: 12500, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 8.010, lng: 98.839, tier: 1 },
-            { id: 'kr_act1', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'กระบี่', title: 'พายเรือคายัค อ่าวท่าเลน', price: 800, img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400', lat: 8.143, lng: 98.784, tier: 2 },
-            { id: 'kr_shop1', category: 'shop', catName: 'ร้านค้า & ของฝาก', country: 'ประเทศไทย', city: 'กระบี่', title: 'ถนนคนเดินกระบี่ & ของฝาก OTOP', price: 250, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', lat: 8.064, lng: 98.916, tier: 3 },
+            // --- ประเทศไทย ---
+            // Tier 1 (โชว์ตอนภาพรวมประเทศ)
+            { id: 'th_t1_1', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ประเพณียี่เป็ง โคมลอย', price: 0, img: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=400', lat: 18.790, lng: 98.985, tier: 1 },
+            { id: 'th_t1_2', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'ภูเก็ต', title: 'ทะเลภูเก็ต หาดป่าตอง', price: 0, img: 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400', lat: 7.892, lng: 98.298, tier: 1 },
+            { id: 'th_t1_3', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'วัดพระแก้ว', price: 500, img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400', lat: 13.751, lng: 100.492, tier: 1 },
 
-            // --- เชียงใหม่ ---
-            { id: 'cm1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'วัดพระธาตุดอยสุเทพ', price: 50, img: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=400', lat: 18.804, lng: 98.921, tier: 1 },
-            { id: 'cm_h1', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'Anantara Chiang Mai Resort', price: 6500, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 18.781, lng: 98.999, tier: 1 },
-            { id: 'cm_shop1', category: 'shop', catName: 'ร้านค้า & ของฝาก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ตลาดวโรรส (กาดหลวง)', price: 300, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400', lat: 18.789, lng: 99.001, tier: 2 },
+            // Tier 2 (สปอนเซอร์ X บาท/ปี)
+            { id: 'th_t2_1', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'ภูเก็ต', title: 'Sri Panwa Phuket', price: 18000, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 7.805, lng: 98.408, tier: 2 },
+            { id: 'th_t2_2', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'Anantara Resort', price: 7500, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 18.781, lng: 98.999, tier: 2 },
 
-            // --- กรุงเทพฯ ---
-            { id: 'bk1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'วัดพระแก้ว', price: 500, img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400', lat: 13.750, lng: 100.491, tier: 1 },
-            { id: 'bk_shop1', category: 'shop', catName: 'ร้านค้า & ของฝาก', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'ตลาดนัดจตุจักร', price: 500, img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400', lat: 13.799, lng: 100.550, tier: 2 }
+            // Tier 3 (สปอนเซอร์ Y บาท/ปี)
+            { id: 'th_t3_1', category: 'shop', catName: 'ร้านค้า & ของฝาก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'กาดหลวง วโรรส', price: 300, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400', lat: 18.789, lng: 99.001, tier: 3 },
+            { id: 'th_t3_2', category: 'shop', catName: 'ร้านค้า & ของฝาก', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'ตลาดนัดจตุจักร', price: 500, img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400', lat: 13.799, lng: 100.550, tier: 3 },
+
+            // Tier 4 (ร้านท้องถิ่น / ฟรี 0 บาท)
+            { id: 'th_t4_1', category: 'shop', catName: 'ร้านค้าท้องถิ่น', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'กาแฟชุมชน แม่กำปอง', price: 80, img: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400', lat: 18.865, lng: 99.349, tier: 4 },
+            { id: 'th_t4_2', category: 'activity', catName: 'วิถีชุมชน', country: 'ประเทศไทย', city: 'กระบี่', title: 'เรือหางยาวชุมชนบ้านคลองหรูด', price: 300, img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400', lat: 8.090, lng: 98.810, tier: 4 },
+
+            // --- ฝรั่งเศส ---
+            { id: 'fr_t1_1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'หอไอเฟล (Eiffel Tower)', price: 1200, img: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=400', lat: 48.8584, lng: 2.2945, tier: 1 },
+            { id: 'fr_t2_1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'พิพิธภัณฑ์ลูฟฟร์', price: 900, img: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=400', lat: 48.8606, lng: 2.3376, tier: 2 },
+
+            // --- สหรัฐอเมริกา ---
+            { id: 'us_t1_1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'เทพีเสรีภาพ (Statue of Liberty)', price: 1100, img: 'https://images.unsplash.com/photo-1605130284535-11dd9dee6884?w=400', lat: 40.6892, lng: -74.0445, tier: 1 },
+            { id: 'us_t2_1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'ไทม์สแควร์ (Times Square)', price: 0, img: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400', lat: 40.7580, lng: -73.9855, tier: 2 },
+
+            // --- ญี่ปุ่น ---
+            { id: 'jp_t1_1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'ภูเขาไฟฟูจิ', price: 0, img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400', lat: 35.3606, lng: 138.7278, tier: 1 },
+            { id: 'jp_t2_1', category: 'attraction', catName: 'สถานที่ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'วัดเซ็นโซจิ อาซากุสะ', price: 0, img: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400', lat: 35.7148, lng: 139.7967, tier: 2 }
         ];
 
         let map;
@@ -366,6 +394,7 @@
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
 
+            // เมื่อมีการซูมแผนที่ ให้ประมวลผลการซ่อน/แสดงหมุดตาม Zoom Level
             map.on('zoomend', function() {
                 refreshMapPins();
             });
@@ -386,7 +415,7 @@
             const titleEl = document.getElementById('map-target-title');
 
             if (!city || city === '-- ทั้งประเทศ --') {
-                titleEl.innerText = `${country} (ภาพรวมทั่วประเทศ)`;
+                titleEl.innerText = `${country} (ภาพรวมทั้งประเทศ)`;
                 const conf = locationConfigs[country] || { lat: 13.0, lng: 101.5, zoom: 5 };
                 map.flyTo([conf.lat, conf.lng], conf.zoom, { duration: 1.2 });
             } else {
@@ -475,14 +504,14 @@
             }).join('');
         }
 
-        // MAP PINS ENGINE (Speech Bubble Pins - ตามรูปตัวอย่างแรก)
+        // MAP PINS ENGINE (Sleek Rounded Rect Card Pin + Backend Tier Logic)
         function refreshMapPins() {
             activeMarkers.forEach(m => map.removeLayer(m));
             activeMarkers = [];
 
             const country = document.getElementById('select-country').value;
             const city = document.getElementById('select-city').value;
-            const currentZoom = map.getZoom();
+            const zoom = map.getZoom();
 
             let visiblePins = allPinsData.filter(pin => pin.country === country);
 
@@ -490,39 +519,45 @@
                 visiblePins = visiblePins.filter(pin => pin.city === city);
             }
 
-            // Backend Tier Logic
+            /*
+               BACKEND TIER FILTERING BY ZOOM LEVEL:
+               - Zoom < 6 (มองภาพรวมประเทศ): โชว์แค่ Tier 1 เท่านั้น
+               - Zoom 6 - 8 (มองระดับภูมิภาค/จังหวัด): โชว์ Tier 1, Tier 2
+               - Zoom 9 - 11 (มองระดับเมือง): โชว์ Tier 1, Tier 2, Tier 3
+               - Zoom >= 12 (ซูมใกล้ชุมชน/ถนน): โชว์ครบทุก Tier (รวม Tier 4 ท้องถิ่นฟรี)
+            */
             visiblePins = visiblePins.filter(pin => {
-                if (currentZoom < 7) {
+                if (zoom < 6) {
                     return pin.tier === 1;
-                } else if (currentZoom < 10) {
+                } else if (zoom < 9) {
                     return pin.tier <= 2;
+                } else if (zoom < 12) {
+                    return pin.tier <= 3;
                 } else {
                     return true;
                 }
             });
 
-            // RENDER SPEECH BUBBLE PINS
+            // RENDER ROUNDED RECT MINI CARD PINS
             visiblePins.forEach(pin => {
                 const pinHtml = `
-                    <div class="speech-bubble-container">
-                        <div class="speech-bubble-box">
-                            <img src="${pin.img}" alt="${pin.title}">
-                        </div>
-                        <div class="speech-bubble-tail"></div>
-                        <div class="speech-bubble-tail-inner"></div>
+                    <div class="mini-card-pin">
+                        <img class="mini-card-photo" src="${pin.img}" alt="${pin.title}">
+                        <div class="mini-card-label">${pin.title}</div>
                     </div>
+                    <div class="mini-card-pointer"></div>
                 `;
 
                 const customIcon = L.divIcon({
-                    className: 'speech-bubble-wrapper',
+                    className: 'mini-card-wrapper',
                     html: pinHtml,
-                    iconSize: [84, 75],
-                    iconAnchor: [18, 75]
+                    iconSize: [92, 70],
+                    iconAnchor: [46, 70]
                 });
 
                 const marker = L.marker([pin.lat, pin.lng], { icon: customIcon }).addTo(map);
 
-                // POPUP SHOWS DETAILS & ACTIVITIES ON CLICK
+                // POPUP DETAIL ON CLICK
                 const popupContent = `
                     <div class="p-1.5 w-48 text-slate-800 font-sans">
                         <div class="relative h-28 rounded-lg overflow-hidden mb-2">
@@ -586,7 +621,7 @@
             const items = itineraryData[activeDay] || [];
 
             if (items.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">ยังไม่มีกิจกรรมในวันนี้ กดเลือกเพิ่มจากหมุดรูปภาพบนแผนที่ได้เลย!</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">ยังไม่มีกิจกรรมในวันนี้ กดเลือกเพิ่มจากการ์ดสถานที่บนแผนที่ได้เลย!</p>`;
                 return;
             }
 
