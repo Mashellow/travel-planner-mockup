@@ -25,11 +25,12 @@
         }
         .pin-bubble {
             animation: floatPin 3s ease-in-out infinite;
-            filter: drop-shadow(0 10px 10px rgba(0,0,0,0.3));
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.25));
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         @keyframes floatPin {
             0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-5px); }
+            50% { transform: translateY(-4px); }
         }
         .bubble-tail {
             position: absolute;
@@ -41,6 +42,9 @@
             border-left: 7px solid transparent;
             border-right: 7px solid transparent;
             border-top: 9px solid white;
+        }
+        .bubble-tail-vip {
+            border-top-color: #f59e0b;
         }
     </style>
 </head>
@@ -83,23 +87,25 @@
         <!-- ================= PAGE 1: SEARCH & INTERACTIVE MAP HERO ================= -->
         <section id="page-search" class="space-y-8">
             
-            <!-- Hero Layout: Grid 2 Columns (Map on Left + Form on Right) -->
+            <!-- Hero Layout: Grid 2 Columns -->
             <div class="bg-slate-900 rounded-3xl p-4 md:p-6 shadow-2xl border border-slate-800 text-white">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                     
-                    <!-- LEFT COLUMN: Interactive Map Canvas (Span 7) -->
+                    <!-- LEFT COLUMN: Interactive Map Canvas -->
                     <div class="lg:col-span-7 space-y-3">
                         <div class="flex items-center justify-between px-1">
                             <div>
-                                <span class="bg-sky-500/20 text-sky-300 text-[11px] px-2.5 py-0.5 rounded-full border border-sky-400/30">Interactive Map</span>
+                                <span class="bg-sky-500/20 text-sky-300 text-[11px] px-2.5 py-0.5 rounded-full border border-sky-400/30">Ad Tier Map Engine</span>
                                 <h2 class="text-lg font-bold text-white mt-1 flex items-center gap-2">
                                     <i class="fa-solid fa-map-location-dot text-sky-400"></i>
-                                    สำรวจแผนที่: <span id="map-target-title" class="text-sky-400">ประเทศไทย (ภาพรวมทั่วประเทศ)</span>
+                                    แผนที่: <span id="map-target-title" class="text-sky-400">ประเทศไทย</span>
                                 </h2>
                             </div>
-                            <span class="text-[11px] bg-slate-800 text-slate-300 px-2.5 py-1 rounded-lg border border-slate-700 hidden sm:inline-block">
-                                <i class="fa-solid fa-hand-pointer text-sky-400 mr-1"></i>ลองซูมเข้า-ออกดูสถานที่ย่อย
-                            </span>
+                            <div class="text-[10px] text-slate-300 bg-slate-800 px-2 py-1 rounded border border-slate-700 flex gap-2">
+                                <span class="text-amber-400">⭐ VIP</span>
+                                <span class="text-sky-400">🔷 PRO</span>
+                                <span class="text-slate-400">⚪ Standard</span>
+                            </div>
                         </div>
 
                         <!-- Leaflet Real Interactive Map View Container -->
@@ -108,11 +114,11 @@
                         </div>
                     </div>
 
-                    <!-- RIGHT COLUMN: Search & Input Form Card (Span 5) -->
+                    <!-- RIGHT COLUMN: Search Form Card -->
                     <div class="lg:col-span-5 bg-white text-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
                         <div class="border-b pb-3">
                             <h3 class="font-bold text-lg text-slate-800"><i class="fa-solid fa-sliders text-sky-600 mr-2"></i>เริ่มสร้างทริปของคุณ</h3>
-                            <p class="text-xs text-slate-500">ระบุปลายทางเพื่อเปลี่ยนมุมมองแผนที่อัตโนมัติ</p>
+                            <p class="text-xs text-slate-500">ทดลองเลื่อนและซูมแผนที่เพื่อดูการขยายตัวของหมุดป๊อปอัป</p>
                         </div>
                         
                         <!-- Destination Selection -->
@@ -130,7 +136,6 @@
                                 <div>
                                     <label class="block text-[10px] text-slate-400 mb-0.5">เลือกเมือง / จังหวัด</label>
                                     <select id="select-city" onchange="onCityChange()" class="w-full px-2.5 py-2 border rounded-lg text-xs bg-white text-slate-700 focus:ring-2 focus:ring-sky-500 outline-none font-medium">
-                                        <!-- Options populated dynamically -->
                                     </select>
                                 </div>
                             </div>
@@ -170,10 +175,10 @@
                 </div>
             </div>
 
-            <!-- Category Recommendation Lists -->
+            <!-- Recommendation Lists -->
             <div class="space-y-8">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-umbrella-beach text-sky-600 mr-2"></i>สถานที่ท่องเที่ยวแนะนำประจำภูมิภาค</h2>
+                    <h2 class="text-xl font-bold text-slate-800 mb-3"><i class="fa-solid fa-umbrella-beach text-sky-600 mr-2"></i>สถานที่แนะนำประจำภูมิภาค</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4" id="attraction-list"></div>
                 </div>
             </div>
@@ -185,7 +190,6 @@
                 <div>
                     <span class="text-xs font-semibold uppercase tracking-wider text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-100">สรุปแพลนทริป</span>
                     <h2 class="text-2xl font-bold text-slate-800 mt-1" id="trip-title-display">ประเทศไทย (3 วัน 2 คืน)</h2>
-                    <p class="text-xs text-slate-500 mt-0.5"><i class="fa-solid fa-hotel mr-1"></i>ที่พัก: <span id="hotel-display">ยังไม่ได้ระบุ</span></p>
                 </div>
 
                 <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 w-full md:w-80 space-y-2">
@@ -223,7 +227,7 @@
                     <h3 class="font-bold text-slate-800 flex items-center justify-between border-b pb-3">
                         <span><i class="fa-solid fa-list-check text-sky-600 mr-2"></i>รายการกิจกรรมในทริป</span>
                     </h3>
-                    <p class="text-xs text-slate-500">เลือกเพิ่มกิจกรรมได้จากหมุดบนแผนที่ในหน้าแรก</p>
+                    <p class="text-xs text-slate-500">กดปุ่ม "+ ใส่แพลน" จากป๊อปอัปบนแผนที่เพื่อเพิ่มกิจกรรม</p>
                 </div>
             </div>
         </section>
@@ -240,14 +244,12 @@
 
     <!-- JAVASCRIPT & LEAFLET LOGIC -->
     <script>
-        // CITY LIST WITH "ALL CITIES" (ทั้งประเทศ) OPTION
         const cityMap = {
             'ประเทศไทย': ['-- ทั้งประเทศ --', 'กระบี่', 'เชียงใหม่', 'กรุงเทพมหานคร', 'ภูเก็ต'],
-            'ญี่ปุ่น': ['-- ทั้งประเทศ --', 'โตเกียว (Tokyo)', 'โอซาก้า (Osaka)', 'เกียวโต (Kyoto)'],
-            'เกาหลีใต้': ['-- ทั้งประเทศ --', 'โซล (Seoul)', 'ปูซาน (Busan)', 'เกาะเชจู (Jeju)']
+            'ญี่ปุ่น': ['-- ทั้งประเทศ --', 'โตเกียว (Tokyo)', 'โอซาก้า (Osaka)'],
+            'เกาหลีใต้': ['-- ทั้งประเทศ --', 'โซล (Seoul)', 'ปูซาน (Busan)']
         };
 
-        // COUNTRY / CITY COORDINATES & ZOOM CONFIGS
         const locationConfigs = {
             'ประเทศไทย': { lat: 13.0, lng: 101.5, zoom: 5 },
             'กระบี่': { lat: 8.08, lng: 98.91, zoom: 10 },
@@ -264,40 +266,39 @@
             'ปูซาน (Busan)': { lat: 35.17, lng: 129.07, zoom: 11 }
         };
 
-        // ALL PLACES / PINS DATABASE (With City Tag & National Landmark Flag)
+        // PLACES DATABASE WITH AD TIERS (vip, premium, standard)
         const allPinsData = [
-            // ประเทศไทย - กระบี่
-            { id: 'kr1', country: 'ประเทศไทย', city: 'กระบี่', title: 'อนุสาวรีย์ปูดำ เมืองกระบี่', price: 0, img: 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=400', lat: 8.065, lng: 98.917, isNational: true },
-            { id: 'kr2', country: 'ประเทศไทย', city: 'กระบี่', title: 'สระมรกต & น้ำตกร้อน', price: 400, img: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400', lat: 7.924, lng: 99.258, isNational: false },
-            { id: 'kr3', country: 'ประเทศไทย', city: 'กระบี่', title: 'เกาะพีพี & ทะเลแหวก', price: 1500, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', lat: 7.740, lng: 98.778, isNational: true },
-            { id: 'kr4', country: 'ประเทศไทย', city: 'กระบี่', title: 'หาดไร่เลย์ & ถ้ำพระนาง', price: 0, img: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400', lat: 8.011, lng: 98.837, isNational: false },
+            // กระบี่
+            { id: 'kr1', country: 'ประเทศไทย', city: 'กระบี่', title: 'อนุสาวรีย์ปูดำ เมืองกระบี่', price: 0, img: 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=400', lat: 8.065, lng: 98.917, tier: 'vip' },
+            { id: 'kr2', country: 'ประเทศไทย', city: 'กระบี่', title: 'เกาะพีพี & ทะเลแหวก', price: 1500, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', lat: 7.740, lng: 98.778, tier: 'premium' },
+            { id: 'kr3', country: 'ประเทศไทย', city: 'กระบี่', title: 'สระมรกต & น้ำตกร้อน', price: 400, img: 'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=400', lat: 7.924, lng: 99.258, tier: 'standard' },
+            { id: 'kr4', country: 'ประเทศไทย', city: 'กระบี่', title: 'หาดไร่เลย์ & ถ้ำพระนาง', price: 0, img: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400', lat: 8.011, lng: 98.837, tier: 'standard' },
+            { id: 'kr5', country: 'ประเทศไทย', city: 'กระบี่', title: 'วัดถ้ำเสือ กระบี่', price: 0, img: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400', lat: 8.124, lng: 98.925, tier: 'standard' },
 
-            // ประเทศไทย - เชียงใหม่
-            { id: 'cm1', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'วัดพระธาตุดอยสุเทพ', price: 50, img: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=400', lat: 18.804, lng: 98.921, isNational: true },
-            { id: 'cm2', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ประตูท่าแพ & ถนนคนเดิน', price: 0, img: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=400', lat: 18.787, lng: 98.993, isNational: false },
+            // เชียงใหม่
+            { id: 'cm1', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'วัดพระธาตุดอยสุเทพ', price: 50, img: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=400', lat: 18.804, lng: 98.921, tier: 'vip' },
+            { id: 'cm2', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ประตูท่าแพ & ถนนคนเดิน', price: 0, img: 'https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=400', lat: 18.787, lng: 98.993, tier: 'premium' },
+            { id: 'cm3', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ดอยอินทนนท์', price: 300, img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400', lat: 18.588, lng: 98.487, tier: 'standard' },
 
-            // ประเทศไทย - กรุงเทพฯ / ภูเก็ต
-            { id: 'bk1', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'วัดพระแก้ว & พระบรมมหาราชวัง', price: 500, img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400', lat: 13.750, lng: 100.491, isNational: true },
-            { id: 'pk1', country: 'ประเทศไทย', city: 'ภูเก็ต', title: 'แหลมพรหมเทพ ภูเก็ต', price: 0, img: 'https://images.unsplash.com/photo-1589394815804-964ed0be2eb5?w=400', lat: 7.761, lng: 98.305, isNational: true },
+            // กรุงเทพฯ
+            { id: 'bk1', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'วัดพระแก้ว & พระบรมมหาราชวัง', price: 500, img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400', lat: 13.750, lng: 100.491, tier: 'vip' },
+            { id: 'bk2', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'ไอคอนสยาม (ICONSIAM)', price: 0, img: 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400', lat: 13.726, lng: 100.510, tier: 'premium' },
 
             // ญี่ปุ่น
-            { id: 'jp1', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'วัดเซ็นโซจิ (อาซากุสะ)', price: 0, img: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400', lat: 35.714, lng: 139.796, isNational: true },
-            { id: 'jp2', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'ห้าแยกชิบูย่า (Shibuya)', price: 0, img: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400', lat: 35.659, lng: 139.700, isNational: false },
-            { id: 'jp3', country: 'ญี่ปุ่น', city: 'โอซาก้า (Osaka)', title: 'ปราสาทโอซาก้า', price: 600, img: 'https://images.unsplash.com/photo-1590559899731-a382839e5549?w=400', lat: 34.687, lng: 135.526, isNational: true },
+            { id: 'jp1', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'วัดเซ็นโซจิ (อาซากุสะ)', price: 0, img: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400', lat: 35.714, lng: 139.796, tier: 'vip' },
+            { id: 'jp2', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'ห้าแยกชิบูย่า (Shibuya)', price: 0, img: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400', lat: 35.659, lng: 139.700, tier: 'premium' },
 
             // เกาหลีใต้
-            { id: 'kr1_sk', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'พระราชวังเคียงบกคุง', price: 100, img: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400', lat: 37.579, lng: 126.977, isNational: true },
-            { id: 'kr2_sk', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'หาดแฮอึนแด ปูซาน', price: 0, img: 'https://images.unsplash.com/photo-1535189043414-47a3c49a0bed?w=400', lat: 35.158, lng: 129.160, isNational: true }
+            { id: 'sk1', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'พระราชวังเคียงบกคุง', price: 100, img: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400', lat: 37.579, lng: 126.977, tier: 'vip' },
+            { id: 'sk2', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'หาดแฮอึนแด ปูซาน', price: 0, img: 'https://images.unsplash.com/photo-1535189043414-47a3c49a0bed?w=400', lat: 35.158, lng: 129.160, tier: 'vip' }
         ];
 
-        // GLOBAL APP STATE
         let map;
         let activeMarkers = [];
         let currentBudgetTotal = 15000;
         let activeDay = 1;
         let itineraryData = { 1: [], 2: [], 3: [] };
 
-        // INITIALIZE APP & LEAFLET MAP
         window.onload = function() {
             initLeafletMap();
             onCountryChange();
@@ -306,25 +307,22 @@
         };
 
         function initLeafletMap() {
-            // Default center: Thailand
             map = L.map('map', {
                 zoomControl: true,
                 scrollWheelZoom: true
             }).setView([13.0, 101.5], 5);
 
-            // Clean Tile Layer (CartoDB Positron style)
             L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
                 maxZoom: 18,
                 attribution: '&copy; OpenStreetMap & CartoDB'
             }).addTo(map);
 
-            // Listen to User Manual Zoom Event (Dynamic Pin Details Control)
+            // Re-eval pins size & visibility when zoom changes
             map.on('zoomend', function() {
                 refreshMapPins();
             });
         }
 
-        // COUNTRY & CITY CHANGE HANDLERS
         function onCountryChange() {
             const country = document.getElementById('select-country').value;
             const citySelect = document.getElementById('select-city');
@@ -342,22 +340,18 @@
             if (!city || city === '-- ทั้งประเทศ --') {
                 titleEl.innerText = `${country} (ภาพรวมทั่วประเทศ)`;
                 const conf = locationConfigs[country] || { lat: 13.0, lng: 101.5, zoom: 5 };
-                map.flyTo([conf.lat, conf.lng], conf.zoom, { duration: 1.5 });
+                map.flyTo([conf.lat, conf.lng], conf.zoom, { duration: 1.2 });
             } else {
                 titleEl.innerText = `${city} (${country})`;
                 const conf = locationConfigs[city] || locationConfigs[country];
-                map.flyTo([conf.lat, conf.lng], conf.zoom, { duration: 1.5 });
+                map.flyTo([conf.lat, conf.lng], conf.zoom, { duration: 1.2 });
             }
 
-            // Small delay to let flyTo transition smoothly before updating pins
-            setTimeout(() => {
-                refreshMapPins();
-            }, 300);
+            setTimeout(() => { refreshMapPins(); }, 350);
         }
 
-        // REFRESH & FILTER MAP PINS BASED ON SELECTION & ZOOM LEVEL
+        // DYNAMIC AD TIER & ZOOM SCALING ENGINE
         function refreshMapPins() {
-            // Clear existing markers from map
             activeMarkers.forEach(m => map.removeLayer(m));
             activeMarkers = [];
 
@@ -365,46 +359,91 @@
             const city = document.getElementById('select-city').value;
             const currentZoom = map.getZoom();
 
-            // Filter Pins logic
             let visiblePins = allPinsData.filter(pin => pin.country === country);
 
             if (city && city !== '-- ทั้งประเทศ --') {
-                // If specific city selected: ONLY show pins for this city!
                 visiblePins = visiblePins.filter(pin => pin.city === city);
-            } else {
-                // If "Whole Country" selected:
-                // If zoomed out (< 8), show only National Landmarks
-                // If user manually zooms in closer (>= 8), show all local pins across country
-                if (currentZoom < 8) {
-                    visiblePins = visiblePins.filter(pin => pin.isNational);
-                }
             }
 
-            // Render Bubble Pin Markers onto Leaflet Map
+            // FILTER VISIBILITY BY AD TIER & ZOOM LEVEL
+            visiblePins = visiblePins.filter(pin => {
+                if (currentZoom < 8) {
+                    return pin.tier === 'vip'; // Zoom out country level -> VIP ONLY
+                } else if (currentZoom >= 8 && currentZoom < 11) {
+                    return pin.tier === 'vip' || pin.tier === 'premium'; // City level -> VIP + Premium
+                } else {
+                    return true; // Deep Zoom (>=11) -> Show All Tiers (VIP, Premium, Standard)
+                }
+            });
+
+            // RENDER DYNAMIC BUBBLE POPUPS
             visiblePins.forEach(pin => {
+                let badgeHtml = "";
+                let cardStyle = "";
+                let tailStyle = "";
+                let showImage = true;
+                let widthClass = "w-36 sm:w-40";
+
+                // Tier Styling & Sizing Rules
+                if (pin.tier === 'vip') {
+                    badgeHtml = `<span class="bg-amber-500 text-white font-bold text-[8px] px-1.5 py-0.2 rounded shadow">⭐ VIP</span>`;
+                    cardStyle = "border-2 border-amber-400 ring-2 ring-amber-300/40 bg-amber-50/95";
+                    tailStyle = "bubble-tail-vip";
+                    widthClass = currentZoom >= 11 ? "w-40 sm:w-44" : "w-36 sm:w-40";
+                    showImage = true;
+                } else if (pin.tier === 'premium') {
+                    badgeHtml = `<span class="bg-sky-500 text-white font-bold text-[8px] px-1 py-0.2 rounded">PRO</span>`;
+                    cardStyle = "border-2 border-sky-400 bg-white/95";
+                    if (currentZoom < 10) {
+                        widthClass = "w-28";
+                        showImage = false; // Minimal view when farther
+                    } else {
+                        widthClass = "w-36";
+                        showImage = true;
+                    }
+                } else {
+                    // Standard Tier
+                    cardStyle = "border border-slate-300 bg-white/95";
+                    if (currentZoom < 12) {
+                        widthClass = "w-24";
+                        showImage = false; // Small minimal badge when far
+                    } else {
+                        widthClass = "w-32 sm:w-36"; // Scales up when zooming closer!
+                        showImage = true;
+                    }
+                }
+
+                const imgHtml = showImage ? `
+                    <div class="relative h-16 sm:h-20 rounded-lg overflow-hidden mb-1">
+                        <img src="${pin.img}" class="w-full h-full object-cover">
+                        <span class="absolute bottom-1 right-1 bg-black/75 text-white text-[8px] px-1.5 py-0.5 rounded font-bold backdrop-blur">
+                            ${pin.price === 0 ? 'เข้าฟรี' : pin.price.toLocaleString() + ' B'}
+                        </span>
+                    </div>
+                ` : '';
+
                 const bubbleHtml = `
-                    <div class="pin-bubble bg-white/95 backdrop-blur-sm p-1.5 rounded-xl shadow-2xl border border-slate-200 w-32 sm:w-36 text-slate-800">
-                        <div class="relative h-16 sm:h-20 rounded-lg overflow-hidden mb-1">
-                            <img src="${pin.img}" class="w-full h-full object-cover">
-                            <span class="absolute bottom-1 right-1 bg-black/70 text-white text-[8px] px-1.5 py-0.5 rounded font-bold backdrop-blur">
-                                ${pin.price === 0 ? 'เข้าฟรี' : pin.price.toLocaleString() + ' B'}
-                            </span>
+                    <div class="pin-bubble p-1.5 rounded-xl ${cardStyle} ${widthClass} text-slate-800">
+                        <div class="flex items-center justify-between mb-0.5 gap-1">
+                            ${badgeHtml}
+                            <span class="text-[9px] text-slate-400 truncate">${pin.city}</span>
                         </div>
+                        ${imgHtml}
                         <h4 class="font-bold text-[10px] text-slate-800 truncate text-center leading-tight">${pin.title}</h4>
-                        <div class="mt-1 pt-1 border-t border-slate-100 flex justify-center">
-                            <button onclick="addToItinerary('${pin.id}', '${pin.title}', ${pin.price})" class="w-full text-[9px] bg-sky-600 hover:bg-sky-700 text-white py-0.5 rounded font-semibold shadow-sm">
+                        <div class="mt-1 pt-1 border-t border-slate-200/60 flex justify-center">
+                            <button onclick="addToItinerary('${pin.id}', '${pin.title}', ${pin.price})" class="w-full text-[9px] ${pin.tier==='vip'?'bg-amber-600 hover:bg-amber-700':'bg-sky-600 hover:bg-sky-700'} text-white py-0.5 rounded font-semibold shadow-sm">
                                 + ใส่แพลน
                             </button>
                         </div>
-                        <div class="bubble-tail"></div>
+                        <div class="bubble-tail ${tailStyle}"></div>
                     </div>
                 `;
 
                 const customIcon = L.divIcon({
                     className: 'custom-bubble-pin',
                     html: bubbleHtml,
-                    iconSize: [140, 110],
-                    iconAnchor: [70, 110]
+                    iconSize: [160, 120],
+                    iconAnchor: [80, 120]
                 });
 
                 const marker = L.marker([pin.lat, pin.lng], { icon: customIcon }).addTo(map);
@@ -412,12 +451,9 @@
             });
         }
 
-        // RENDER RECOMMENDATION CARDS
         function renderExploreCards() {
             const container = document.getElementById('attraction-list');
-            const sampleCards = allPinsData.slice(0, 4);
-            
-            container.innerHTML = sampleCards.map(item => `
+            container.innerHTML = allPinsData.slice(0, 4).map(item => `
                 <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 hover:shadow-md transition flex flex-col">
                     <div class="relative h-36 bg-slate-200">
                         <img src="${item.img}" class="w-full h-full object-cover">
@@ -438,7 +474,6 @@
             `).join('');
         }
 
-        // NAVIGATION TABS
         function switchTab(tab) {
             document.getElementById('page-search').classList.add('hidden');
             document.getElementById('page-plan').classList.add('hidden');
@@ -451,12 +486,9 @@
             document.getElementById('page-' + tab).classList.remove('hidden');
             document.getElementById('nav-' + tab).className = "py-5 px-1 tab-active flex items-center space-x-2";
 
-            if (tab === 'search') {
-                setTimeout(() => map.invalidateSize(), 200);
-            }
+            if (tab === 'search') setTimeout(() => map.invalidateSize(), 200);
         }
 
-        // PLANNER & ITINERARY ACTIONS
         function startPlanning(mode) {
             const country = document.getElementById('select-country').value;
             const city = document.getElementById('select-city').value;
