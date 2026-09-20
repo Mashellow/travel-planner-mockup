@@ -26,7 +26,7 @@
             padding: 0 !important;
         }
 
-        /* 🟢 1. Custom Card Pin: ปรับเพิ่มกรอบสีเดียวกับแถบชื่อข้อความด้านล่าง */
+        /* Custom Card Pin บนแผนที่ */
         .custom-map-pin {
             width: 130px;
             border-radius: 12px;
@@ -35,7 +35,7 @@
             transition: all 0.2s ease-in-out;
             cursor: pointer;
             background: var(--pin-bg);
-            border: 2.5px solid var(--pin-bg) !important; /* ใส่กรอบสีเดียวกับข้อความล่าง */
+            border: 2.5px solid var(--pin-bg) !important;
             position: relative;
             padding: 0 !important;
             margin: 0 !important;
@@ -154,6 +154,12 @@
             border-color: #0284c7 !important;
             box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
         }
+
+        .moment-tag-active {
+            background-color: #ec4899 !important;
+            color: #ffffff !important;
+            border-color: #ec4899 !important;
+        }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col">
@@ -199,7 +205,6 @@
 
         <!-- ================= PAGE 1: SEARCH & INTERACTIVE MAP HERO ================= -->
         <section id="page-search" class="space-y-8">
-            
             <div class="bg-slate-900 rounded-3xl p-4 md:p-6 shadow-2xl border border-slate-800 text-white">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                     
@@ -248,7 +253,6 @@
                             <p class="text-xs text-slate-500">คลิกการ์ดบนแผนที่เพื่อดูรายละเอียดและใส่ทริป</p>
                         </div>
                         
-                        <!-- Destination Selection -->
                         <div class="space-y-2">
                             <label class="block text-xs font-semibold text-slate-700">เลือกประเทศและเมือง *</label>
                             <div class="grid grid-cols-2 gap-2">
@@ -389,17 +393,55 @@
             </div>
         </section>
 
-        <!-- ================= PAGE 3: MOMENTS ================= -->
+        <!-- ================= PAGE 3: MOMENTS (ส่วนที่ปรับเพิ่มระบบรีวิว & คอมมูนิตี้แบบจัดเต็ม) ================= -->
         <section id="page-moment" class="hidden space-y-6">
-            <div class="bg-gradient-to-r from-purple-600 via-pink-600 to-rose-500 text-white p-8 rounded-3xl shadow-lg">
-                <h2 class="text-2xl font-bold"><i class="fa-solid fa-camera-retro mr-2"></i>Travel Moments & Reviews</h2>
-                <p class="text-xs text-rose-100 mt-1">แรงบันดาลใจการท่องเที่ยวจากคอมมูนิตี้ผู้ใช้งานจริงทั่วโลก</p>
+            
+            <!-- Hero Banner -->
+            <div class="bg-gradient-to-r from-purple-700 via-pink-600 to-rose-500 text-white p-6 md:p-8 rounded-3xl shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="space-y-2 z-10 max-w-2xl">
+                    <span class="bg-white/20 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-md border border-white/30">
+                        <i class="fa-solid fa-users text-amber-300 mr-1"></i> Travel Community Feed
+                    </span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight">Travel Moments & Experiences</h2>
+                    <p class="text-xs md:text-sm text-rose-100 leading-relaxed">
+                        แชร์ประสบการณ์จริง เทคนิคการเดินทาง และสร้างแรงบันดาลใจจากเพื่อนๆ นักเดินทางทั่วโลก
+                    </p>
+                </div>
+                <button onclick="openCreateMomentModal()" class="z-10 bg-white text-rose-600 hover:bg-rose-50 font-bold px-5 py-3 rounded-2xl text-xs shadow-lg transition flex items-center gap-2 active:scale-95 shrink-0">
+                    <i class="fa-solid fa-pen-to-square text-rose-500"></i>
+                    <span>แชร์ Moment ของคุณ</span>
+                </button>
             </div>
+
+            <!-- Moment Category Filter Bar -->
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3 flex-wrap gap-2">
+                <div class="flex items-center gap-1.5 overflow-x-auto py-1" id="moment-filter-bar">
+                    <button onclick="filterMoments('all')" id="m-btn-all" class="moment-tag-active px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 transition">
+                        🌐 ทั้งหมด
+                    </button>
+                    <button onclick="filterMoments('thailand')" id="m-btn-thailand" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition">
+                        🇹🇭 เที่ยวไทย
+                    </button>
+                    <button onclick="filterMoments('japan')" id="m-btn-japan" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition">
+                        🇯🇵 เที่ยวญี่ปุ่น
+                    </button>
+                    <button onclick="filterMoments('food')" id="m-btn-food" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition">
+                        🍜 สายกิน / สตรีทฟู้ด
+                    </button>
+                    <button onclick="filterMoments('cafe')" id="m-btn-cafe" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition">
+                        ☕ คาเฟ่ / ถ่ายรูป
+                    </button>
+                </div>
+                <span class="text-xs text-slate-400 font-medium" id="moment-count-text">แสดง 8 เรื่องราว</span>
+            </div>
+
+            <!-- Moments Grid Feed -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="moment-feed-container"></div>
         </section>
 
     </main>
 
-    <!-- 🟢 3. MODAL: Full Details Modal (รวบรวมข้อมูลทั้งหมดไว้ในหน้านี้หน้าเดียว ไม่มีปุ่มดูข้อมูลเพิ่มเติมอีกต่อไป) -->
+    <!-- MODAL: Full Details Modal -->
     <div id="modal-full-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col animate-in fade-in zoom-in duration-200">
             <div class="relative h-52 w-full bg-slate-900 shrink-0">
@@ -412,21 +454,17 @@
 
             <div class="p-6 space-y-4 overflow-y-auto flex-grow">
                 <div>
-                    <!-- ชื่อสถานที่ -->
                     <h2 id="modal-full-title" class="text-xl font-bold text-slate-800"></h2>
                     <div class="flex items-center gap-3 mt-1.5 flex-wrap">
-                        <!-- ตำแหน่ง -->
                         <span id="modal-full-location" class="text-xs text-slate-500 font-medium flex items-center gap-1">
                             <i class="fa-solid fa-location-dot text-rose-500"></i> <span></span>
                         </span>
-                        <!-- คะแนนรีวิว -->
                         <span id="modal-full-rating" class="text-xs font-bold text-amber-500 flex items-center gap-1 bg-amber-50 px-2.5 py-0.5 rounded-lg border border-amber-200/60">
                             <i class="fa-solid fa-star"></i> <span></span>
                         </span>
                     </div>
                 </div>
 
-                <!-- เรทราคา -->
                 <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 flex items-center justify-between">
                     <div>
                         <span class="text-[10px] font-semibold text-slate-400 block">เรทราคา / อัตราค่าบริการ</span>
@@ -438,7 +476,6 @@
                     </div>
                 </div>
 
-                <!-- ตำแหน่ง/ที่อยู่ -->
                 <div class="space-y-1">
                     <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                         <i class="fa-solid fa-map-pin text-sky-600"></i> ตำแหน่ง / ที่อยู่
@@ -446,7 +483,6 @@
                     <p id="modal-full-address" class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 leading-relaxed"></p>
                 </div>
 
-                <!-- คำอธิบาย -->
                 <div class="space-y-1">
                     <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                         <i class="fa-solid fa-align-left text-sky-600"></i> คำอธิบายรายละเอียด
@@ -454,7 +490,6 @@
                     <p id="modal-full-description" class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-100"></p>
                 </div>
 
-                <!-- ช่องทางติดต่อ -->
                 <div class="space-y-1">
                     <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                         <i class="fa-solid fa-address-book text-sky-600"></i> ช่องทางติดต่อ
@@ -462,7 +497,6 @@
                     <p id="modal-full-contact" class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 leading-relaxed"></p>
                 </div>
 
-                <!-- รีวิวจากผู้ใช้งานท่านอื่น -->
                 <div class="space-y-2 border-t border-slate-100 pt-3">
                     <h4 class="text-xs font-bold text-slate-800 flex items-center justify-between">
                         <span><i class="fa-solid fa-comments text-sky-600 mr-1.5"></i>รีวิวจากผู้ใช้งาน</span>
@@ -472,10 +506,55 @@
                 </div>
             </div>
 
-            <!-- ปุ่มเพิ่มเข้าทริป -->
             <div class="p-4 bg-slate-50 border-t border-slate-100 shrink-0">
                 <button id="btn-full-add-plan" class="w-full bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs py-3 rounded-2xl font-bold shadow-md transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-plus text-xs"></i> เพิ่มเข้าแพลนทริป
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Create New Moment (จำลองการแชร์ประสบการณ์) -->
+    <div id="modal-create-moment" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 space-y-4 border border-slate-100">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 class="font-bold text-base text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-camera-retro text-rose-500"></i> แชร์ Travel Moment ของคุณ
+                </h3>
+                <button onclick="closeModal('modal-create-moment')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">ชื่อสถานที่ / ทริป</label>
+                    <input id="new-moment-title" type="text" placeholder="เช่น คาเฟ่ลับย่านอารีย์, เดินป่าเชียงดาว..." class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">เมือง / จังหวัด</label>
+                        <input id="new-moment-city" type="text" placeholder="เช่น เชียงใหม่, โตเกียว" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">หมวดหมู่</label>
+                        <select id="new-moment-tag" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200 bg-white">
+                            <option value="thailand">🇹🇭 เที่ยวไทย</option>
+                            <option value="japan">🇯🇵 เที่ยวญี่ปุ่น</option>
+                            <option value="food">🍜 สายกิน / สตรีทฟู้ด</option>
+                            <option value="cafe">☕ คาเฟ่ / ถ่ายรูป</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">เล่าความรู้สึก / ประสบการณ์</label>
+                    <textarea id="new-moment-content" rows="3" placeholder="เขียนรีวิวสั้นๆ แชร์ความประทับใจ..." class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200"></textarea>
+                </div>
+            </div>
+
+            <div class="pt-2">
+                <button onclick="submitNewMoment()" class="w-full bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-bold text-xs py-3 rounded-xl shadow-md transition">
+                    โพสต์แชร์ Moment
                 </button>
             </div>
         </div>
@@ -593,10 +672,143 @@
             }
         ];
 
+        /* 🌟 คลังข้อมูล Moments รีวิวประสบการณ์จากผู้ใช้งานจริง */
+        let momentsData = [
+            {
+                id: 'm1',
+                author: 'Nisha_PhotoTravel',
+                avatar: 'https://i.pravatar.cc/150?img=32',
+                timeAgo: '2 ชั่วโมงที่แล้ว',
+                location: 'โตเกียว, ญี่ปุ่น',
+                tag: 'japan',
+                tagLabel: '🇯🇵 เที่ยวญี่ปุ่น',
+                rating: 5,
+                title: 'แจกพิกัดถ่ายรูปฟูจิยามเช้า มุมมหัศจรรย์คนน้อยมาก! 🗻✨',
+                content: 'ใครไปโตเกียว แนะนำให้นั่งรถไฟเที่ยวแรกมาที่จุดชมวิวชูเรโต (Chureito Pagoda) ครับ แสงเช้ากระทบหิมะบนยอดฟูจิสวยงามตระการตามาก คนยังน้อยถ่ายติดวิวง่ายสุดๆ!',
+                img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600',
+                likes: 245,
+                isLiked: false,
+                hashtags: ['#TokyoTrip', '#FujiView', '#สายถ่ายรูป']
+            },
+            {
+                id: 'm2',
+                author: 'Bank_StreetFood',
+                avatar: 'https://i.pravatar.cc/150?img=12',
+                timeAgo: '5 ชั่วโมงที่แล้ว',
+                location: 'โอซาก้า, ญี่ปุ่น',
+                tag: 'food',
+                tagLabel: '🍜 สายกิน / สตรีทฟู้ด',
+                rating: 5,
+                title: 'ตะลุยกินโดทงโบริ 5 ร้านเด็ดที่ห้ามพลาด! 🐙🍢',
+                content: 'โอซาก้าคือสวรรค์ของนักกินจริงๆ ครับ! ทาโกยากิกรอบนอกนุ่มใน กับคุชิคาซึ (ของทอดไม้) ร้อนๆ แกล้มเครื่องดื่มยามค่ำคืน บรรยากาศป้ายไฟกูลิโกะคึกคักสุดๆ',
+                img: 'https://images.unsplash.com/photo-1565031491910-e57fac031c41?w=600',
+                likes: 189,
+                isLiked: false,
+                hashtags: ['#OsakaEats', '#Dotonbori', '#StreetFood']
+            },
+            {
+                id: 'm3',
+                author: 'Ploy_LuxeEscape',
+                avatar: 'https://i.pravatar.cc/150?img=47',
+                timeAgo: 'เมื่อวานนี้',
+                location: 'ภูเก็ต, ประเทศไทย',
+                tag: 'thailand',
+                tagLabel: '🇹🇭 เที่ยวไทย',
+                rating: 5,
+                title: 'นอนวิลล่าวิวทะเลอันดามัน 360 องศา พักผ่อนแบบฉ่ำๆ 🌊☀️',
+                content: 'ทริปนี้มาให้รางวัลตัวเองที่ Sri Panwa ภูเก็ตค่ะ วิวพระอาทิตย์ตกดินจากพูลวิลล่าส่วนตัวคือที่สุดของความประทับใจ พนักงานบริการดีระดับ 5 ดาวเต็ม 10 ไม่หัก!',
+                img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600',
+                likes: 412,
+                isLiked: true,
+                hashtags: ['#PhuketStaycation', '#SriPanwa', '#LuxuryTravel']
+            },
+            {
+                id: 'm4',
+                author: 'Kittisak_Adventure',
+                avatar: 'https://i.pravatar.cc/150?img=60',
+                timeAgo: '2 วันที่แล้ว',
+                location: 'เชียงใหม่, ประเทศไทย',
+                tag: 'thailand',
+                tagLabel: '🇹🇭 เที่ยวไทย',
+                rating: 5,
+                title: 'ประเพณียี่เป็งลอยโคมเชียงใหม่ งดงามจนต้องมาเห็นด้วยตาซ้ำอีกครั้ง! 🕯️🎆',
+                content: 'บรรยากาศโคมลอยนับพันดวงส่องแสงสว่างบนท้องฟ้าเชียงใหม่ยามค่ำคืน เป็นโมเมนต์ที่โรแมนติกและขลังมาก แนะนำให้จองพื้นที่ล่วงหน้านะครับ',
+                img: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=600',
+                likes: 310,
+                isLiked: false,
+                hashtags: ['#YiPengFestival', '#ChiangMai', '#UnseenThailand']
+            },
+            {
+                id: 'm5',
+                author: 'Mint_CafeHopper',
+                avatar: 'https://i.pravatar.cc/150?img=25',
+                timeAgo: '3 วันที่แล้ว',
+                location: 'เชียงใหม่, ประเทศไทย',
+                tag: 'cafe',
+                tagLabel: '☕ คาเฟ่ / ถ่ายรูป',
+                rating: 4,
+                title: 'เช็กอินกาดหลวง ชิมไส้อั่วร้อนๆ แวะคาเฟ่สไตล์ล้านนามินิมอล 🥐☕',
+                content: 'มาเชียงใหม่นอกจากเดินตลาดวโรรสซื้อของฝากแล้ว แถวริมแม่น้ำปิงยังมีคาเฟ่เก๋ๆ ซ่อนตัวเยอะมาก กาแฟดี เบเกอรี่อร่อย ถ่ายรูปได้ทุกมุมเลยค่ะ',
+                img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=600',
+                likes: 156,
+                isLiked: false,
+                hashtags: ['#ChiangMaiCafe', '#KadLuang', '#CafeHopping']
+            },
+            {
+                id: 'm6',
+                author: 'Tar_TravelCouple',
+                avatar: 'https://i.pravatar.cc/150?img=11',
+                timeAgo: '4 วันที่แล้ว',
+                location: 'เกียวโต, ญี่ปุ่น',
+                tag: 'japan',
+                tagLabel: '🇯🇵 เที่ยวญี่ปุ่น',
+                rating: 5,
+                title: 'เดินชมป่าไผ่อาราชิยามะยามเช้า ไร้ผู้คน เงียบสงบได้ยินเสียงลมพัด 🎍🎋',
+                content: 'ถ้าอยากได้รูปป่าไผ่ Arashiyama แบบไม่ติดคน แนะนำให้ไปถึงตั้งแต่ 7:00 น. ครับ อากาศเย็นสบาย เดินสูดอากาศบริสุทธิ์ได้เต็มปอดเลย',
+                img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600',
+                likes: 275,
+                isLiked: false,
+                hashtags: ['#KyotoTrip', '#Arashiyama', '#JapanTravel']
+            },
+            {
+                id: 'm7',
+                author: 'May_SeaLover',
+                avatar: 'https://i.pravatar.cc/150?img=5',
+                timeAgo: '5 วันที่แล้ว',
+                location: 'ภูเก็ต, ประเทศไทย',
+                tag: 'thailand',
+                tagLabel: '🇹🇭 เที่ยวไทย',
+                rating: 4,
+                title: 'เล่น Surf & ดูพระอาทิตย์ตกที่หาดป่าตอง 🏄‍♀️🌅',
+                content: 'หาดป่าตองตอนเย็นบรรยากาศคึกคักมาก มีกิจกรรมทางน้ำให้เลือกเยอะ ทรายนุ่ม นั่งจิบน้ำมะพร้าวชมแสงเคาท์ดาวน์พระอาทิตย์ลับขอบฟ้า ฟินสุดๆ!',
+                img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600',
+                likes: 198,
+                isLiked: false,
+                hashtags: ['#PatongBeach', '#PhuketLife', '#BeachVibes']
+            },
+            {
+                id: 'm8',
+                author: 'Tawan_SoloBackpack',
+                avatar: 'https://i.pravatar.cc/150?img=68',
+                timeAgo: '1 สัปดาห์ที่แล้ว',
+                location: 'กรุงเทพมหานคร, ประเทศไทย',
+                tag: 'thailand',
+                tagLabel: '🇹🇭 เที่ยวไทย',
+                rating: 5,
+                title: 'พาเพื่อนต่างชาติชมความงามวัดพระแก้ว สถาปัตยกรรมระดับโลก 🏛️✨',
+                content: 'พาเพื่อนชาวฝรั่งเศสมาเที่ยวพระบรมมหาราชวังและวัดพระแก้ว เพื่อนตื่นตาตื่นใจกับความประณีตของสถาปัตยกรรมและกระเบื้องทองคำมาก ถือเป็น Must-visit ของเมืองไทยจริงๆ',
+                img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=600',
+                likes: 340,
+                isLiked: false,
+                hashtags: ['#BangkokTrip', '#GrandPalace', '#ThailandUnseen']
+            }
+        ];
+
         let map;
         let activeMarkers = [];
         let selectedMapCategoryFilter = 'all';
         let selectedCategoryFilter = 'all';
+        let selectedMomentFilter = 'all';
         let activeDay = 1;
         let itineraryData = { 1: [], 2: [], 3: [], 4: [] };
 
@@ -604,6 +816,7 @@
             initLeafletMap();
             onCountryChange();
             renderItinerary();
+            renderMomentsFeed();
         };
 
         function initLeafletMap() {
@@ -755,7 +968,6 @@
                 const theme = categoryThemeMap[pin.category] || categoryThemeMap['attraction'];
                 const priceDisplay = pin.price === 0 ? 'เข้าฟรี' : `${pin.price.toLocaleString()} B`;
 
-                /* 🟢 1. โครงสร้างหมุดการ์ด: ปรับเพิ่มกรอบสีเดียวกับตัวหนังสือล่าง */
                 const pinHtml = `
                     <div class="custom-map-pin" style="--pin-bg: ${theme.hex};">
                         <div class="pin-photo-wrapper">
@@ -776,7 +988,6 @@
 
                 const marker = L.marker([pin.lat, pin.lng], { icon: customIcon }).addTo(map);
 
-                /* 🟢 2. POPUP MAP (ตามรูปที่ 2): แสดงชื่อสถานที่, ตำแหน่ง และเรทราคา */
                 const popupContent = `
                     <div class="w-56 font-sans bg-white overflow-hidden rounded-2xl border-t-4 shadow-xl" style="border-top-color: ${theme.hex}">
                         <div class="relative h-32 w-full overflow-hidden bg-slate-900">
@@ -793,7 +1004,6 @@
                         </div>
 
                         <div class="p-3 space-y-2 bg-white">
-                            <!-- ข้อมูลตำแหน่งและเรทราคา -->
                             <div class="flex items-center justify-between text-[11px] border-b pb-1.5">
                                 <span class="text-slate-500 font-medium truncate flex items-center gap-1">
                                     <i class="fa-solid fa-location-dot text-rose-500"></i> ${pin.city}
@@ -801,7 +1011,6 @@
                                 <span class="font-extrabold text-emerald-600">${priceDisplay}</span>
                             </div>
 
-                            <!-- ปุ่มดูรายละเอียด (กดแล้วไปรูปที่ 3 ทันที) -->
                             <button onclick="openFullDetailModal('${pin.id}')" class="w-full ${theme.bg} hover:opacity-90 text-white text-xs py-2 rounded-xl font-bold shadow-md active:scale-95 transition flex items-center justify-center gap-1.5 mt-1">
                                 <i class="fa-solid fa-eye text-[10px]"></i> ดูรายละเอียด
                             </button>
@@ -814,7 +1023,6 @@
             });
         }
 
-        /* 🟢 3. เปิด MODAL ข้อมูลสมบูรณ์ (ตามรูปที่ 3): แสดงข้อมูลครบในหน้าเดียว ไม่ต้องมีปุ่มดูข้อมูลเพิ่มเติมซ้ำ */
         function openFullDetailModal(pinId) {
             const pin = allPinsData.find(p => p.id === pinId);
             if (!pin) return;
@@ -859,6 +1067,158 @@
             document.getElementById('modal-full-detail').classList.remove('hidden');
         }
 
+        /* 🌟 ฟังก์ชันแสดงผลและจัดการระบบ MOMENTS (รีวิว & คอมมูนิตี้) */
+        function renderMomentsFeed() {
+            const container = document.getElementById('moment-feed-container');
+            let items = momentsData;
+
+            if (selectedMomentFilter !== 'all') {
+                items = items.filter(m => m.tag === selectedMomentFilter);
+            }
+
+            document.getElementById('moment-count-text').innerText = `แสดง ${items.length} เรื่องราว`;
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-slate-400 space-y-2">
+                        <i class="fa-solid fa-camera text-4xl text-slate-300"></i>
+                        <p class="text-xs">ยังไม่มี Moment ในหมวดหมู่นี้ เป็นคนแรกที่โพสต์แชร์เลย!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map(m => `
+                <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200/80 hover:shadow-lg transition duration-300 flex flex-col justify-between group">
+                    <div>
+                        <!-- Header User Info -->
+                        <div class="p-4 flex items-center justify-between border-b border-slate-100">
+                            <div class="flex items-center space-x-3">
+                                <img src="${m.avatar}" class="w-10 h-10 rounded-full object-cover border-2 border-rose-200 shadow-sm" onerror="this.src='https://i.pravatar.cc/150'">
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-800 leading-tight">${m.author}</h4>
+                                    <span class="text-[10px] text-slate-400 font-medium">${m.timeAgo}</span>
+                                </div>
+                            </div>
+                            <span class="text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200/60 px-2.5 py-1 rounded-full">
+                                ${m.tagLabel}
+                            </span>
+                        </div>
+
+                        <!-- Image Banner -->
+                        <div class="relative h-48 w-full bg-slate-100 overflow-hidden">
+                            <img src="${m.img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='${fallbackImg}'">
+                            <span class="absolute bottom-3 left-3 bg-slate-900/70 backdrop-blur-md text-white text-[10px] px-2.5 py-1 rounded-lg flex items-center gap-1 font-medium">
+                                <i class="fa-solid fa-location-dot text-rose-400"></i> ${m.location}
+                            </span>
+                            <span class="absolute top-3 right-3 bg-amber-500 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-md flex items-center gap-1">
+                                <i class="fa-solid fa-star"></i> ${m.rating}.0
+                            </span>
+                        </div>
+
+                        <!-- Review Text Content -->
+                        <div class="p-4 space-y-2">
+                            <h3 class="font-bold text-sm text-slate-800 group-hover:text-rose-600 transition leading-snug">${m.title}</h3>
+                            <p class="text-xs text-slate-600 leading-relaxed line-clamp-3">${m.content}</p>
+
+                            <!-- Hashtags -->
+                            <div class="flex flex-wrap gap-1.5 pt-1">
+                                ${m.hashtags.map(h => `<span class="text-[10px] text-slate-500 bg-slate-100 font-medium px-2 py-0.5 rounded-md">${h}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Action Bar -->
+                    <div class="p-3 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between">
+                        <button onclick="toggleLikeMoment('${m.id}')" class="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl transition ${m.isLiked ? 'text-rose-600 bg-rose-50' : 'text-slate-500 hover:text-rose-600'}">
+                            <i class="${m.isLiked ? 'fa-solid' : 'fa-regular'} fa-heart text-sm"></i>
+                            <span>${m.likes} ไลก์</span>
+                        </button>
+
+                        <button onclick="addToItinerary('m_add', '${m.title}', 0); alert('เพิ่มรายการจาก Moment เข้าตารางทริปเรียบร้อย!');" class="text-[11px] font-bold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200/60 px-3 py-1.5 rounded-xl transition flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-[9px]"></i> ใส่ในตารางทริป
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterMoments(tag) {
+            selectedMomentFilter = tag;
+            const tags = ['all', 'thailand', 'japan', 'food', 'cafe'];
+            tags.forEach(t => {
+                const btn = document.getElementById(`m-btn-${t}`);
+                if (btn) {
+                    if (t === tag) {
+                        btn.className = "moment-tag-active px-4 py-1.5 rounded-full text-xs font-semibold border border-rose-500 transition shadow-sm";
+                    } else {
+                        btn.className = "px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition";
+                    }
+                }
+            });
+            renderMomentsFeed();
+        }
+
+        function toggleLikeMoment(id) {
+            const moment = momentsData.find(m => m.id === id);
+            if (moment) {
+                moment.isLiked = !moment.isLiked;
+                moment.likes += moment.isLiked ? 1 : -1;
+                renderMomentsFeed();
+            }
+        }
+
+        function openCreateMomentModal() {
+            document.getElementById('modal-create-moment').classList.remove('hidden');
+        }
+
+        function submitNewMoment() {
+            const title = document.getElementById('new-moment-title').value.trim();
+            const city = document.getElementById('new-moment-city').value.trim();
+            const tag = document.getElementById('new-moment-tag').value;
+            const content = document.getElementById('new-moment-content').value.trim();
+
+            if (!title || !content) {
+                alert('กรุณากรอกชื่อสถานที่และรีวิวประสบการณ์ให้ครบถ้วนนะครับ');
+                return;
+            }
+
+            const tagLabels = {
+                'thailand': '🇹🇭 เที่ยวไทย',
+                'japan': '🇯🇵 เที่ยวญี่ปุ่น',
+                'food': '🍜 สายกิน / สตรีทฟู้ด',
+                'cafe': '☕ คาเฟ่ / ถ่ายรูป'
+            };
+
+            const newMoment = {
+                id: 'm_' + Date.now(),
+                author: 'You (นักเดินทาง)',
+                avatar: 'https://i.pravatar.cc/150?img=65',
+                timeAgo: 'เมื่อสักครู่นี้',
+                location: city || 'ประเทศไทย',
+                tag: tag,
+                tagLabel: tagLabels[tag] || '🇹🇭 เที่ยวไทย',
+                rating: 5,
+                title: title,
+                content: content,
+                img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600',
+                likes: 1,
+                isLiked: true,
+                hashtags: ['#MyTrip', '#LetsUPlan']
+            };
+
+            momentsData.unshift(newMoment);
+            closeModal('modal-create-moment');
+            renderMomentsFeed();
+
+            // Clear inputs
+            document.getElementById('new-moment-title').value = '';
+            document.getElementById('new-moment-city').value = '';
+            document.getElementById('new-moment-content').value = '';
+
+            alert('แชร์ Moment ของคุณเรียบร้อยแล้ว!');
+        }
+
         function closeModal(modalId) {
             document.getElementById(modalId).classList.add('hidden');
         }
@@ -876,6 +1236,7 @@
             document.getElementById('nav-' + tab).className = "py-5 px-1 tab-active flex items-center space-x-2";
 
             if (tab === 'search') setTimeout(() => map.invalidateSize(), 200);
+            if (tab === 'moment') renderMomentsFeed();
         }
 
         function startPlanning(mode) {
@@ -906,7 +1267,6 @@
             itineraryData[activeDay].push({ id, title, price });
             renderItinerary();
             updateBudgetTracker();
-            alert(`เพิ่ม "${title}" ลงในแผน DAY ${activeDay} เรียบร้อยแล้ว!`);
         }
 
         function removeFromItinerary(index) {
@@ -920,7 +1280,7 @@
             const items = itineraryData[activeDay] || [];
 
             if (items.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">ยังไม่มีกิจกรรมในวันนี้ เลือกเพิ่มจากการ์ดบนแผนที่ได้เลย!</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-400 text-center py-8">ยังไม่มีกิจกรรมในวันนี้ เลือกเพิ่มจากการ์ดบนแผนที่หรือ Moments ได้เลย!</p>`;
                 return;
             }
 
