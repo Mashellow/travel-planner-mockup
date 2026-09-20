@@ -18,93 +18,6 @@
         body { font-family: 'Prompt', sans-serif; }
         .tab-active { border-bottom: 3px solid #0284c7; color: #0284c7; font-weight: 600; }
         
-        /* Custom Leaflet DivIcon reset */
-        .leaflet-div-icon, .custom-pin-wrapper {
-            background: transparent !important;
-            border: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        .custom-map-pin {
-            width: 130px;
-            border-radius: 12px;
-            overflow: hidden !important;
-            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35);
-            transition: all 0.2s ease-in-out;
-            cursor: pointer;
-            background: var(--pin-bg);
-            border: 2.5px solid var(--pin-bg) !important;
-            position: relative;
-            padding: 0 !important;
-            margin: 0 !important;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .custom-map-pin:hover {
-            transform: scale(1.1) translateY(-5px);
-            z-index: 9999 !important;
-            box-shadow: 0 12px 25px rgba(15, 23, 42, 0.45);
-        }
-
-        .pin-photo-wrapper {
-            position: relative;
-            width: 100% !important;
-            height: 75px !important;
-            background: #cbd5e1;
-            overflow: hidden !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            display: block;
-            border: none !important;
-        }
-
-        .pin-photo {
-            width: 100% !important;
-            height: 100% !important;
-            object-fit: cover !important;
-            display: block !important;
-            border: none !important;
-        }
-
-        .pin-price-tag {
-            position: absolute;
-            bottom: 4px;
-            right: 4px;
-            background: rgba(15, 23, 42, 0.85);
-            color: #ffffff;
-            font-size: 9.5px;
-            font-weight: 700;
-            padding: 2px 7px;
-            border-radius: 8px;
-            line-height: 1.2;
-            z-index: 2;
-        }
-
-        .pin-title-box {
-            background: var(--pin-bg);
-            color: #ffffff;
-            padding: 5px 6px;
-            font-size: 10.5px;
-            font-weight: 700;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            line-height: 1.2;
-        }
-
-        .pin-pointer {
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-top: 8px solid var(--pin-bg);
-            margin: 0 auto;
-            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
-        }
-
         .cat-pill-active {
             background-color: #0284c7 !important;
             color: #ffffff !important;
@@ -116,6 +29,15 @@
             background-color: #ec4899 !important;
             color: #ffffff !important;
             border-color: #ec4899 !important;
+        }
+
+        /* ซ่อน Scrollbar ของหมวดหมู่แต่ยังเลื่อนได้ */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
@@ -181,11 +103,10 @@
                     <div class="lg:col-span-5 bg-white text-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
                         <h3 class="font-bold text-lg text-slate-800">ค้นหาจุดหมาย & วางแผน</h3>
                         <div class="space-y-2">
-                            <select id="select-country" onchange="onCountryChange()" class="w-full px-2.5 py-2 border rounded-xl text-xs bg-slate-50">
+                            <select id="select-country" class="w-full px-2.5 py-2 border rounded-xl text-xs bg-slate-50">
                                 <option value="ประเทศไทย">🇹🇭 ประเทศไทย</option>
                                 <option value="ญี่ปุ่น">🇯🇵 ญี่ปุ่น</option>
                             </select>
-                            <select id="select-city" onchange="onCityChange()" class="w-full px-2.5 py-2 border rounded-xl text-xs bg-slate-50"></select>
                         </div>
                     </div>
                 </div>
@@ -199,7 +120,7 @@
             </div>
         </section>
 
-        <!-- PAGE 3: MOMENTS (ส่วนที่อัปเดตระบบลิสต์ใหม่ + อัปโหลดรูป/วิดีโอ) -->
+        <!-- PAGE 3: MOMENTS -->
         <section id="page-moment" class="space-y-6">
             
             <!-- Hero Banner -->
@@ -219,29 +140,56 @@
                 </button>
             </div>
 
-            <!-- Moment Category Filter Bar (ปรับปรุง Tag ตามที่ขอ) -->
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3 flex-wrap gap-2">
-                <div class="flex items-center gap-1.5 overflow-x-auto py-1" id="moment-filter-bar">
-                    <button onclick="filterMoments('all')" id="m-btn-all" class="moment-tag-active px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 transition">
+            <!-- SEARCH BAR (ฝั่งริมซ้าย ด้านบน LIST) & FILTER BAR -->
+            <div class="space-y-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                <!-- ช่องค้นหาฝั่งริมซ้าย -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                    <div class="relative w-full sm:w-80">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input id="moment-search-input" type="text" oninput="renderMomentsFeed()" placeholder="ค้นหาทริป, สถานที่, หรือคีย์เวิร์ด..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 focus:bg-white transition">
+                    </div>
+                    <span class="text-xs text-slate-400 font-medium self-end sm:self-center shrink-0" id="moment-count-text">แสดง 0 เรื่องราว</span>
+                </div>
+
+                <!-- Tag List (ครบทุกหมวดหมู่ที่ขอ) -->
+                <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1" id="moment-filter-bar">
+                    <button onclick="selectCategory('all')" id="m-btn-all" class="moment-tag-active px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 transition shrink-0">
                         🌐 ทั้งหมด
                     </button>
-                    <button onclick="filterMoments('food')" id="m-btn-food" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition">
+                    <button onclick="selectCategory('food')" id="m-btn-food" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         🍜 สายกิน / สตรีทฟู้ด
                     </button>
-                    <button onclick="filterMoments('cafe')" id="m-btn-cafe" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition">
+                    <button onclick="selectCategory('cafe')" id="m-btn-cafe" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         ☕ คาเฟ่ / ถ่ายรูป
                     </button>
-                    <button onclick="filterMoments('hidden')" id="m-btn-hidden" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition">
+                    <button onclick="selectCategory('hidden')" id="m-btn-hidden" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         🕵️‍♂️ สถานที่ลับ
                     </button>
-                    <button onclick="filterMoments('sea')" id="m-btn-sea" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition">
+                    <button onclick="selectCategory('sea')" id="m-btn-sea" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         🌊 ทะเล
                     </button>
-                    <button onclick="filterMoments('mountain')" id="m-btn-mountain" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition">
+                    <button onclick="selectCategory('mountain')" id="m-btn-mountain" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         ⛰️ ภูเขา
                     </button>
+                    <button onclick="selectCategory('camping')" id="m-btn-camping" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
+                        🏕️ แคมป์ปิ้ง / สายลุย
+                    </button>
+                    <button onclick="selectCategory('mu')" id="m-btn-mu" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
+                        🔮 สายมู / วัฒนธรรม
+                    </button>
+                    <button onclick="selectCategory('pet')" id="m-btn-pet" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
+                        🐕 Pet-Friendly
+                    </button>
+                    <button onclick="selectCategory('solo')" id="m-btn-solo" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
+                        🎒 Solo Traveler
+                    </button>
+                    <button onclick="selectCategory('stay')" id="m-btn-stay" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
+                        🏨 ที่พัก / โรงแรม
+                    </button>
+                    <button onclick="selectCategory('activity')" id="m-btn-activity" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
+                        🎯 กิจกรรม
+                    </button>
                 </div>
-                <span class="text-xs text-slate-400 font-medium" id="moment-count-text">แสดง 0 เรื่องราว</span>
             </div>
 
             <!-- Moments Grid Feed -->
@@ -250,7 +198,7 @@
 
     </main>
 
-    <!-- MODAL: Create New Moment (เพิ่มช่องทางอัปโหลดรูปภาพ / วิดีโอ) -->
+    <!-- MODAL: Create New Moment -->
     <div id="modal-create-moment" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b pb-3">
@@ -265,7 +213,7 @@
             <div class="space-y-3">
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">ชื่อสถานที่ / ทริป *</label>
-                    <input id="new-moment-title" type="text" placeholder="เช่น จุดชมวิวลับเกาะล้าน, ชาบูเจ้าเด็ด..." class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200">
+                    <input id="new-moment-title" type="text" placeholder="เช่น รีวิวที่พักริมทะเล, วัดสวยเชียงใหม่..." class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200">
                 </div>
                 
                 <div class="grid grid-cols-2 gap-2">
@@ -281,6 +229,12 @@
                             <option value="hidden">🕵️‍♂️ สถานที่ลับ</option>
                             <option value="sea">🌊 ทะเล</option>
                             <option value="mountain">⛰️ ภูเขา</option>
+                            <option value="camping">🏕️ แคมป์ปิ้ง / สายลุย</option>
+                            <option value="mu">🔮 สายมู / วัฒนธรรม</option>
+                            <option value="pet">🐕 Pet-Friendly</option>
+                            <option value="solo">🎒 Solo Traveler</option>
+                            <option value="stay">🏨 ที่พัก / โรงแรม</option>
+                            <option value="activity">🎯 กิจกรรม</option>
                         </select>
                     </div>
                 </div>
@@ -292,7 +246,6 @@
                     </label>
                     <input id="new-moment-file" type="file" accept="image/*,video/*" onchange="handleMediaPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-rose-50 file:text-rose-600 hover:file:bg-rose-100 cursor-pointer border rounded-xl p-1 border-slate-200">
                     
-                    <!-- ส่วนแสดงพรีวิว Media -->
                     <div id="media-preview-container" class="mt-2 hidden relative rounded-2xl overflow-hidden max-h-48 border border-slate-200 bg-slate-900">
                         <div id="media-preview-content"></div>
                         <button onclick="clearMediaPreview()" class="absolute top-2 right-2 bg-slate-900/70 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center hover:bg-slate-900">
@@ -319,9 +272,9 @@
     <script>
         let selectedMomentFilter = 'all';
         let uploadedMediaUrl = null;
-        let uploadedMediaType = 'image'; // 'image' หรือ 'video'
+        let uploadedMediaType = 'image';
 
-        // คลังข้อมูล Moments ตัวอย่าง (ปรับหมวดหมู่ตามลิสต์ใหม่)
+        // คลังข้อมูล Moments ครบทุกหมวดหมู่ใหม่
         let momentsData = [
             {
                 id: 'm1',
@@ -331,7 +284,6 @@
                 location: 'โตเกียว, ญี่ปุ่น',
                 tag: 'hidden',
                 tagLabel: '🕵️‍♂️ สถานที่ลับ',
-                rating: 5,
                 title: 'แจกพิกัดมุมถ่ายรูปฟูจิยามเช้า ซอยลับไร้ผู้คน! 🗻✨',
                 content: 'ตรอกเล็กๆ ย่าน Shimoyoshida วิวเห็นภูเขาไฟฟูจิตรงกลางถนนสวยแบบตะโกน คนน้อยมากไม่ต้องแย่งกันถ่ายรูปครับ',
                 mediaType: 'image',
@@ -348,7 +300,6 @@
                 location: 'โอซาก้า, ญี่ปุ่น',
                 tag: 'food',
                 tagLabel: '🍜 สายกิน / สตรีทฟู้ด',
-                rating: 5,
                 title: 'ตะลุยกินโดทงโบริ 5 ร้านเด็ดสตรีทฟู้ด! 🐙🍢',
                 content: 'ทาโกยากิกรอบนอกนุ่มใน คุชิคาซึร้อนๆ แกล้มเครื่องดื่มยามค่ำคืน บรรยากาศป้ายไฟกูลิโกะคึกคักสุดๆ',
                 mediaType: 'image',
@@ -363,16 +314,15 @@
                 avatar: 'https://i.pravatar.cc/150?img=47',
                 timeAgo: 'เมื่อวานนี้',
                 location: 'ภูเก็ต, ประเทศไทย',
-                tag: 'sea',
-                tagLabel: '🌊 ทะเล',
-                rating: 5,
-                title: 'พักผ่อนริมหาดป่าตอง ชมวิวทะเลอันดามันแบบ 360 องศา 🌊☀️',
-                content: 'ทริปนี้มาชาร์จแบตที่ภูเก็ต น้ำทะเลใสมาก พระอาทิตย์ตกดินบรรยากาศดีสุดๆ เหมาะกับการมาพักผ่อนสุดๆ ค่ะ',
+                tag: 'stay',
+                tagLabel: '🏨 ที่พัก / โรงแรม',
+                title: 'นอนวิลล่าวิวทะเลอันดามัน 360 องศา พักผ่อนแบบฉ่ำๆ 🌊🏨',
+                content: 'รีสอร์ตสวยมาก มีสระว่ายน้ำอินฟินิตี้พูลมองเห็นวิวทะเลแบบพาโนรามา บริการระดับ 5 ดาว ประทับใจมาก',
                 mediaType: 'image',
-                mediaUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600',
+                mediaUrl: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600',
                 likes: 412,
                 isLiked: true,
-                hashtags: ['#PhuketBeach', '#SeaSandSun', '#เที่ยวทะเล']
+                hashtags: ['#PhuketHotel', '#ResortVibes', '#ที่พักสวย']
             },
             {
                 id: 'm4',
@@ -380,33 +330,63 @@
                 avatar: 'https://i.pravatar.cc/150?img=60',
                 timeAgo: '2 วันที่แล้ว',
                 location: 'เชียงใหม่, ประเทศไทย',
-                tag: 'mountain',
-                tagLabel: '⛰️ ภูเขา',
-                rating: 5,
+                tag: 'camping',
+                tagLabel: '🏕️ แคมป์ปิ้ง / สายลุย',
                 title: 'กางเต็นท์ดูดาวบนยอดดอยหลวงเชียงดาว อากาศ 15 องศา! ⛺🌌',
-                content: 'สัมผัสทะเลหมอกยามเช้าและทะเลดาวค่ำคืน สายภูเขาต้องมาพิชิตให้ได้สักครั้งในชีวิตครับ',
+                content: 'สัมผัสทะเลหมอกยามเช้าและทะเลดาวค่ำคืน สายภูเขาและสายแคมป์ปิ้งต้องมาพิชิตให้ได้สักครั้งในชีวิตครับ',
                 mediaType: 'image',
                 mediaUrl: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=600',
                 likes: 310,
                 isLiked: false,
-                hashtags: ['#ChiangDao', '#MountainVibes', '#สายภูเขา']
+                hashtags: ['#ChiangDao', '#CampingLife', '#สายลุย']
             },
             {
                 id: 'm5',
-                author: 'Mint_CafeHopper',
-                avatar: 'https://i.pravatar.cc/150?img=25',
+                author: 'Aom_MuTelu',
+                avatar: 'https://i.pravatar.cc/150?img=20',
                 timeAgo: '3 วันที่แล้ว',
-                location: 'กรุงเทพมหานคร, ประเทศไทย',
-                tag: 'cafe',
-                tagLabel: '☕ คาเฟ่ / ถ่ายรูป',
-                rating: 4,
-                title: 'เช็กอินคาเฟ่สไตล์มินิมอลย่านอารีย์ แสงสวยถ่ายรูปปัง 🥐☕',
-                content: 'กาแฟหอมกลมกล่อม มีมุมถ่ายรูปทั้ง Indoor และ Outdoor สาย คาเฟ่/ถ่ายรูป ห้ามพลาดเด็ดขาด!',
+                location: 'ฉะเชิงเทรา, ประเทศไทย',
+                tag: 'mu',
+                tagLabel: '🔮 สายมู / วัฒนธรรม',
+                title: 'ไหว้พระพิฆเนศองค์ใหญ่ ขอพรเรื่องงานประสบความสำเร็จ! 🕉️✨',
+                content: 'มาขอพรที่วัดสมานรัตนาราม บรรยากาศสงบร่มรื่น มีจุดขอพรและทำบุญหลายจุด สายมูแนะนำให้มาเช็กอินครับ',
                 mediaType: 'image',
-                mediaUrl: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=600',
-                likes: 156,
+                mediaUrl: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?w=600',
+                likes: 278,
                 isLiked: false,
-                hashtags: ['#CafeAri', '#CafeHopping', '#ถ่ายรูปคาเฟ่']
+                hashtags: ['#สายมู', '#ไหว้พระขอพร', '#วัฒนธรรม']
+            },
+            {
+                id: 'm6',
+                author: 'Pang_DogLover',
+                avatar: 'https://i.pravatar.cc/150?img=16',
+                timeAgo: '4 วันที่แล้ว',
+                location: 'ชลบุรี, ประเทศไทย',
+                tag: 'pet',
+                tagLabel: '🐕 Pet-Friendly',
+                title: 'พาน้องหมาวิ่งเล่นริมหาดบางแสน คาเฟ่ Pet-Friendly ต้อนรับดีมาก 🐾🏖️',
+                content: 'พาน้องโกลเด้นมาเที่ยวทะเลครั้งแรก คาเฟ่มีพื้นที่ให้สัตว์เลี้ยงวิ่งเล่น มีชามน้ำและขนมบริการ น่ารักสุดๆ',
+                mediaType: 'image',
+                mediaUrl: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600',
+                likes: 520,
+                isLiked: true,
+                hashtags: ['#PetFriendly', '#พาน้องเที่ยว', '#บางแสน']
+            },
+            {
+                id: 'm7',
+                author: 'Top_Diver',
+                avatar: 'https://i.pravatar.cc/150?img=33',
+                timeAgo: '5 วันที่แล้ว',
+                location: 'กระบี่, ประเทศไทย',
+                tag: 'activity',
+                tagLabel: '🎯 กิจกรรม',
+                title: 'ทริปดำน้ำ Scuba ดูปะการังและเต่าทะเลเกาะพีพี 🦭🤿',
+                content: 'ประสบการณ์ดำน้ำลึกสุดตื่นเต้น เจอเต่าทะเลตัวใหญ่และฝูงปลาการ์ตูนเยอะมาก ทีมครูฝึกดูแลความปลอดภัยดีเยี่ยม!',
+                mediaType: 'image',
+                mediaUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600',
+                likes: 198,
+                isLiked: false,
+                hashtags: ['#ScubaDiving', '#กิจกรรมแอดเวนเจอร์', '#กระบี่']
             }
         ];
 
@@ -416,10 +396,24 @@
 
         function renderMomentsFeed() {
             const container = document.getElementById('moment-feed-container');
+            const searchKeyword = document.getElementById('moment-search-input')?.value.toLowerCase().trim() || '';
+
             let items = momentsData;
 
+            // 1. กรองตาม Category Tag
             if (selectedMomentFilter !== 'all') {
                 items = items.filter(m => m.tag === selectedMomentFilter);
+            }
+
+            // 2. กรองตามคำค้นหา (Search Keyword)
+            if (searchKeyword) {
+                items = items.filter(m => 
+                    m.title.toLowerCase().includes(searchKeyword) ||
+                    m.content.toLowerCase().includes(searchKeyword) ||
+                    m.location.toLowerCase().includes(searchKeyword) ||
+                    m.author.toLowerCase().includes(searchKeyword) ||
+                    m.hashtags.some(h => h.toLowerCase().includes(searchKeyword))
+                );
             }
 
             document.getElementById('moment-count-text').innerText = `แสดง ${items.length} เรื่องราว`;
@@ -427,21 +421,19 @@
             if (items.length === 0) {
                 container.innerHTML = `
                     <div class="col-span-full py-12 text-center text-slate-400 space-y-2">
-                        <i class="fa-solid fa-folder-open text-4xl text-slate-300"></i>
-                        <p class="text-xs">ยังไม่มี Moment ในหมวดหมู่นี้ เป็นคนแรกที่โพสต์แชร์เลย!</p>
+                        <i class="fa-solid fa-magnifying-glass text-4xl text-slate-300"></i>
+                        <p class="text-xs">ไม่พบ Moment ที่ค้นหา หรือยังไม่มีข้อมูลในหมวดหมู่นี้</p>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = items.map(m => {
-                // ตรวจสอบการแสดงผลระหว่าง Media รูปภาพ หรือ วิดีโอ
                 let mediaHtml = '';
                 if (m.mediaType === 'video') {
                     mediaHtml = `
                         <video controls class="w-full h-full object-cover">
                             <source src="${m.mediaUrl}">
-                            เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
                         </video>
                     `;
                 } else {
@@ -466,7 +458,6 @@
                                 </span>
                             </div>
 
-                            <!-- Media Container (Image / Video) -->
                             <div class="relative h-52 w-full bg-slate-900 overflow-hidden">
                                 ${mediaHtml}
                                 <span class="absolute bottom-3 left-3 bg-slate-900/70 backdrop-blur-md text-white text-[10px] px-2.5 py-1 rounded-lg flex items-center gap-1 font-medium">
@@ -499,16 +490,16 @@
             }).join('');
         }
 
-        function filterMoments(tag) {
+        function selectCategory(tag) {
             selectedMomentFilter = tag;
-            const tags = ['all', 'food', 'cafe', 'hidden', 'sea', 'mountain'];
+            const tags = ['all', 'food', 'cafe', 'hidden', 'sea', 'mountain', 'camping', 'mu', 'pet', 'solo', 'stay', 'activity'];
             tags.forEach(t => {
                 const btn = document.getElementById(`m-btn-${t}`);
                 if (btn) {
                     if (t === tag) {
-                        btn.className = "moment-tag-active px-4 py-1.5 rounded-full text-xs font-semibold border border-rose-500 transition shadow-sm";
+                        btn.className = "moment-tag-active px-3.5 py-1.5 rounded-full text-xs font-semibold border border-rose-500 transition shadow-sm shrink-0";
                     } else {
-                        btn.className = "px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition";
+                        btn.className = "px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0";
                     }
                 }
             });
@@ -524,7 +515,6 @@
             }
         }
 
-        /* ฟังก์ชันจัดการไฟล์อัปโหลดรูปภาพ / วิดีโอ */
         function handleMediaPreview(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -532,7 +522,6 @@
             const previewContainer = document.getElementById('media-preview-container');
             const previewContent = document.getElementById('media-preview-content');
             
-            // สร้าง Temporary URL เพื่อพรีวิวไฟล์ทันที
             uploadedMediaUrl = URL.createObjectURL(file);
 
             if (file.type.startsWith('video/')) {
@@ -579,7 +568,13 @@
                 'cafe': '☕ คาเฟ่ / ถ่ายรูป',
                 'hidden': '🕵️‍♂️ สถานที่ลับ',
                 'sea': '🌊 ทะเล',
-                'mountain': '⛰️ ภูเขา'
+                'mountain': '⛰️ ภูเขา',
+                'camping': '🏕️ แคมป์ปิ้ง / สายลุย',
+                'mu': '🔮 สายมู / วัฒนธรรม',
+                'pet': '🐕 Pet-Friendly',
+                'solo': '🎒 Solo Traveler',
+                'stay': '🏨 ที่พัก / โรงแรม',
+                'activity': '🎯 กิจกรรม'
             };
 
             const mediaUrl = uploadedMediaUrl || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600';
@@ -592,7 +587,6 @@
                 location: city || 'ประเทศไทย',
                 tag: tag,
                 tagLabel: tagLabels[tag] || '🏖️ ท่องเที่ยว',
-                rating: 5,
                 title: title,
                 content: content || 'แบ่งปันประสบการณ์การเดินทางประทับใจ',
                 mediaType: uploadedMediaType,
@@ -607,12 +601,11 @@
             clearMediaPreview();
             renderMomentsFeed();
 
-            // Reset Input Fields
             document.getElementById('new-moment-title').value = '';
             document.getElementById('new-moment-city').value = '';
             document.getElementById('new-moment-content').value = '';
 
-            alert('โพสต์แชร์ Moment พร้อมสื่อของคุณเรียบร้อยแล้ว!');
+            alert('โพสต์แชร์ Moment ของคุณเรียบร้อยแล้ว!');
         }
 
         function closeModal(modalId) {
