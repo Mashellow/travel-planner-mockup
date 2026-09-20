@@ -24,36 +24,39 @@
             border: none !important;
         }
 
-        /* 🟢 Custom Card Pin: รูปภาพเต็มช่องชิดขอบ ไร้ช่องว่างคั่น */
+        /* 🟢 Custom Card Pin: รูปภาพเต็มขอบด้านบนทันที ไร้ช่องว่าง/แถบสีคั่น */
         .custom-map-pin {
             width: 130px;
-            border-radius: 16px;
-            overflow: hidden !important; /* บังคับตัดขอบภาพเต็มช่อง */
-            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.35);
-            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-radius: 14px;
+            overflow: hidden !important; /* บังคับตัดขอบมุมโค้งของการ์ด */
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35);
+            transition: all 0.2s ease-in-out;
             cursor: pointer;
             background: var(--pin-bg);
-            border: 3.5px solid var(--pin-bg); /* กรอบสีหนารอบการ์ด */
+            border: 3px solid var(--pin-bg); /* กรอบสีหนารอบการ์ด */
             position: relative;
             padding: 0 !important;
             margin: 0 !important;
+            display: flex;
+            flex-direction: column;
         }
 
         .custom-map-pin:hover {
-            transform: scale(1.12) translateY(-6px);
+            transform: scale(1.1) translateY(-5px);
             z-index: 9999 !important;
-            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.45);
+            box-shadow: 0 12px 25px rgba(15, 23, 42, 0.45);
         }
 
-        /* กล่องใส่รูปภาพเต็มพื้นที่ส่วนบน */
+        /* กล่องใส่รูปภาพ แนบชิดขอบบน 100% */
         .pin-photo-wrapper {
             position: relative;
             width: 100%;
-            height: 72px; /* ความสูงภาพพอดีการ์ด */
+            height: 75px;
             background: #cbd5e1;
             overflow: hidden;
-            margin: 0;
-            padding: 0;
+            margin: 0 !important;
+            padding: 0 !important;
+            display: block;
         }
 
         .pin-photo {
@@ -61,7 +64,9 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            border: none;
+            border: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
         /* แท็กแสดงราคาตรงมุมขวาล่างของรูปภาพ */
@@ -73,8 +78,8 @@
             color: #ffffff;
             font-size: 9.5px;
             font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 12px;
+            padding: 2px 7px;
+            border-radius: 10px;
             letter-spacing: 0.2px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.4);
             line-height: 1.2;
@@ -84,7 +89,7 @@
         .pin-title-box {
             background: var(--pin-bg);
             color: #ffffff;
-            padding: 5px 6px;
+            padding: 4px 5px;
             font-size: 10.5px;
             font-weight: 700;
             text-align: center;
@@ -100,9 +105,9 @@
             height: 0;
             border-left: 8px solid transparent;
             border-right: 8px solid transparent;
-            border-top: 9px solid var(--pin-bg);
+            border-top: 8px solid var(--pin-bg);
             margin: -1px auto 0 auto;
-            filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.2));
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
         }
 
         /* Leaflet Popup Override */
@@ -211,7 +216,7 @@
                             </span>
                         </div>
 
-                        <!-- Dropdown กรองหมวดหมู่เหนือขอบแผนที่ -->
+                        <!-- Dropdown กรองหมวดหมู่ (ลบวงเล็บสีออกแล้ว) -->
                         <div class="flex items-center justify-between bg-slate-800/90 p-3 rounded-2xl border border-slate-700 shadow-md">
                             <label for="map-category-select" class="text-xs font-bold text-slate-200 flex items-center gap-2">
                                 <i class="fa-solid fa-filter text-sky-400"></i>
@@ -219,10 +224,10 @@
                             </label>
                             <select id="map-category-select" onchange="onMapCategorySelectChange(this.value)" class="bg-slate-900 text-slate-100 text-xs font-semibold px-3.5 py-2 rounded-xl border border-slate-600 focus:ring-2 focus:ring-sky-500 outline-none cursor-pointer">
                                 <option value="all">🌐 ทั้งหมด</option>
-                                <option value="attraction">🏖️ ท่องเที่ยว (สีฟ้า)</option>
-                                <option value="hotel">🏨 ที่พัก (สีส้ม/ทอง)</option>
-                                <option value="activity">🏄‍♂️ กิจกรรม (สีเขียว)</option>
-                                <option value="shop">🛍️ ร้านค้า/ของฝาก (สีม่วง)</option>
+                                <option value="attraction">🏖️ ท่องเที่ยว</option>
+                                <option value="hotel">🏨 ที่พัก</option>
+                                <option value="activity">🏄‍♂️ กิจกรรม</option>
+                                <option value="shop">🛍️ ร้านค้า/ของฝาก</option>
                             </select>
                         </div>
 
@@ -392,7 +397,7 @@
 
     </main>
 
-    <!-- 🟢 MODAL 1: Quick Details Modal -->
+    <!-- MODAL 1: Quick Details Modal -->
     <div id="modal-quick-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden border border-slate-100 animate-in fade-in zoom-in duration-200">
             <div class="relative h-44 w-full bg-slate-900">
@@ -428,7 +433,7 @@
         </div>
     </div>
 
-    <!-- 🟢 MODAL 2: Full Details Modal -->
+    <!-- MODAL 2: Full Details Modal -->
     <div id="modal-full-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col animate-in fade-in zoom-in duration-200">
             <div class="relative h-52 w-full bg-slate-900 shrink-0">
@@ -538,7 +543,6 @@
             'ลอสแอนเจลิส (Los Angeles)': { lat: 34.052, lng: -118.243, zoom: 10 }
         };
 
-        /* 🟢 การแบ่งกลุ่มสีตามรูปที่ 2 */
         const categoryThemeMap = {
             'attraction': { bg: 'bg-sky-600', text: 'text-sky-600', hex: '#0284c7', name: 'ท่องเที่ยว' },
             'hotel': { bg: 'bg-amber-500', text: 'text-amber-500', hex: '#f59e0b', name: 'ที่พัก' },
@@ -733,7 +737,7 @@
             }).join('');
         }
 
-        /* 🟢 REFRESH MAP PINS - หมุดการ์ดภาพเต็มช่อง ไร้ขอบคั่น */
+        /* 🟢 REFRESH MAP PINS - รูปภาพแนบชิดขอบบนทันที */
         function refreshMapPins() {
             activeMarkers.forEach(m => map.removeLayer(m));
             activeMarkers = [];
@@ -763,7 +767,7 @@
                 const theme = categoryThemeMap[pin.category] || categoryThemeMap['attraction'];
                 const priceDisplay = pin.price === 0 ? 'เข้าฟรี' : `${pin.price.toLocaleString()} B`;
 
-                /* โครงสร้างหมุดการ์ด: รูปภาพเต็มส่วนบน ชิดขอบสีการ์ด ไม่เว้นช่องว่าง */
+                /* โครงสร้างหมุดการ์ด: รูปภาพแนบชิดกรอบบนสุด ไร้ช่องว่างคั่น */
                 const pinHtml = `
                     <div class="custom-map-pin" style="--pin-bg: ${theme.hex}; border-color: ${theme.hex};">
                         <div class="pin-photo-wrapper">
@@ -818,7 +822,7 @@
             });
         }
 
-        /* 🟢 เปิดป๊อปอัพรายละเอียด */
+        /* เปิดป๊อปอัพรายละเอียด */
         function openQuickDetailModal(pinId) {
             const pin = allPinsData.find(p => p.id === pinId);
             if (!pin) return;
