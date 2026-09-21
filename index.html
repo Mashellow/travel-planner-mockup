@@ -705,6 +705,20 @@
                     </div>
                 </div>
 
+                <!-- เพิ่มระบบให้คะแนนรีวิวสถานที่ใน Moment -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
+                        <i class="fa-solid fa-star text-amber-400 mr-1"></i> ให้คะแนนรีวิวสถานที่ (Rating)
+                    </label>
+                    <select id="new-moment-rating" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200 bg-white font-medium">
+                        <option value="5">⭐⭐⭐⭐⭐ 5.0 (ประทับใจมากที่สุด)</option>
+                        <option value="4">⭐⭐⭐⭐ 4.0 (ดีมาก)</option>
+                        <option value="3">⭐⭐⭐ 3.0 (ปานกลาง / พอใช้)</option>
+                        <option value="2">⭐⭐ 2.0 (ควรปรับปรุง)</option>
+                        <option value="1">⭐ 1.0 (ไม่ประทับใจ)</option>
+                    </select>
+                </div>
+
                 <div>
                     <label class="block text-xs font-semibold text-slate-700 mb-1">
                         <i class="fa-solid fa-photo-film text-rose-500 mr-1"></i> อัปโหลดรูปภาพ หรือ วิดีโอ
@@ -720,7 +734,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 mb-1">เล่าความรู้สึก / ประสบการณ์</label>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">เล่าความรู้สึก / ประสบการณ์ (รีวิว)</label>
                     <textarea id="new-moment-content" rows="3" placeholder="เขียนรีวิวสั้นๆ บอกเล่าความประทับใจ..." class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200"></textarea>
                 </div>
             </div>
@@ -846,7 +860,7 @@
             }
         ];
 
-        // MOMENTS DATA
+        // MOMENTS DATA (เพิ่มฟิลด์คะแนนรีวิว rating และ reviewCount)
         const tagMap = {
             'food': '🍜 สายกิน / สตรีทฟู้ด',
             'cafe': '☕ คาเฟ่ / ถ่ายรูป',
@@ -863,22 +877,6 @@
 
         let momentsData = [
             {
-                id: 'm_kk1',
-                author: 'Khon Kaen Guide',
-                avatar: 'https://i.pravatar.cc/150?img=68',
-                timeAgo: '1 ชั่วโมงที่แล้ว',
-                location: 'ขอนแก่น, ประเทศไทย',
-                tag: 'food',
-                tagLabel: '🍜 สายกิน / สตรีทฟู้ด',
-                title: '10 พิกัดขอนแก่น สายกิน ห้ามพลาด! 🍜🔥',
-                content: 'รวมร้านเด็ดร้านดังเมืองขอนแก่น ทั้งตำกระเทย ก๋วยเตี๋ยวเรือ และคาเฟ่สุดชิค มาขอนแก่นต้องตามเก็บให้ครบ!',
-                mediaType: 'image',
-                mediaUrl: 'https://images.unsplash.com/photo-1559314809-0d155014e29e?w=600',
-                likes: 382,
-                isLiked: false,
-                hashtags: ['#KhonKaen', '#StreetFood', '#สายกิน', '#ร้านเด็ดขอนแก่น']
-            },
-            {
                 id: 'm1',
                 author: 'Nisha_PhotoTravel',
                 avatar: 'https://i.pravatar.cc/150?img=32',
@@ -892,7 +890,9 @@
                 mediaUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600',
                 likes: 245,
                 isLiked: false,
-                hashtags: ['#SecretSpot', '#FujiView', '#สถานที่ลับ']
+                hashtags: ['#SecretSpot', '#FujiView', '#สถานที่ลับ'],
+                rating: 5.0,
+                reviewCount: 38
             },
             {
                 id: 'm2',
@@ -908,7 +908,9 @@
                 mediaUrl: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=600',
                 likes: 512,
                 isLiked: true,
-                hashtags: ['#PhuketHotel', '#LuxuriousVilla', '#ที่พักวิวหลักล้าน']
+                hashtags: ['#PhuketHotel', '#LuxuriousVilla', '#ที่พักวิวหลักล้าน'],
+                rating: 4.9,
+                reviewCount: 64
             },
             {
                 id: 'm3',
@@ -924,7 +926,9 @@
                 mediaUrl: 'https://images.unsplash.com/photo-1565031491910-e57fac031c41?w=600',
                 likes: 189,
                 isLiked: false,
-                hashtags: ['#OsakaEats', '#StreetFood', '#สายกิน']
+                hashtags: ['#OsakaEats', '#StreetFood', '#สายกิน'],
+                rating: 4.8,
+                reviewCount: 29
             }
         ];
 
@@ -1616,6 +1620,9 @@
                     <img src="${m.mediaUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='${fallbackImg}'">
                 `;
 
+                const momentRating = m.rating ? parseFloat(m.rating).toFixed(1) : '5.0';
+                const momentReviewCount = m.reviewCount || 1;
+
                 return `
                     <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200/80 hover:shadow-lg transition duration-300 flex flex-col justify-between group">
                         <div>
@@ -1637,6 +1644,11 @@
                                 <span class="absolute bottom-3 left-3 bg-slate-900/70 backdrop-blur-md text-white text-[10px] px-2.5 py-1 rounded-lg flex items-center gap-1 font-medium">
                                     <i class="fa-solid fa-location-dot text-rose-400"></i> ${m.location}
                                 </span>
+                                
+                                <!-- แสดงป้ายคะแนนรีวิวบนภาพ Moment -->
+                                <span class="absolute top-3 right-3 bg-white/90 backdrop-blur-md text-amber-500 text-[10px] px-2.5 py-1 rounded-full font-bold shadow-md flex items-center gap-1">
+                                    <i class="fa-solid fa-star"></i> ${momentRating}
+                                </span>
                             </div>
 
                             <div class="p-4 space-y-2">
@@ -1650,10 +1662,18 @@
                         </div>
 
                         <div class="p-3 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between">
-                            <button onclick="toggleLikeMoment('${m.id}')" class="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl transition ${m.isLiked ? 'text-rose-600 bg-rose-50' : 'text-slate-500 hover:text-rose-600'}">
-                                <i class="${m.isLiked ? 'fa-solid' : 'fa-regular'} fa-heart text-sm"></i>
-                                <span>${m.likes} ไลก์</span>
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <button onclick="toggleLikeMoment('${m.id}')" class="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-xl transition ${m.isLiked ? 'text-rose-600 bg-rose-50' : 'text-slate-500 hover:text-rose-600'}">
+                                    <i class="${m.isLiked ? 'fa-solid' : 'fa-regular'} fa-heart text-sm"></i>
+                                    <span>${m.likes} ไลก์</span>
+                                </button>
+
+                                <!-- แสดงปุ่มและจำนวนรีวิว/ความคิดเห็น -->
+                                <button class="flex items-center gap-1 text-xs font-semibold text-amber-600 bg-amber-50 border border-amber-200/60 px-2.5 py-1.5 rounded-xl transition hover:bg-amber-100">
+                                    <i class="fa-solid fa-star text-[11px]"></i>
+                                    <span>${momentRating} (${momentReviewCount} รีวิว)</span>
+                                </button>
+                            </div>
 
                             <button onclick="addMomentToPlan('${m.title.replace(/'/g, "\\'")}', '${m.location.replace(/'/g, "\\\'")}')" class="text-[11px] font-bold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200/60 px-3 py-1.5 rounded-xl transition flex items-center gap-1">
                                 <i class="fa-solid fa-plus text-[9px]"></i> ใส่ในตารางทริป
@@ -1730,6 +1750,7 @@
             const city = document.getElementById('new-moment-city').value.trim();
             const tag = document.getElementById('new-moment-tag').value;
             const content = document.getElementById('new-moment-content').value.trim();
+            const ratingVal = parseFloat(document.getElementById('new-moment-rating')?.value || '5');
 
             if (!title) {
                 alert('กรุณากรอกชื่อสถานที่หรือทริปด้วยนะครับ');
@@ -1752,7 +1773,9 @@
                 mediaUrl: mediaUrl,
                 likes: 1,
                 isLiked: true,
-                hashtags: ['#MyTrip', `#${tag}`]
+                hashtags: ['#MyTrip', `#${tag}`],
+                rating: ratingVal,
+                reviewCount: 1
             };
 
             momentsData.unshift(newMoment);
@@ -1764,7 +1787,7 @@
             document.getElementById('new-moment-city').value = '';
             document.getElementById('new-moment-content').value = '';
 
-            alert('โพสต์แชร์ Moment เรียบร้อยแล้ว!');
+            alert('โพสต์แชร์ Moment พร้อมรีวิวเรียบร้อยแล้ว!');
         }
 
         function closeModal(modalId) {
