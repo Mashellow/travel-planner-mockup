@@ -787,216 +787,510 @@
 
         const fallbackImg = "https://picsum.photos/400/300";
 
-        // เพิ่มข้อมูลครบทั้ง 7 ประเทศ หัวข้อละ 5 รายการ (รวม 140 รายการ)
         const allPinsData = [
-            // ================= ประเทศไทย (20 รายการ) =================
-            // ท่องเที่ยว (5)
-            { id: 'th_att_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'วัดพระแก้วมณีรัตนศาสดาราม', price: 500, img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400', lat: 13.751, lng: 100.492, tier: 1, address: 'ถนนหน้าพระลาน แขวงพระบรมมหาราชวัง เขตพระนคร กรุงเทพฯ', rating: 4.9, reviewCount: 890, contact: '02-224-8803', description: 'วัดคู่บ้านคู่เมืองไทย ประดิษฐานพระพุทธมหามณีรัตนปฏิมากร (พระแก้วมรกต)' },
-            { id: 'th_att_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'วัดอรุณราชวราราม', price: 100, img: 'https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=400', lat: 13.743, lng: 100.488, tier: 1, address: '158 ถนนวังเดิม แขวงวัดอรุณ เขตบางกอกใหญ่ กรุงเทพฯ', rating: 4.8, reviewCount: 750, contact: '02-891-2185', description: 'วัดโบราณริมแม่น้ำเจ้าพระยา เด่นด้วยพระปรางค์ประดับกระเบื้องเคลือบโบราณ' },
-            { id: 'th_att_3', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ยอดดอยอินทนนท์', price: 60, img: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=400', lat: 18.588, lng: 98.487, tier: 1, address: 'ต.บ้านหลวง อ.จอมทอง จ.เชียงใหม่', rating: 4.9, reviewCount: 620, contact: '053-282151', description: 'จุดที่สูงที่สุดในประเทศไทย สัมผัสอากาศหนาวเย็น ชมทะเลหมอกและพระมหาธาตุ' },
-            { id: 'th_att_4', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'ภูเก็ต', title: 'แหลมพรหมเทพ', price: 0, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', lat: 7.760, lng: 98.305, tier: 1, address: 'ต.ราไวย์ อ.เมือง จ.ภูเก็ต', rating: 4.8, reviewCount: 940, contact: 'ททท. ภูเก็ต 076-211036', description: 'จุดชมพระอาทิตย์ตกดินที่สวยที่สุดแห่งหนึ่งในประเทศไทย มองเห็นทะเลอันดามันกว้างไกล' },
-            { id: 'th_att_5', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'หาดไร่เลย์', price: 0, img: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400', lat: 8.011, lng: 98.837, tier: 1, address: 'อ.เมือง จ.กระบี่', rating: 4.9, reviewCount: 510, contact: 'ททท. กระบี่ 075-622163', description: 'ชายหาดสวยงามล้อมรอบด้วยผาหินปูนสูงใหญ่ โด่งดังระดับโลกด้านการปีนผา' },
+            // ================= ประเทศไทย (10 รายการ) =================
+            { 
+                id: 'th_1', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ประเพณียี่เป็ง โคมลอย', price: 0, img: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=400', lat: 18.790, lng: 98.985, tier: 1,
+                address: 'สะพานนวรัฐ และพื้นที่จัดกิจกรรมรอบเมืองเชียงใหม่ จ.เชียงใหม่', rating: 4.9, reviewCount: 320,
+                contact: 'โทร: 053-248604 (ททท.สำนักงานเชียงใหม่)',
+                description: 'ประเพณีลอยโคมไฟตระการตาของชาวล้านนาในเทศกาลยี่เป็ง สัมผัสความสวยงามระดับโลกยามค่ำคืน',
+                reviews: [{ author: 'Somchai T.', rating: 5, comment: 'ประทับใจมาก บรรยากาศตระการตาที่สุด' }]
+            },
+            { 
+                id: 'th_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'ภูเก็ต', title: 'ทะเลภูเก็ต หาดป่าตอง', price: 0, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', lat: 7.892, lng: 98.298, tier: 1,
+                address: 'หาดป่าตอง อ.กะทู้ จ.ภูเก็ต', rating: 4.8, reviewCount: 512,
+                contact: 'ศูนย์บริการนักท่องเที่ยวป่าตอง: 076-344275',
+                description: 'ชายหาดยอดนิยมของภูเก็ต น้ำทะเลใส ทรายนุ่ม เหมาะสำหรับการพักผ่อน เล่นน้ำ และกิจกรรมทางน้ำหลากหลายประเภท',
+                reviews: [{ author: 'John D.', rating: 5, comment: 'Great beach vibe, beautiful sunset!' }]
+            },
+            { 
+                id: 'th_3', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'วัดพระแก้วมณีรัตนศาสดาราม', price: 500, img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400', lat: 13.751, lng: 100.492, tier: 1,
+                address: 'ถนนหน้าพระลาน แขวงพระบรมมหาราชวัง เขตพระนคร กรุงเทพมหานคร 10200', rating: 4.9, reviewCount: 890,
+                contact: 'โทร: 02-224-8803 | เว็บไซต์: royalgrandpalace.th',
+                description: 'วัดคู่บ้านคู่เมืองไทย ประดิษฐานพระพุทธมหามณีรัตนปฏิมากร (พระแก้วมรกต) และมีความงดงามด้านสถาปัตยกรรมไทยชั้นสูง',
+                reviews: [{ author: 'นภา พ.', rating: 5, comment: 'สถาปัตยกรรมงดงาม ทรงคุณค่าทางประวัติศาสตร์อย่างยิ่ง' }]
+            },
+            { 
+                id: 'th_4', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'ภูเก็ต', title: 'Sri Panwa Resort', price: 16500, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 7.805, lng: 98.408, tier: 2,
+                address: '88 หมู่ 8 ถนนศักดิเดช แหลมพันวา จ.ภูเก็ต', rating: 4.9, reviewCount: 210,
+                contact: 'โทร: 076-371000 | Email: chill@sripanwa.com',
+                description: 'รีสอร์ตหรูระดับ 5 ดาว บนปลายแหลมพันวา มองเห็นวิวทะเลอันดามันแบบ 360 องศา พร้อมพูลวิลล่าส่วนตัว',
+                reviews: [{ author: 'Ake S.', rating: 5, comment: 'วิวสวยที่สุด วิลล่ากว้างขวางบริการยอดเยี่ยมมาก' }]
+            },
+            { 
+                id: 'th_5', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'Anantara Chiang Mai', price: 7200, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 18.781, lng: 98.999, tier: 2,
+                address: '123-123/1 ถนนเจริญประเทศ อ.เมือง จ.เชียงใหม่', rating: 4.8, reviewCount: 175,
+                contact: 'โทร: 053-253333 | เว็บไซต์: anantara.com/chiang-mai',
+                description: 'โรงแรมสไตล์รีสอร์ตริมแม่น้ำปิง บรรยากาศสงบ ผ่อนคลาย ผสมผสานความร่วมสมัยกับกลิ่นอายล้านนาได้อย่างลงตัว',
+                reviews: [{ author: 'กิตติพงษ์', rating: 5, comment: 'ติดแม่น้ำปิง บรรยากาศเงียบสงบ เหมาะกับการพักผ่อน' }]
+            },
+            { 
+                id: 'th_6', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'กาดหลวง วโรรส', price: 250, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400', lat: 18.789, lng: 99.001, tier: 3,
+                address: 'ถนนวิชยานนท์ ต.ช้างม่อย อ.เมือง จ.เชียงใหม่', rating: 4.7, reviewCount: 430,
+                contact: 'เปิดบริการทุกวัน: 05:00 - 18:00 น.',
+                description: 'ตลาดเก่าแก่คู่เมืองเชียงใหม่ แหล่งรวมของฝากขึ้นชื่อ เช่น แคบหมู น้ำพริกหนุ่ม ไส้อั่ว และของกินพื้นเมืองมากมาย',
+                reviews: [{ author: 'ปรียาภรณ์', rating: 5, comment: 'ของฝากครบครัน ไส้อั่วอร่อยมาก' }]
+            },
+            { 
+                id: 'th_7', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'หาดไร่เลย์', price: 0, img: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400', lat: 8.011, lng: 98.838, tier: 1,
+                address: 'อ่าวนาง อ.เมือง จ.กระบี่', rating: 4.8, reviewCount: 620,
+                contact: 'ททท.สำนักงานกระบี่ โทร: 075-622163',
+                description: 'หาดทรายขาวละเอียดล้อมรอบด้วยหน้าผาหินปูน มีชื่อเสียงระดับโลกในด้านการปีนผาและวิวทิวทัศน์ธรรมชาติสุดอลังการ',
+                reviews: [{ author: 'Suda M.', rating: 5, comment: 'ผาหินปูนสวยงามมาก น้ำทะเลใสเงียบสงบ' }]
+            },
+            { 
+                id: 'th_8', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'พัทยา', title: 'สวนนงนุช พัทยา', price: 500, img: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=400', lat: 12.766, lng: 100.932, tier: 2,
+                address: '34/1 หมู่ 7 ต.นาจอมเทียน อ.สัตหีบ จ.ชลบุรี', rating: 4.7, reviewCount: 480,
+                contact: 'โทร: 038-238061',
+                description: 'สวนพฤกษศาสตร์ระดับโลก รวบรวมพันธุ์ไม้นานาชนิด การแสดงวัฒนธรรมไทย และหุบเขาไดโนเสาร์สุดตื่นตา',
+                reviews: [{ author: 'Chaiwat T.', rating: 5, comment: 'เหมาะกับครอบครัวมาก ต้นไม้สวยและไดโนเสาร์อลังการ' }]
+            },
+            { 
+                id: 'th_9', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'ตลาดน้ำดำเนินสะดวก', price: 300, img: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400', lat: 13.519, lng: 99.960, tier: 2,
+                address: 'อ.ดำเนินสะดวก จ.ราชบุรี (ใกล้นครปฐมและกรุงเทพฯ)', rating: 4.6, reviewCount: 710,
+                contact: 'เปิดบริการทุกวัน 06:00 - 12:00 น.',
+                description: 'สัมผัสวิถีชีวิตชาวสวน พายเรือขายผลไม้และอาหารไทยโบราณอันเป็นเอกลักษณ์ของตลาดน้ำไทย',
+                reviews: [{ author: 'Laura H.', rating: 4, comment: 'Unique floating market experience!' }]
+            },
+            { 
+                id: 'th_10', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'กระบี่', title: 'ทัวร์ดำน้ำเกาะพีพี', price: 1500, img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400', lat: 7.740, lng: 98.778, tier: 2,
+                address: 'หมู่เกาะพีพี อ.เมือง จ.กระบี่', rating: 4.9, reviewCount: 930,
+                contact: 'โทร: 075-620000',
+                description: 'ดำน้ำชมปะการังสีสันสดใส และสัตว์ทะเลหลากชนิด ณ หมู่เกาะพีพี สวรรค์ของนักดำน้ำทั่วโลก',
+                reviews: [{ author: 'David P.', rating: 5, comment: 'Crystal clear water, amazing marine life!' }]
+            },
 
-            // ที่พัก (5)
-            { id: 'th_hot_1', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'ภูเก็ต', title: 'Sri Panwa Resort', price: 16500, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 7.805, lng: 98.408, tier: 2, address: '88 หมู่ 8 ถ.ศักดิเดช แหลมพันวา จ.ภูเก็ต', rating: 4.9, reviewCount: 210, contact: '076-371000', description: 'รีสอร์ตหรูระดับ 5 ดาว มองเห็นวิวทะเลอันดามันแบบ 360 องศา พร้อมพูลวิลล่าส่วนตัว' },
-            { id: 'th_hot_2', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'Anantara Chiang Mai Resort', price: 7200, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 18.781, lng: 98.999, tier: 2, address: '123 ถ.เจริญประเทศ อ.เมือง จ.เชียงใหม่', rating: 4.8, reviewCount: 175, contact: '053-253333', description: 'โรงแรมหรูสไตล์รีสอร์ตริมแม่น้ำปิง บรรยากาศสงบ ผสมผสานสถาปัตยกรรมล้านนา' },
-            { id: 'th_hot_3', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'Mandarin Oriental Bangkok', price: 18000, img: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400', lat: 13.723, lng: 100.514, tier: 2, address: '48 เจริญกรุงซอย 40 เขตบางรัก กรุงเทพฯ', rating: 5.0, reviewCount: 430, contact: '02-659-9000', description: 'โรงแรมตำนานริมแม่น้ำเจ้าพระยา บริการระดับตำนาน และความหรูหราระดับโลก' },
-            { id: 'th_hot_4', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'กระบี่', title: 'Rayavadee Resort', price: 14500, img: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400', lat: 8.008, lng: 98.839, tier: 2, address:214 หมู่ 2 ต.อ่าวนาง อ.เมือง จ.กระบี่', rating: 4.9, reviewCount: 190, contact: '075-620740', description: 'รีสอร์ตสุดหรูท่ามกลางธรรมชาติริมหาดไร่เลย์และถ้ำหินปูนสวยงาม' },
-            { id: 'th_hot_5', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'พัทยา', title: 'Cape Dara Resort Pattaya', price: 4500, img: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400', lat: 12.955, lng: 100.884, tier: 2, address: '256 หาดดารา พัทยาเหนือ จ.ชลบุรี', rating: 4.7, reviewCount: 380, contact: '038-933888', description: 'รีสอร์ตติดชายหาดส่วนตัว พร้อมสระว่ายน้ำอินฟินิตี้วิวทะเลพัทยา' },
+            // ================= ญี่ปุ่น (10 รายการ) =================
+            { 
+                id: 'jp_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'ภูเขาไฟฟูจิ (Mt. Fuji)', price: 0, img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400', lat: 35.360, lng: 138.727, tier: 1,
+                address: 'Kitayama, Fujinomiya, Shizuoka, Japan', rating: 5.0, reviewCount: 1540,
+                contact: 'Fujinomiya Tourist Information Center',
+                description: 'สัญลักษณ์อันทรงคุณค่าของประเทศญี่ปุ่น ภูเขาไฟที่สูงและงดงามที่สุด โอบล้อมด้วยธรรมชาติสวยงามตลอดสี่ฤดู',
+                reviews: [{ author: 'Kenji S.', rating: 5, comment: 'Breathtaking iconic views of Japan.' }]
+            },
+            { 
+                id: 'jp_2', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ญี่ปุ่น', city: 'โอซาก้า (Osaka)', title: 'ย่านโดทงโบริ (Dotonbori)', price: 500, img: 'https://images.unsplash.com/photo-1565031491910-e57fac031c41?w=400', lat: 34.668, lng: 135.501, tier: 2,
+                address: 'Dotonbori, Chuo Ward, Osaka, Japan', rating: 4.9, reviewCount: 1100,
+                contact: 'Osaka Tourist Info: +81 6-6211-3540',
+                description: 'ศูนย์รวมสตรีทฟู้ด คาเฟ่ ร้านค้าแฟชั่น และป้ายไฟกูลิโกะอันเป็นสัญลักษณ์สำคัญของโอซาก้า',
+                reviews: [{ author: 'Yuki M.', rating: 5, comment: 'Amazing street food and vibrant night life!' }]
+            },
+            { 
+                id: 'jp_3', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'เกียวโต (Kyoto)', title: 'วัดคิโยมิซุเดระ (วัดน้ำใส)', price: 400, img: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400', lat: 34.994, lng: 135.785, tier: 1,
+                address: '1-294 Kiyomizu, Higashiyama Ward, Kyoto, Japan', rating: 4.9, reviewCount: 980,
+                contact: 'Kyoto Tourism Board: +81 75-343-0548',
+                description: 'วัดโบราณมรดกโลกชื่อดังของเกียวโต โดดเด่นด้วยระเบียงไม้ขนาดใหญ่ที่สร้างโดยไม่ใช้ตะปูแม้แต่ตัวเดียว',
+                reviews: [{ author: 'Taro K.', rating: 5, comment: 'สวยงามตระการตาโดยเฉพาะช่วงใบไม้เปลี่ยนสี' }]
+            },
+            { 
+                id: 'jp_4', category: 'activity', catName: 'กิจกรรม', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'โตเกียวดิสนีย์แลนด์', price: 2300, img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400', lat: 35.632, lng: 139.880, tier: 1,
+                address: '1-1 Maihama, Urayasu, Chiba, Japan', rating: 4.9, reviewCount: 2100,
+                contact: 'Tokyo Disney Resort Service',
+                description: 'สวนสนุกดิสนีย์แห่งแรกภายนอกสหรัฐอเมริกา เติมเต็มจินตนาการด้วยเครื่องเล่น ปราสาทเทพนิยาย และขบวนพาเหรดตระการตา',
+                reviews: [{ author: 'Mei C.', rating: 5, comment: 'Magical experience for all ages!' }]
+            },
+            { 
+                id: 'jp_5', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'โอซาก้า (Osaka)', title: 'ปราสาทโอซาก้า (Osaka Castle)', price: 150, img: 'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=400', lat: 34.687, lng: 135.526, tier: 1,
+                address: '1-1 Osakajo, Chuo Ward, Osaka, Japan', rating: 4.8, reviewCount: 1250,
+                contact: 'Osaka Castle Office',
+                description: 'ปราสาทสำคัญทางประวัติศาสตร์ ล้อมรอบด้วยสวนสาธารณะขนาดใหญ่และคูเมือง จุดชมดอกซากุระยอดนิยม',
+                reviews: [{ author: 'Hiroshi T.', rating: 5, comment: 'ปราสาทสวยงาม ทัศนียภาพรอบๆ เงียบสงบมาก' }]
+            },
+            { 
+                id: 'jp_6', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'เกียวโต (Kyoto)', title: 'ศาลเจ้าฟูชิมิอินาริ', price: 0, img: 'https://images.unsplash.com/photo-1492571350019-22de08371fd3?w=400', lat: 34.967, lng: 135.772, tier: 2,
+                address: '68 Fukakusa Yabunouchicho, Fushimi Ward, Kyoto, Japan', rating: 4.9, reviewCount: 1800,
+                contact: 'Fushimi Inari Taisha Office',
+                description: 'ศาลเจ้าเสาโทริอิสีแดงนับพันต้น ทอดยาวตามเส้นทางขึ้นภูเขาอินาริ อันเป็นเอกลักษณ์เฉพาะตัวของเกียวโต',
+                reviews: [{ author: 'Elena R.', rating: 5, comment: 'The orange torii gates are completely surreal!' }]
+            },
+            { 
+                id: 'jp_7', category: 'hotel', catName: 'ที่พัก', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'Park Hyatt Tokyo', price: 15000, img: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400', lat: 35.685, lng: 139.691, tier: 2,
+                address:3-7-1-2 Nishi-Shinjuku, Shinjuku-ku, Tokyo, Japan', rating: 4.9, reviewCount: 310,
+                contact: 'Tel: +81 3-5322-1234',
+                description: 'โรงแรมหรูระดับ 5 ดาว ย่านชินจูกุ ชมทัศนียภาพเมืองโตเกียวและภูเขาไฟฟูจิแบบพาโนรามาจากมุมสูง',
+                reviews: [{ author: 'Arthur M.', rating: 5, comment: 'Top class hospitality with stunning city view' }]
+            },
+            { 
+                id: 'jp_8', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'ตลาดปลาสึคิจิ', price: 800, img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400', lat: 35.665, lng: 139.770, tier: 2,
+                address: '4 Chome Tsukiji, Chuo City, Tokyo, Japan', rating: 4.7, reviewCount: 890,
+                contact: 'Tsukiji Outer Market Information',
+                description: 'แหล่งรวมอาหารทะเลสดใหม่ ซูชิระดับพรีเมียม และสตรีทฟู้ดญี่ปุ่นดั้งเดิมที่เปิดให้บริการมาอย่างยาวนาน',
+                reviews: [{ author: 'Sora H.', rating: 5, comment: 'ซูชิสดอร่อยมาก ของกินเยอะสุดๆ' }]
+            },
+            { 
+                id: 'jp_9', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'ย่านช้อปปิ้งชินจูกุ', price: 1000, img: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400', lat: 35.690, lng: 139.700, tier: 3,
+                address: 'Shinjuku, Tokyo, Japan', rating: 4.8, reviewCount: 1400,
+                contact: 'Shinjuku Visitor Center',
+                description: 'ย่านการค้าและศูนย์ความบันเทิงขนาดใหญ่ที่สุดในโตเกียว เต็มไปด้วยห้างสรรพสินค้าและร้านค้าแบรนด์เนมชั้นนำ',
+                reviews: [{ author: 'Chris W.', rating: 5, comment: 'Best shopping district in Tokyo!' }]
+            },
+            { 
+                id: 'jp_10', category: 'hotel', catName: 'ที่พัก', country: 'ญี่ปุ่น', city: 'เกียวโต (Kyoto)', title: 'เรียวกัง คุรามะ (Ryokan)', price: 8500, img: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400', lat: 35.116, lng: 135.781, tier: 3,
+                address: '525 Kuramahonmachi, Sakyo Ward, Kyoto, Japan', rating: 4.8, reviewCount: 190,
+                contact: 'Kurama Onsen Ryokan Desk',
+                description: 'สัมผัสประสบการณ์การพักผ่อนแบบญี่ปุ่นดั้งเดิม นอนเสื่อทาทามิ แช่น้ำแร่ออนเซ็นธรรมชาติท่ามกลางหุบเขา',
+                reviews: [{ author: 'Natsuki O.', rating: 5, comment: 'บรรยากาศออนเซ็นธรรมชาติผ่อนคลายสุดๆ' }]
+            },
 
-            // กิจกรรม (5)
-            { id: 'th_act_1', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ประเพณียี่เป็ง โคมลอย', price: 0, img: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=400', lat: 18.790, lng: 98.985, tier: 1, address: 'สะพานนวรัฐ และรอบเมืองเชียงใหม่', rating: 4.9, reviewCount: 320, contact: '053-248604', description: 'ปล่อยโคมลอยตระการตาต้อนรับเทศกาลยี่เป็ง วัฒนธรรมยิ่งใหญ่ระดับโลก' },
-            { id: 'th_act_2', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'กระบี่', title: 'ดำน้ำตื้น ทัวร์ 4 เกาะกระบี่', price: 1200, img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400', lat: 8.033, lng: 98.828, tier: 1, address: 'ท่าเรืออ่าวนาง จ.กระบี่', rating: 4.8, reviewCount: 290, contact: '075-637111', description: 'นั่งเรือหางยาวท่องเที่ยวเกาะไก่ เกาะปอดะ ทะเลแหวก และถ้ำพระนาง' },
-            { id: 'th_act_3', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'นวดไทยต้นตำรับ วัดโพธิ์', price: 420, img: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400', lat: 13.746, lng: 100.493, tier: 1, address: 'โรงเรียนแพทย์แผนโบราณวัดโพธิ์ เขตพระนคร กรุงเทพฯ', rating: 4.8, reviewCount: 530, contact: '02-221-2974', description: 'สัมผัสการนวดแผนไทยตำรับนวดวัดโพธิ์ ผ่อนคลายร่างกายและฟื้นฟูสุขภาพ' },
-            { id: 'th_act_4', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'ล่องเรือทานอาหาร แม่น้ำเจ้าพระยา', price: 1500, img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400', lat: 13.725, lng: 100.511, tier: 1, address: 'ท่าเรือเอเชียทีค เดอะ ริเวอร์ฟรอนท์ กรุงเทพฯ', rating: 4.7, reviewCount: 410, contact: '02-541-5599', description: 'รับประทานอาหารบุฟเฟต์นานาชาติบนเรือหรู ชมวัดอรุณและสะพานพระราม 8 ยามค่ำคืน' },
-            { id: 'th_act_5', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'พัทยา', title: 'เล่นโหนสลิง จังเกิ้ลไฟลท์', price: 2200, img: 'https://images.unsplash.com/photo-1526772662000-3f88f10405ff?w=400', lat: 12.920, lng: 100.880, tier: 1, address: 'อ.บางละมุง จ.ชลบุรี', rating: 4.8, reviewCount: 180, contact: '038-221144', description: 'ผจญภัยโหนสลิงผ่านยอดไม้ในป่าธรรมชาติ ตื่นเต้นและชมทัศนียภาพมุมสูง' },
+            // ================= เกาหลีใต้ (10 รายการ) =================
+            { 
+                id: 'kr_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'พระราชวังเคียงบกกุง', price: 100, img: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400', lat: 37.579, lng: 126.977, tier: 1,
+                address:161 Sajik-ro, Jongno-gu, Seoul, South Korea', rating: 4.9, reviewCount: 1350,
+                contact: 'Gyeongbokgung Center: +82 2-3700-3900',
+                description: 'พระราชวังหลวงหลักของราชวงศ์โชซอน สถาปัตยกรรมโบราณอันทรงคุณค่า ยอดนิยมสำหรับการแต่งชุดฮันบกถ่ายภาพ',
+                reviews: [{ author: 'Min-jun K.', rating: 5, comment: 'สวยงามมาก ยิ่งใส่ชุดฮันบกเดินชมยิ่งได้บรรยากาศ' }]
+            },
+            { 
+                id: 'kr_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'N Seoul Tower (โซลทาวเวอร์)', price: 400, img: 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400', lat: 37.551, lng: 126.988, tier: 1,
+                address: '105 Namsangongwon-gil, Yongsan-gu, Seoul, South Korea', rating: 4.8, reviewCount: 1120,
+                contact: 'N Seoul Tower Service Desk',
+                description: 'หอคอยชมเมืองบนเขานัมซาน แลนด์มาร์กโรแมนติกอันเป็นสถานที่คล้องกุญแจคู่รักยอดฮิตของโซล',
+                reviews: [{ author: 'Eun-ji S.', rating: 5, comment: 'วิวพาโนรามายามค่ำคืนสวยงามประทับใจมาก' }]
+            },
+            { 
+                id: 'kr_3', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'ย่านช้อปปิ้งเมียงดง', price: 500, img: 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400', lat: 37.563, lng: 126.983, tier: 2,
+                address: 'Myeongdong-gil, Jung-gu, Seoul, South Korea', rating: 4.8, reviewCount: 1600,
+                contact: 'Myeongdong Information Center',
+                description: 'สวรรค์ของขาช้อป เครื่องสำอางแบรนด์ดัง แฟชั่นเสื้อผ้า และสตรีทฟู้ดเกาหลีแสนอร่อยตลอดสองข้างทาง',
+                reviews: [{ author: 'Grace L.', rating: 5, comment: 'Great place for cosmetics and street snacks!' }]
+            },
+            { 
+                id: 'kr_4', category: 'attraction', catName: 'ท่องเที่ยว', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'หาดแฮอุนแด (Haeundae)', price: 0, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', lat: 35.158, lng: 129.160, tier: 1,
+                address: 'Haeundae-gu, Busan, South Korea', rating: 4.8, reviewCount: 870,
+                contact: 'Haeundae Tourist Information',
+                description: 'ชายหาดชื่อดังระดับประเทศของเมืองปูซาน หาดทรายยาวโค้งสวยงาม คึกคักด้วยงานเทศกาลตลอดปี',
+                reviews: [{ author: 'Ji-hoon P.', rating: 5, comment: 'หาดทรายสวย ลมพัดเย็นสบาย อาหารทะเลสดมาก' }]
+            },
+            { 
+                id: 'kr_5', category: 'activity', catName: 'กิจกรรม', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'สวนสนุกล็อตเต้เวิลด์', price: 1400, img: 'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=400', lat: 37.511, lng: 127.098, tier: 2,
+                address: '240 Olympic-ro, Songpa-gu, Seoul, South Korea', rating: 4.7, reviewCount: 940,
+                contact: 'Lotte World Call Center',
+                description: 'สวนสนุกในร่มที่ใหญ่ที่สุดในโลกและสวนสนุกกลางแจ้งริมเลค เติมความสนุกด้วยเครื่องเล่นหวาดเสียวหลากสไตล์',
+                reviews: [{ author: 'Soo-jin Y.', rating: 5, comment: 'เครื่องเล่นสนุกมาก สวนสนุกในร่มใหญ่สะใจ' }]
+            },
+            { 
+                id: 'kr_6', category: 'attraction', catName: 'ท่องเที่ยว', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'หมู่บ้านวัฒนธรรมคัมชอน', price: 0, img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400', lat: 35.097, lng: 129.010, tier: 2,
+                address: 'Gamcheon 2-dong, Saha-gu, Busan, South Korea', rating: 4.8, reviewCount: 780,
+                contact: 'Gamcheon Culture Village Info',
+                description: 'หมู่บ้านหลากสีสันบนเนินเขา ฉายามาชูปิกชูแห่งปูซาน โดดเด่นด้วยภาพวาดฝาผนังและงานศิลปะรอบเมือง',
+                reviews: [{ author: 'Hannah B.', rating: 5, comment: 'Colorful houses and super cute photo spots!' }]
+            },
+            { 
+                id: 'kr_7', category: 'hotel', catName: 'ที่พัก', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'Lotte Hotel Seoul', price: 9500, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 37.565, lng: 126.981, tier: 2,
+                address: '30 Eulji-ro, Jung-gu, Seoul, South Korea', rating: 4.9, reviewCount: 280,
+                contact: 'Tel: +82 2-771-1000',
+                description: 'โรงแรมหรูระดับพรีเมียมใจกลางกรุงโซล เดินทางสะดวก ใกล้แหล่งช้อปปิ้งและสถานที่ท่องเที่ยวสำคัญ',
+                reviews: [{ author: 'Sang-woo L.', rating: 5, comment: 'ห้องพักสะอาด เดินทางสะดวกมาก ติดสถานีรถไฟฟ้า' }]
+            },
+            { 
+                id: 'kr_8', category: 'hotel', catName: 'ที่พัก', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'Signiel Busan', price: 11000, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 35.160, lng: 129.165, tier: 2,
+                address: '30 LCT Tower, Haeundae-gu, Busan, South Korea', rating: 4.9, reviewCount: 210,
+                contact: 'Signiel Busan Desk',
+                description: 'โรงแรมหรูบนตึกสูงริมหาดแฮอุนแด ชมทัศนียภาพเส้นขอบฟ้าและท้องทะเลปูซานจากห้องพักสุดเอ็กซ์คลูซีฟ',
+                reviews: [{ author: 'Daniel H.', rating: 5, comment: 'Best ocean view hotel in Busan!' }]
+            },
+            { 
+                id: 'kr_9', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'ตลาดสตรีทฟู้ดกวางจัง', price: 300, img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400', lat: 37.570, lng: 127.000, tier: 3,
+                address: '88 Changgyeonggung-ro, Jongno-gu, Seoul, South Korea', rating: 4.7, reviewCount: 650,
+                contact: 'Gwangjang Market Office',
+                description: 'ตลาดดั้งเดิมเก่าแก่ที่มีชื่อเสียงด้านอาหารพื้นเมืองเกาหลี เช่น บินแดต็อก คิมบับ ต็อกโบกี และยุกฮเว',
+                reviews: [{ author: 'Su-bin N.', rating: 5, comment: 'บินแดต็อกอร่อยมาก บรรยากาศตลาดคึกคักสุดๆ' }]
+            },
+            { 
+                id: 'kr_10', category: 'activity', catName: 'กิจกรรม', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'กระเช้าลอยฟ้า Songdo', price: 500, img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400', lat: 35.076, lng: 129.023, tier: 3,
+                address: '171 Songdobeach-ro, Seo-gu, Busan, South Korea', rating: 4.8, reviewCount: 420,
+                contact: 'Songdo Marine Cable Car',
+                description: 'นั่งกระเช้าลอยฟ้าพื้นกระจกใสข้ามท้องทะเล ชมความสวยงามของชายฝั่งปูซานและโขดหินธรรมชาติ',
+                reviews: [{ author: 'Woo-jin T.', rating: 5, comment: 'วิวทะเลสวย ใสเห็นพื้นน้ำข้างล่างตื่นเต้นมาก' }]
+            },
 
-            // ร้านค้า/ของฝาก (5)
-            { id: 'th_shp_1', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ตลาดวโรรส (กาดหลวง)', price: 250, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400', lat: 18.789, lng: 99.001, tier: 3, address: 'ถ.วิชยานนท์ ต.ช้างม่อย อ.เมือง จ.เชียงใหม่', rating: 4.7, reviewCount: 430, contact: '053-232591', description: 'ศูนย์รวมของฝากขึ้นชื่อของเชียงใหม่ แคบหมู น้ำพริกหนุ่ม ไส้อั่ว ผลไม้อบแห้ง' },
-            { id: 'th_shp_2', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ประเทศไทย', city: 'กรุงเทพมหานคร', title: 'ตลาดนัดจตุจักร', price: 300, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', lat: 13.803, lng: 100.550, tier: 3, address: 'ถ.พหลโยธิน แขวงจตุจักร เขตจตุจักร กรุงเทพฯ', rating: 4.8, reviewCount: 1200, contact: '02-272-4813', description: 'ตลาดนัดกลางแจ้งใหญ่ที่สุดในโลก สินค้าแฟชั่น ของแต่งบ้าน งานแฮนด์เมด อาหารรสเด็ด' },
-            { id: 'th_shp_3', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ถนนคนเดินท่าแพ', price: 200, img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400', lat: 18.788, lng: 98.993, tier: 3, address: 'ประตูท่าแพ ถ.ราชดำเนิน อ.เมือง จ.เชียงใหม่', rating: 4.8, reviewCount: 880, contact: 'ททท. เชียงใหม่ 053-248604', description: 'ถนนคนเดินวันอาทิตย์ยอดนิยม สินค้าทำมือพื้นเมือง งานศิลปะ หัตถกรรมล้านนา' },
-            { id: 'th_shp_4', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ประเทศไทย', city: 'ภูเก็ต', title: 'ตลาดถนนคนเดินภูเก็ต (Lard Yai)', price: 200, img: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400', lat: 7.883, lng: 98.389, tier: 3, address: 'ถ.ถลาง ย่านย่านเมืองเก่า อ.เมือง จ.ภูเก็ต', rating: 4.7, reviewCount: 520, contact: '081-8922093', description: 'ตลาดคนเดินย่านเมืองเก่า สถาปัตยกรรมชิโนโปตุกีส ของกินพื้นเมืองภูเก็ตและของฝากน่ารัก' },
-            { id: 'th_shp_5', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ประเทศไทย', city: 'กระบี่', title: 'ตลาดมหาราช (ตลาดเช้ากระบี่)', price: 150, img: 'https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=400', lat: 8.064, lng: 98.917, tier: 3, address: 'ถ.มหาราช ต.ปากน้ำ อ.เมือง จ.กระบี่', rating: 4.6, reviewCount: 240, contact: '075-611110', description: 'ตลาดสดและของฝากท้องถิ่น เม็ดมะม่วงหิมพานต์ กะปิแท้ น้ำพริก และขนมไทย' },
+            // ================= สิงคโปร์ (10 รายการ) =================
+            { 
+                id: 'sg_1', category: 'hotel', catName: 'ที่พัก', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'Marina Bay Sands Hotel', price: 18000, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 1.283, lng: 103.860, tier: 1,
+                address: '10 Bayfront Ave, Singapore 018956', rating: 4.9, reviewCount: 2300,
+                contact: 'Tel: +65 6688 8868',
+                description: 'โรงแรมแลนด์มาร์กระดับโลกพร้อมสระว่ายน้ำไร้ขอบ Infinity Pool บนชั้นดาดฟ้า มอบทัศนียภาพอันตระการตาของอ่าวมารีนา',
+                reviews: [{ author: 'Tan Wei L.', rating: 5, comment: 'Unmatched infinity pool view of Singapore skylines.' }]
+            },
+            { 
+                id: 'sg_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'Gardens by the Bay', price: 700, img: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400', lat: 1.281, lng: 103.863, tier: 1,
+                address: '18 Marina Gardens Dr, Singapore 018953', rating: 4.9, reviewCount: 1950,
+                contact: 'Gardens by the Bay Desk',
+                description: 'สวนพฤกษศาสตร์ล้ำอนาคต โดดเด่นด้วย Supertree Grove ต้นไม้ยักษ์ประดับไฟ และเรือนกระจก Flower Dome',
+                reviews: [{ author: 'Chloe T.', rating: 5, comment: 'The Light and Sound show at night is magnificent!' }]
+            },
+            { 
+                id: 'sg_3', category: 'activity', catName: 'กิจกรรม', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'Universal Studios Singapore', price: 2100, img: 'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=400', lat: 1.254, lng: 103.823, tier: 1,
+                address: '8 Sentosa Gateway, Sentosa Island, Singapore', rating: 4.8, reviewCount: 2800,
+                contact: 'Resorts World Sentosa Guest Services',
+                description: 'สวนสนุกยูนิเวอร์แซลแห่งแรกในเอเชียตะวันออกเฉียงใต้ บนเกาะเซ็นโตซ่า พร้อมเครื่องเล่นและโชว์ระดับโลก',
+                reviews: [{ author: 'Kevin N.', rating: 5, comment: 'Battlestar Galactica roller coaster is insane!' }]
+            },
+            { 
+                id: 'sg_4', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'Merlion Park (พ่นน้ำ)', price: 0, img: 'https://images.unsplash.com/photo-1506351421178-63b52a2d2562?w=400', lat: 1.286, lng: 103.854, tier: 1,
+                address: '1 Fullerton Rd, Singapore 049213', rating: 4.7, reviewCount: 1650,
+                contact: 'Singapore Tourism Board',
+                description: 'รูปปั้นเมอร์ไลออนหัวสิงโตตัวเป็นปลา สัญลักษณ์สำคัญของสิงคโปร์ จุดถ่ายภาพยอดนิยมริมอ่าวมารีนา',
+                reviews: [{ author: 'Rachel K.', rating: 5, comment: 'Must visit landmark in Singapore!' }]
+            },
+            { 
+                id: 'sg_5', category: 'activity', catName: 'กิจกรรม', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'ชิงช้าสวรรค์ Singapore Flyer', price: 950, img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400', lat: 1.289, lng: 103.863, tier: 2,
+                address: '30 Raffles Ave., Singapore 039803', rating: 4.8, reviewCount: 710,
+                contact: 'Singapore Flyer ticketing desk',
+                description: 'ชิงช้าสวรรค์ชมเมืองขนาดยักษ์สูง 165 เมตร ชมทัศนียภาพรอบอ่าวมารีนาและมองเห็นเกาะเพื่อนบ้านไกลสุดสายตา',
+                reviews: [{ author: 'Jason L.', rating: 5, comment: 'Great scenic views of the city skyline.' }]
+            },
+            { 
+                id: 'sg_6', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'ถนนช้อปปิ้ง Orchard Road', price: 500, img: 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400', lat: 1.304, lng: 103.832, tier: 2,
+                address: 'Orchard Road, Singapore', rating: 4.8, reviewCount: 1100,
+                contact: 'Orchard Road Business Association',
+                description: 'ถนนสายช้อปปิ้งระดับโลก รวบรวมห้างสรรพสินค้าชั้นนำ สินค้าแบรนด์เนม และร้านอาหารแฟชั่นมากมาย',
+                reviews: [{ author: 'Amanda S.', rating: 5, comment: 'Shopping paradise with endless malls!' }]
+            },
+            { 
+                id: 'sg_7', category: 'hotel', catName: 'ที่พัก', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'Raffles Hotel Singapore', price: 22000, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 1.294, lng: 103.854, tier: 2,
+                address: '1 Beach Rd, Singapore 189673', rating: 5.0, reviewCount: 390,
+                contact: 'Tel: +65 6337 1886',
+                description: 'โรงแรมสไตล์อาณานิคมระดับตํานาน ให้บริการหรูหราทรงคุณค่า ต้นกำเนิดเครื่องดื่มค็อกเทล Singapore Sling',
+                reviews: [{ author: 'David B.', rating: 5, comment: 'Historic elegance with world-class service.' }]
+            },
+            { 
+                id: 'sg_8', category: 'activity', catName: 'กิจกรรม', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'สวนสัตว์สิงคโปร์ (Singapore Zoo)', price: 1200, img: 'https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?w=400', lat: 1.404, lng: 103.793, tier: 2,
+                address: '80 Mandai Lake Rd, Singapore 729826', rating: 4.9, reviewCount: 920,
+                contact: 'Mandai Wildlife Reserve Call Center',
+                description: 'สวนสัตว์แบบเปิดระดับแนวหน้าของโลก ให้สัตว์อยู่อย่างเป็นธรรมชาติในสภาพแวดล้อมที่เหมาะสม',
+                reviews: [{ author: 'Sarah M.', rating: 5, comment: 'Best zoo ever! Amazing open concept.' }]
+            },
+            { 
+                id: 'sg_9', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'ย่านไชน่าทาวน์ (Chinatown)', price: 200, img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400', lat: 1.284, lng: 103.844, tier: 3,
+                address: 'Chinatown, Singapore', rating: 4.7, reviewCount: 840,
+                contact: 'Chinatown Visitor Centre',
+                description: 'สัมผัสวัฒนธรรมไทย-จีนโบราณ อาหารการกินท้องถิ่นขึ้นชื่อ และของฝากราคาย่อมเยากลับบ้าน',
+                reviews: [{ author: 'Eric C.', rating: 5, comment: 'Delicious local hawker food and souvenirs.' }]
+            },
+            { 
+                id: 'sg_10', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'น้ำตก Jewel Changi', price: 0, img: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400', lat: 1.360, lng: 103.989, tier: 3,
+                address: '78 Airport Blvd., Singapore 819666', rating: 4.9, reviewCount: 1700,
+                contact: 'Jewel Changi Airport Desk',
+                description: 'น้ำตกในร่มที่สูงที่สุดในโลก ล้อมรอบด้วยสวนป่าเขตร้อนภายในอาคารผู้โดยสารสนามบินชางงี',
+                reviews: [{ author: 'Emily W.', rating: 5, comment: 'Stunning indoor waterfall, best airport in the world.' }]
+            },
 
+            // ================= ฝรั่งเศส (10 รายการ) =================
+            { 
+                id: 'fr_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'หอไอเฟล (Eiffel Tower)', price: 900, img: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=400', lat: 48.858, lng: 2.294, tier: 1,
+                address: 'Champ de Mars, 5 Av. Anatole France, 75007 Paris, France', rating: 4.9, reviewCount: 3100,
+                contact: 'Eiffel Tower Information Desk',
+                description: 'สถาปัตยกรรมโครงเหล็กอันเป็นสัญลักษณ์อันโดดเด่นที่สุดของปารีส มอบวิวเมืองอันงดงามตระการตา',
+                reviews: [{ author: 'Pierre D.', rating: 5, comment: 'The symbol of romance and beauty!' }]
+            },
+            { 
+                id: 'fr_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'พิพิธภัณฑ์ลูฟร์ (Louvre)', price: 700, img: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=400', lat: 48.860, lng: 2.337, tier: 1,
+                address: '75001 Paris, France', rating: 4.9, reviewCount: 2800,
+                contact: 'Musée du Louvre Services',
+                description: 'พิพิธภัณฑ์ทางศิลปะที่มีชื่อเสียงและใหญ่ที่สุดในโลก สถานที่จัดแสดงภาพวาดระดับโลก โมนาลิซา',
+                reviews: [{ author: 'Sophie L.', rating: 5, comment: 'Unbelievable art collection! Mona Lisa is a must see.' }]
+            },
+            { 
+                id: 'fr_3', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'ถนนช็องเซลิเซ', price: 1000, img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400', lat: 48.869, lng: 2.307, tier: 2,
+                address: 'Av. des Champs-Élysées, 75008 Paris, France', rating: 4.8, reviewCount: 1400,
+                contact: 'Paris Tourism Champs-Élysées',
+                description: 'ถนนสายช้อปปิ้งที่สวยงามและมีชื่อเสียงที่สุดในโลก เชื่อมต่อจากจัตุรัสคองคอร์ดไปยังประตูชัยฝรั่งเศส',
+                reviews: [{ author: 'Jean P.', rating: 5, comment: 'Beautiful boulevard with luxury shops everywhere.' }]
+            },
+            { 
+                id: 'fr_4', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'นีซ (Nice)', title: 'ชายหาด Promenade des Anglais', price: 0, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', lat: 43.695, lng: 7.265, tier: 1,
+                address: 'Promenade des Anglais, 06000 Nice, France', rating: 4.8, reviewCount: 920,
+                contact: 'Nice Tourism Information',
+                description: 'ทางเดินริมชายหาดโค้งยาวเลียบเมดิเตอร์เรเนียน ท้องฟ้าสดใสและน้ำทะเลสีฟ้าครามแห่งริเวียร่า',
+                reviews: [{ author: 'Camille R.', rating: 5, comment: 'Stunning French Riviera coastline view!' }]
+            },
+            { 
+                id: 'fr_5', category: 'hotel', catName: 'ที่พัก', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'Hotel Ritz Paris', price: 35000, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 48.868, lng: 2.329, tier: 2,
+                address: '15 Pl. Vendôme, 75001 Paris, France', rating: 5.0, reviewCount: 250,
+                contact: 'Tel: +33 1 43 16 30 30',
+                description: 'โรงแรมหรูหราระดับตํานานใจกลางกรุงปารีส สัมผัสความงดงามสไตล์ฝรั่งเศสชั้นสูงและบริการที่เป็นเลิศ',
+                reviews: [{ author: 'Antoine B.', rating: 5, comment: 'Pinnacle of luxury and historic elegance.' }]
+            },
+            { 
+                id: 'fr_6', category: 'activity', catName: 'กิจกรรม', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'ล่องเรือแม่น้ำแซน', price: 600, img: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400', lat: 48.859, lng: 2.293, tier: 2,
+                address: 'Port de la Bourdonnais, 75007 Paris, France', rating: 4.8, reviewCount: 1150,
+                contact: 'Bateaux Parisiens Desk',
+                description: 'ชมทัศนียภาพสองฝั่งแม่น้ำแซน สัมผัสบรรยากาศโรแมนติกผ่านสถาปัตยกรรมสำคัญรอบเมืองปารีส',
+                reviews: [{ author: 'Claire M.', rating: 5, comment: 'Romantic cruise especially during sunset.' }]
+            },
+            { 
+                id: 'fr_7', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'พระราชวังแวร์ซายส์', price: 850, img: 'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=400', lat: 48.804, lng: 2.120, tier: 2,
+                address: 'Place d\'Armes, 78000 Versailles, France', rating: 4.9, reviewCount: 1850,
+                contact: 'Château de Versailles Office',
+                description: 'พระราชวังอันวิจิตรตระการตา มรดกโลกที่มีห้องกระจก (Hall of Mirrors) และสวนสไตล์ฝรั่งเศสขนาดยักษ์',
+                reviews: [{ author: 'Lucas V.', rating: 5, comment: 'Magnificent palace and grand gardens!' }]
+            },
+            { 
+                id: 'fr_8', category: 'hotel', catName: 'ที่พัก', country: 'ฝรั่งเศส', city: 'นีซ (Nice)', title: 'Hotel Le Negresco', price: 14000, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 43.694, lng: 7.257, tier: 2,
+                address: '37 Prom. des Anglais, 06000 Nice, France', rating: 4.8, reviewCount: 310,
+                contact: 'Tel: +33 4 93 16 64 00',
+                description: 'โรงแรมประวัติศาสตร์สไตล์อาทเดโคริมหาดนีซ จัดแสดงผลงานศิลปะดั้งเดิมอันล้ำค่าภายในโรงแรม',
+                reviews: [{ author: 'Isabelle G.', rating: 5, comment: 'A museum-like hotel right on the Promenade!' }]
+            },
+            { 
+                id: 'fr_9', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ฝรั่งเศส', city: 'นีซ (Nice)', title: 'ตลาดดอกไม้ Cours Saleya', price: 300, img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400', lat: 43.696, lng: 7.275, tier: 3,
+                address: 'Cours Saleya, 06300 Nice, France', rating: 4.7, reviewCount: 520,
+                contact: 'Nice Market Info Desk',
+                description: 'ตลาดกลางแจ้งที่มีเสน่ห์ เต็มไปด้วยดอกไม้สด ผลไม้ อาหารพื้นเมืองโพรวองซ์ และของที่ระลึกน่ารักๆ',
+                reviews: [{ author: 'Mathieu T.', rating: 5, comment: 'Fresh flowers and delicious socca!' }]
+            },
+            { 
+                id: 'fr_10', category: 'activity', catName: 'กิจกรรม', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'ทัวร์ชิมไวน์และชีสฝรั่งเศส', price: 2500, img: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400', lat: 48.853, lng: 2.348, tier: 3,
+                address: 'Latin Quarter, Paris, France', rating: 4.9, reviewCount: 410,
+                contact: 'Paris Wine Tasting Tours',
+                description: 'ลิ้มลองไวน์ชั้นเลิศคู่กับชีสฝรั่งเศสดั้งเดิม เรียนรู้ศิลปะแห่งรสชาติจากซอมเมอลิเยร์มืออาชีพ',
+                reviews: [{ author: 'Emma W.', rating: 5, comment: 'Delightful wine and cheese tasting experience!' }]
+            },
 
-            // ================= ญี่ปุ่น (20 รายการ) =================
-            // ท่องเที่ยว (5)
-            { id: 'jp_att_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'ภูเขาไฟฟูจิ (Mt. Fuji)', price: 0, img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400', lat: 35.360, lng: 138.727, tier: 1, address: 'Fujinomiya, Shizuoka, Japan', rating: 5.0, reviewCount: 1540, contact: '+81 544-27-5240', description: 'สัญลักษณ์อันทรงคุณค่าของประเทศญี่ปุ่น ภูเขาไฟที่สูงและงดงามที่สุด' },
-            { id: 'jp_att_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'วัดเซ็นโซจิ อาซากุสะ (Sensoji)', price: 0, img: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400', lat: 35.714, lng: 139.796, tier: 1, address: '2-3-1 Asakusa, Taito, Tokyo', rating: 4.8, reviewCount: 1200, contact: '+81 3-3842-0181', description: 'วัดพุทธที่เก่าแก่ที่สุดในโตเกียว เด่นด้วยโคมแดงยักษ์บริเวณประตูคามินาริมง' },
-            { id: 'jp_att_3', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'เกียวโต (Kyoto)', title: 'ศาลเจ้าฟูชิมิอินาริ (Fushimi Inari)', price: 0, img: 'https://images.unsplash.com/photo-1492571350019-22de08371fd3?w=400', lat: 34.967, lng: 135.772, tier: 1, address: '68 Fukakusa Yabunouchicho, Fushimi Ward, Kyoto', rating: 4.9, reviewCount: 1400, contact: '+81 75-641-7331', description: 'ศาลเจ้าสุนัขจิ้งจอกที่มีชื่อเสียงด้วยเสาโทริอิสีแดงตระการตานับพันต้น' },
-            { id: 'jp_att_4', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'โอซาก้า (Osaka)', title: 'ปราสาทโอซาก้า (Osaka Castle)', price: 600, img: 'https://images.unsplash.com/photo-1590559899731-a382839e5549?w=400', lat: 34.687, lng: 135.526, tier: 1, address: '1-1 Osakajo, Chuo Ward, Osaka', rating: 4.8, reviewCount: 980, contact: '+81 6-6941-3044', description: 'ปราสาทหอคอยอันยิ่งใหญ่ศูนย์กลางประวัติศาสตร์โอซาก้า โอบล้อมด้วยสวนสวย' },
-            { id: 'jp_att_5', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'สวนชินจูกุเกียวเอ็น (Shinjuku Gyoen)', price: 500, img: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=400', lat: 35.685, lng: 139.710, tier: 1, address: '11 Naitomachi, Shinjuku City, Tokyo', rating: 4.7, reviewCount: 610, contact: '+81 3-3350-0151', description: 'สวนสาธารณะขนาดใหญ่ใจกลางเมือง จุดชมดอกซากุระและใบไม้เปลี่ยนสีที่งดงาม' },
+            // ================= อังกฤษ (10 รายการ) =================
+            { 
+                id: 'uk_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'หอนาฬิกาบิ๊กเบน (Big Ben)', price: 0, img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400', lat: 51.500, lng: -0.124, tier: 1,
+                address: 'London SW1A 0AA, United Kingdom', rating: 4.9, reviewCount: 2900,
+                contact: 'UK Parliament Visitor Information',
+                description: 'หอนาฬิกาอลิซาเบธทาวเวอร์ สัญลักษณ์แห่งกรุงลอนดอน ตั้งตระหง่านริมแม่น้ำเทมส์ข้างรัฐสภาอังกฤษ',
+                reviews: [{ author: 'Oliver S.', rating: 5, comment: 'The iconic symbol of London!' }]
+            },
+            { 
+                id: 'uk_2', category: 'activity', catName: 'กิจกรรม', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'ชิงช้าสวรรค์ London Eye', price: 1500, img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400', lat: 51.503, lng: -0.119, tier: 1,
+                address: 'Riverside Building, County Hall, London SE1 7PB', rating: 4.8, reviewCount: 2100,
+                contact: 'lastminute.com London Eye Center',
+                description: 'ชิงช้าสวรรค์ชมเมืองขนาดยักษ์ริมแม่น้ำเทมส์ หมุนช้าๆ ให้คุณเพลิดเพลินกับทัศนียภาพ 360 องศาของลอนดอน',
+                reviews: [{ author: 'Charlotte B.', rating: 5, comment: 'Best aerial views of London landmark spots.' }]
+            },
+            { 
+                id: 'uk_3', category: 'attraction', catName: 'ท่องเที่ยว', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'พระราชวังบักกิงแฮม', price: 0, img: 'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=400', lat: 51.501, lng: -0.141, tier: 1,
+                address: 'London SW1A 1AA, United Kingdom', rating: 4.8, reviewCount: 1750,
+                contact: 'Royal Collection Trust Services',
+                description: 'พระราชวังอันเป็นที่ประทับของพระมหากษัตริย์อังกฤษ ชมพิธีเปลี่ยนเวรยามของทหารรักษาพระองค์อันโด่งดัง',
+                reviews: [{ author: 'Harry T.', rating: 5, comment: 'The Changing of the Guard ceremony was fantastic.' }]
+            },
+            { 
+                id: 'uk_4', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'ห้างสรรพสินค้าแฮร์รอดส์', price: 1000, img: 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400', lat: 51.499, lng: -0.163, tier: 2,
+                address: '87-135 Brompton Rd, Knightsbridge, London SW1X 7XL', rating: 4.8, reviewCount: 1300,
+                contact: 'Harrods Customer Service',
+                description: 'ห้างสรรพสินค้าสุดหรูหราอลังการอันเก่าแก่แห่งย่านไนท์สบริดจ์ รวบรวมแบรนด์เนมและอาหารระดับพรีเมียม',
+                reviews: [{ author: 'Amelia J.', rating: 5, comment: 'Luxury shopping at its finest!' }]
+            },
+            { 
+                id: 'uk_5', category: 'attraction', catName: 'ท่องเที่ยว', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'พิพิธภัณฑ์บริติช', price: 0, img: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=400', lat: 51.519, lng: -0.127, tier: 1,
+                address: 'Great Russell St, London WC1B 3DG, United Kingdom', rating: 4.9, reviewCount: 2400,
+                contact: 'British Museum Visitor Desk',
+                description: 'พิพิธภัณฑ์ประวัติศาสตร์และวัฒนธรรมมนุษยชาติระดับโลก จัดแสดงโบราณวัตถุชิ้นสำคัญจากทั่วทุกมุมโลก',
+                reviews: [{ author: 'George W.', rating: 5, comment: 'Incredible museum with free admission!' }]
+            },
+            { 
+                id: 'uk_6', category: 'attraction', catName: 'ท่องเที่ยว', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'สะพานทาวเวอร์บริดจ์', price: 0, img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400', lat: 51.505, lng: -0.075, tier: 2,
+                address: 'Tower Bridge Rd, London SE1 2UP, United Kingdom', rating: 4.8, reviewCount: 1600,
+                contact: 'Tower Bridge Exhibition Desk',
+                description: 'สะพานเปิด-ปิดได้สไตล์โกธิกข้ามแม่น้ำเทมส์ เอกลักษณ์โดดเด่นคู่กับหอคอยลอนดอน',
+                reviews: [{ author: 'Emily C.', rating: 5, comment: 'Stunning structure day and night.' }]
+            },
+            { 
+                id: 'uk_7', category: 'hotel', catName: 'ที่พัก', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'The Ritz London', price: 28000, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 51.507, lng: -0.141, tier: 2,
+                address: '150 Piccadilly, St. James\'s, London W1J 9BR', rating: 4.9, reviewCount: 380,
+                contact: 'Tel: +44 20 7493 8181',
+                description: 'โรงแรมหรูในตำนานริมถนนพิคคาดิลลี โดดเด่นด้วยการตกแต่งสไตล์นีโอคลาสสิกและจิบชา Afternoon Tea อันเลื่องชื่อ',
+                reviews: [{ author: 'William H.', rating: 5, comment: 'Exceptional afternoon tea and world-class luxury.' }]
+            },
+            { 
+                id: 'uk_8', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'ตลาดบะระห์ (Borough Market)', price: 400, img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400', lat: 51.505, lng: -0.090, tier: 2,
+                address: '8 Southwark St, London SE1 1TL, United Kingdom', rating: 4.8, reviewCount: 950,
+                contact: 'Borough Market Information',
+                description: 'ตลาดอาหารที่เก่าแก่ที่สุดในลอนดอน รวมวัตถุดิบคุณภาพดี ชีสโฮมเมด และสตรีทฟู้ดนานาชาติชั้นเลิศ',
+                reviews: [{ author: 'James R.', rating: 5, comment: 'Foodie heaven with amazing artisan cheeses and bites!' }]
+            },
+            { 
+                id: 'uk_9', category: 'activity', catName: 'กิจกรรม', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'ชมละครเวที West End', price: 3000, img: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=400', lat: 51.511, lng: -0.130, tier: 3,
+                address: 'West End, London, United Kingdom', rating: 4.9, reviewCount: 680,
+                contact: 'West End Theatre Box Office',
+                description: 'สัมผัสประสบการณ์ละครเวทีมิวสิเคิลระดับโลก เช่น The Phantom of the Opera และ Les Misérables ใจกลางลอนดอน',
+                reviews: [{ author: 'Lily M.', rating: 5, comment: 'Unforgettable musical performance!' }]
+            },
+            { 
+                id: 'uk_10', category: 'hotel', catName: 'ที่พัก', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'The Savoy Hotel', price: 22000, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 51.510, lng: -0.120, tier: 3,
+                address: 'Strand, London WC2R 0EZ, United Kingdom', rating: 4.9, reviewCount: 420,
+                contact: 'Tel: +44 20 7836 4343',
+                description: 'โรงแรมหรูริมแม่น้ำเทมส์ ตกแต่งสไตล์อาทเดโคตระการตา ให้บริการต้อนรับแขกคนสำคัญระดับโลกมายาวนาน',
+                reviews: [{ author: 'Arthur K.', rating: 5, comment: 'Superb service and historic elegance.' }]
+            },
 
-            // ที่พัก (5)
-            { id: 'jp_hot_1', category: 'hotel', catName: 'ที่พัก', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'Hoshinoya Tokyo', price: 28000, img: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400', lat: 35.686, lng: 139.765, tier: 2, address: '1-9-1 Otemachi, Chiyoda City, Tokyo', rating: 4.9, reviewCount: 150, contact: '+81 50-3134-8096', description: 'เรียวกังระดับหรูใจกลางโตเกียว นำเสนอประสบการณ์บ่อน้ำร้อนธรรมชาติและการต้อนรับสไตล์ญี่ปุ่น' },
-            { id: 'jp_hot_2', category: 'hotel', catName: 'ที่พัก', country: 'ญี่ปุ่น', city: 'เกียวโต (Kyoto)', title: 'The Ritz-Carlton Kyoto', price: 24000, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 35.011, lng: 135.771, tier: 2, address: 'Kamogawa Nijo-Ohashi, Nakagyo Ward, Kyoto', rating: 4.9, reviewCount: 220, contact: '+81 75-746-5555', description: 'โรงแรมหรูริมแม่น้ำคาโมะ ผสมผสานความร่วมสมัยและวัฒนธรรมดั้งเดิมของเกียวโต' },
-            { id: 'jp_hot_3', category: 'hotel', catName: 'ที่พัก', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'Park Hyatt Tokyo', price: 21000, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 35.685, lng: 139.691, tier: 2, address:3-7-1-2 Nishi-Shinjuku, Shinjuku City, Tokyo', rating: 4.8, reviewCount: 310, contact: '+81 3-5322-1234', description: 'โรงแรมหรูใจกลางชินจูกุ มองเห็นทัศนียภาพอันงดงามของมหานครโตเกียวและฟูจิ' },
-            { id: 'jp_hot_4', category: 'hotel', catName: 'ที่พัก', country: 'ญี่ปุ่น', city: 'โอซาก้า (Osaka)', title: 'Swissotel Nankai Osaka', price: 7500, img: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400', lat: 34.665, lng: 135.501, tier: 2, address: '5-1-60 Namba, Chuo Ward, Osaka', rating: 4.7, reviewCount: 410, contact: '+81 6-6646-1111', description: 'โรงแรมหรูทำเลดีเหนือสถานีรถไฟนัมบะ เชื่อมต่อการเดินทางสู่ย่านโดทงโบริได้สะดวก' },
-            { id: 'jp_hot_5', category: 'hotel', catName: 'ที่พัก', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'Conrad Tokyo', price: 19000, img: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400', lat: 35.663, lng: 139.760, tier: 2, address: '1-9-1 Higashi-Shinbashi, Minato City, Tokyo', rating: 4.8, reviewCount: 290, contact: '+81 3-6388-8000', description: 'โรงแรมหรูย่านชิโอโดเมะ มองเห็นวิวสวนฮามาอาริกิวและอ่าวโตเกียว' },
-
-            // กิจกรรม (5)
-            { id: 'jp_act_1', category: 'activity', catName: 'กิจกรรม', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'แช่ออนเซ็นธรรมชาติ ฮาโกเน่', price: 1800, img: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400', lat: 35.232, lng: 139.106, tier: 1, address: 'Hakone, Ashigarashimo District, Kanagawa', rating: 4.9, reviewCount: 450, contact: '+81 460-85-5700', description: 'ผ่อนคลายกับการแช่น้ำแร่ออนเซ็นธรรมชาติ มองเห็นวิวภูเขาไฟฟูจิ' },
-            { id: 'jp_act_2', category: 'activity', catName: 'กิจกรรม', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'ชมดอกซากุระ สวนอูเอโนะ', price: 0, img: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=400', lat: 35.714, lng: 139.773, tier: 1, address: 'Uenokoen, Taito City, Tokyo', rating: 4.8, reviewCount: 880, contact: '+81 3-3828-5644', description: 'เทศกาลชมดอกซากุระบานสะพรั่งยามฤดูใบไม้ผลิ สวนสาธารณะชื่อดังของโตเกียว' },
-            { id: 'jp_act_3', category: 'activity', catName: 'กิจกรรม', country: 'ญี่ปุ่น', city: 'เกียวโต (Kyoto)', title: 'ใส่ชุดกิโมโนเดินเที่ยวเมืองเก่าเกียวโต', price: 1200, img: 'https://images.unsplash.com/photo-1492571350019-22de08371fd3?w=400', lat: 35.003, lng: 135.777, tier: 1, address: 'Gion, Higashiyama Ward, Kyoto', rating: 4.9, reviewCount: 670, contact: '+81 75-531-8888', description: 'เช่าชุดกิโมโนสไตล์ดั้งเดิม เดินถ่ายรูปย่านกิออนและวัดโบราณในเกียวโต' },
-            { id: 'jp_act_4', category: 'activity', catName: 'กิจกรรม', country: 'ญี่ปุ่น', city: 'โอซาก้า (Osaka)', title: 'เที่ยวสวนสนุก Universal Studios Japan', price: 2300, img: 'https://images.unsplash.com/photo-1565031491910-e57fac031c41?w=400', lat: 34.665, lng: 135.432, tier: 1, address: '2-1-33 Sakurajima, Konohana Ward, Osaka', rating: 4.9, reviewCount: 1800, contact: '+81 570-200-606', description: 'สวนสนุกระดับโลก สัมผัสโซน Super Nintendo World และ Harry Potter' },
-            { id: 'jp_act_5', category: 'activity', catName: 'กิจกรรม', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'ชมวิวเมือง 360 องศา Shibuya Sky', price: 650, img: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400', lat: 35.658, lng: 139.701, tier: 1, address: '2-24-12 Shibuya, Shibuya City, Tokyo', rating: 4.9, reviewCount: 920, contact: '+81 3-4221-0229', description: 'จุดชมวิวกลางแจ้งบนดาดฟ้าตึกสูงใจกลางชิบูย่า มองเห็นห้าแยกชิบูย่าแบบพาโนรามา' },
-
-            // ร้านค้า/ของฝาก (5)
-            { id: 'jp_shp_1', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ญี่ปุ่น', city: 'โอซาก้า (Osaka)', title: 'ย่านโดทงโบริ (Dotonbori)', price: 500, img: 'https://images.unsplash.com/photo-1565031491910-e57fac031c41?w=400', lat: 34.668, lng: 135.501, tier: 2, address: 'Dotonbori, Chuo Ward, Osaka', rating: 4.9, reviewCount: 1100, contact: '+81 6-6211-3540', description: 'ย่านสตรีทฟู้ดและช้อปปิ้ง ถ่ายรูปคู่ป้ายไฟกูลิโกะ ชิมทาโกยากิต้นตำรับ' },
-            { id: 'jp_shp_2', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'ย่านอกิฮาบาระ (Akihabara)', price: 400, img: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=400', lat: 35.699, lng: 139.771, tier: 2, address: 'Sotokanda, Chiyoda City, Tokyo', rating: 4.8, reviewCount: 1300, contact: 'Akihabara Info Center', description: 'ดินแดนแห่งเครื่องใช้ไฟฟ้า สินค้าไอที ฟิกเกอร์ อนิเมะ และเมดคาเฟ่' },
-            { id: 'jp_shp_3', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'ตลาดปลาซึคิจิ (Tsukiji Outer Market)', price: 600, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400', lat: 35.665, lng: 139.770, tier: 2, address: '4-16-2 Tsukiji, Chuo City, Tokyo', rating: 4.7, reviewCount: 950, contact: '+81 3-3541-9466', description: 'แหล่งรวมอาหารทะเลสด ข้าวหน้าปลาดิบ ซูชิต้นตำรับ และของกินเล่นสตรีทฟู้ด' },
-            { id: 'jp_shp_4', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ญี่ปุ่น', city: 'เกียวโต (Kyoto)', title: 'ตลาดนิชิกิ (Nishiki Market)', price: 350, img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400', lat: 35.005, lng: 135.764, tier: 2, address: 'Nakagyo Ward, Kyoto', rating: 4.7, reviewCount: 780, contact: '+81 75-211-3882', description: 'ครัวแห่งเกียวโต ตลาดเก่าแก่ยาวกว่า 400 เมตร เต็มไปด้วยของกินและของฝากพื้นเมือง' },
-            { id: 'jp_shp_5', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'ย่านชินจูกุ ดองกิโฮเต้ (Don Quijote Shinjuku)', price: 300, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', lat: 35.695, lng: 139.700, tier: 2, address: '1-16-5 Kabukicho, Shinjuku City, Tokyo', rating: 4.8, reviewCount: 1600, contact: '+81 570-055-511', description: 'ห้างส่วนลดชื่อดัง เปิด 24 ชั่วโมง ศูนย์รวมขนม เครื่องสำอาง ของฝากยอดนิยม' },
-
-
-            // ================= เกาหลีใต้ (20 รายการ) =================
-            // ท่องเที่ยว (5)
-            { id: 'kr_att_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'พระราชวังเคียงบกกุง (Gyeongbokgung)', price: 100, img: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400', lat: 37.579, lng: 126.977, tier: 1, address: '161 Sajik-ro, Jongno-gu, Seoul', rating: 4.9, reviewCount: 1100, contact: '+82 2-3700-3900', description: 'พระราชวังหลักที่ใหญ่และเก่าแก่ที่สุดในสมัยราชวงศ์โชซอน' },
-            { id: 'kr_att_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'โซลทาวเวอร์ (N Seoul Tower)', price: 420, img: 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400', lat: 37.551, lng: 126.988, tier: 1, address: '105 Namsangongwon-gil, Yongsan-gu, Seoul', rating: 4.8, reviewCount: 950, contact: '+82 2-3455-9277', description: 'แลนด์มาร์กสำคัญบนยอดเขานัมซาน จุดคล้องกุญแจคู่รักและชมวิวโซลแบบ 360 องศา' },
-            { id: 'kr_att_3', category: 'attraction', catName: 'ท่องเที่ยว', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'หาดแฮอุนแด (Haeundae Beach)', price: 0, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', lat: 35.158, lng: 129.160, tier: 1, address: 'Haeundae-gu, Busan', rating: 4.8, reviewCount: 820, contact: '+82 51-749-5700', description: 'ชายหาดที่มีชื่อเสียงที่สุดในปูซาน ชายหาดโค้งสวยงาม คึกคักตลอดทั้งปี' },
-            { id: 'kr_att_4', category: 'attraction', catName: 'ท่องเที่ยว', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'หมู่บ้านบุคชอนฮันอก (Bukchon Hanok)', price: 0, img: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400', lat: 37.582, lng: 126.983, tier: 1, address: 'Gyeodong-gil, Jongno-gu, Seoul', rating: 4.7, reviewCount: 710, contact: '+82 2-2133-1371', description: 'หมู่บ้านบ้านโบราณฮันอกดั้งเดิม สัมผัสบรรยากาศย้อนยุคใจกลางเมืองโซล' },
-            { id: 'kr_att_5', category: 'attraction', catName: 'ท่องเที่ยว', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'หมู่บ้านวัฒนธรรมคัมชอน (Gamcheon)', price: 0, img: 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400', lat: 35.097, lng: 129.010, tier: 1, address: '200 Gamnae 2-ro, Saha-gu, Busan', rating: 4.8, reviewCount: 640, contact: '+82 51-204-1444', description: 'ซานโตรินีแห่งเกาหลี บ้านเรือนหลากสีสันบนเนินเขา พร้อมงานศิลปะสตรีทอาร์ต' },
-
-            // ที่พัก (5)
-            { id: 'kr_hot_1', category: 'hotel', catName: 'ที่พัก', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'Signiel Seoul', price: 18000, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 37.513, lng: 127.102, tier: 2, address: '300 Olympic-ro, Songpa-gu, Seoul', rating: 4.9, reviewCount: 230, contact: '+82 2-3213-1000', description: 'โรงแรมหรูบนตึก Lotte World Tower ชมทัศนียภาพความสูงเสียดฟ้าเหนือเมืองโซล' },
-            { id: 'kr_hot_2', category: 'hotel', catName: 'ที่พัก', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'The Shilla Seoul', price: 12000, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 37.556, lng: 127.005, tier: 2, address: '249 Dongho-ro, Jung-gu, Seoul', rating: 4.9, reviewCount: 310, contact: '+82 2-2230-3311', description: 'โรงแรมหรูระดับตำนาน ผสมผสานความร่วมสมัยและการต้อนรับสไตล์เกาหลี' },
-            { id: 'kr_hot_3', category: 'hotel', catName: 'ที่พัก', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'Park Hyatt Busan', price: 9500, img: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400', lat: 35.153, lng: 129.139, tier: 2, address: '51 Marine city 1-ro, Haeundae-gu, Busan', rating: 4.8, reviewCount: 190, contact: '+82 51-990-1234', description: 'โรงแรมหรูย่านมารีนซิตี้ มองเห็นวิวสะพานกวางอันแดกโยและอ่าวปูซาน' },
-            { id: 'kr_hot_4', category: 'hotel', catName: 'ที่พัก', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'Lotte Hotel Seoul', price: 7800, img: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400', lat: 37.565, lng: 126.981, tier: 2, address: '30 Eulji-ro, Jung-gu, Seoul', rating: 4.7, reviewCount: 420, contact: '+82 2-771-1000', description: 'โรงแรมหรูทำเลดีใจกลางย่านเมียงดง เดินทางช้อปปิ้งและท่องเที่ยวสะดวกสบาย' },
-            { id: 'kr_hot_5', category: 'hotel', catName: 'ที่พัก', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'Ananti At Busan Cove', price: 8900, img: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400', lat: 35.195, lng: 129.229, tier: 2, address: '268 Gijanghaean-ro, Gijang-gun, Busan', rating: 4.8, reviewCount: 160, contact: '+82 51-509-1111', description: 'รีสอร์ตหรูริมชายฝั่งคิยัง บรรยากาศเงียบสงบพร้อมสระว่ายน้ำอินฟินิตี้วิวมหาสมุทร' },
-
-            // กิจกรรม (5)
-            { id: 'kr_act_1', category: 'activity', catName: 'กิจกรรม', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'เช่าชุดฮันบก ถ่ายรูปพระราชวัง', price: 450, img: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400', lat: 37.578, lng: 126.979, tier: 1, address: 'Jongno-gu, Seoul', rating: 4.9, reviewCount: 880, contact: '+82 2-722-8228', description: 'ใส่ชุดฮันบกโบราณเดินเข้าชมพระราชวังเคียงบกกุงฟรี ถ่ายภาพความประทับใจ' },
-            { id: 'kr_act_2', category: 'activity', catName: 'กิจกรรม', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'ล่องเรือฟีดดิ้งนกนางนวล แม่น้ำฮัน', price: 500, img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400', lat: 37.526, lng: 126.933, tier: 1, address: 'Yeouido Hangang Park, Seoul', rating: 4.7, reviewCount: 390, contact: '+82 2-3271-6900', description: 'ล่องเรือชมบรรยากาศแม่น้ำฮัน พร้อมกิจกรรมให้อาหารนกนางนวลกลางลำน้ำ' },
-            { id: 'kr_act_3', category: 'activity', catName: 'กิจกรรม', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'ขึ้นกระเช้าลอยฟ้า Busan Air Cruise', price: 420, img: 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400', lat: 35.076, lng: 129.023, tier: 1, address: 'Songdo Beach, Seo-gu, Busan', rating: 4.8, reviewCount: 470, contact: '+82 51-247-9900', description: 'นั่งกระเช้าพื้นกระจกข้ามอ่าวซงโด ชมวิวทะเลและชายหาดปูซานมุมสูง' },
-            { id: 'kr_act_4', category: 'activity', catName: 'กิจกรรม', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'เล่นสกี สกีรีสอร์ตเอลิเซียนกังชอน', price: 2100, img: 'https://images.unsplash.com/photo-1526772662000-3f88f10405ff?w=400', lat: 37.818, lng: 127.587, tier: 1, address: 'Chuncheon-si, Gangwon-do', rating: 4.8, reviewCount: 310, contact: '+82 33-260-2000', description: 'สัมผัสหิมะฉ่ำๆ สนุกกับการเล่นสกีและสโนว์บอร์ดใกล้เมืองโซล' },
-            { id: 'kr_act_5', category: 'activity', catName: 'กิจกรรม', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'เดินสะพานกระจก Oryukdo Skywalk', price: 0, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', lat: 35.101, lng: 129.123, tier: 1, address:137 Oryukdo-ro, Nam-gu, Busan', rating: 4.7, reviewCount: 290, contact: '+82 51-607-6395', description: 'เดินบนทางเดินกระจกใสยื่นออกไปหน้าผา มองเห็นเกาะโอรยุกโดและคลื่นทะเล' },
-
-            // ร้านค้า/ของฝาก (5)
-            { id: 'kr_shp_1', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'ย่านช้อปปิ้งเมียงดง (Myeongdong)', price: 400, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', lat: 37.563, lng: 126.983, tier: 2, address: 'Myeongdong-길, Jung-gu, Seoul', rating: 4.8, reviewCount: 1500, contact: 'Myeongdong Tourist Info Center', description: 'ศูนย์รวมเครื่องสำอางแบรนด์ดัง แฟชั่นเสื้อผ้า และสตรีทฟู้ดเกาหลีชื่อดัง' },
-            { id: 'kr_shp_2', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'ย่านฮงแด (Hongdae)', price: 300, img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400', lat: 37.556, lng: 126.923, tier: 2, address: 'Eowha-ro, Mapo-gu, Seoul', rating: 4.8, reviewCount: 1250, contact: 'Mapo Tourist Center', description: 'ย่านวัยรุ่นใกล้มหาวิทยาลัย สินค้าแฟชั่นราคาถูก คาเฟ่เก๋ๆ และดนตรีเปิดหมวก' },
-            { id: 'kr_shp_3', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'ตลาดกวางจัง (Gwangjang Market)', price: 250, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400', lat: 37.570, lng: 126.999, tier: 2, address: '88 Changgyeonggung-ro, Jongno-gu, Seoul', rating: 4.7, reviewCount: 980, contact: '+82 2-2267-0291', description: 'ตลาดสตรีทฟู้ดโบราณ ชิมพินแดต็อก (แพนเค้กถั่ว녹) ยุกฮเว (ก้อยเนื้อ) และสตรีทฟู้ด' },
-            { id: 'kr_shp_4', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'ตลาดปลาชาคัลชิ (Jagalchi Market)', price: 500, img: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400', lat: 35.096, lng: 129.030, tier: 2, address: '52 Jagalchimarket-gil, Jung-gu, Busan', rating: 4.6, reviewCount: 840, contact: '+82 51-713-8000', description: 'ตลาดอาหารทะเลที่ใหญ่ที่สุดในเกาหลี เลือกซื้ออาหารทะเลสดปรุงทานได้ทันที' },
-            { id: 'kr_shp_5', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'ห้างสรรพสินค้าฮุนได โซล (The Hyundai Seoul)', price: 600, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', lat: 37.525, lng: 126.928, tier: 2, address: '108 Yeoui-daero, Yeongdeungpo-gu, Seoul', rating: 4.9, reviewCount: 670, contact: '+82 2-3277-0000', description: 'ห้างสรรพสินค้าที่ใหญ่ที่สุดในโซล โดดเด่นด้วยสวนป่าร่มรื่นกลางห้าง และแบรนด์ลักชัวรี' },
-
-
-            // ================= สิงคโปร์ (20 รายการ) =================
-            // ท่องเที่ยว (5)
-            { id: 'sg_att_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'การ์เดนส์ บาย เดอะ เบย์ (Gardens by the Bay)', price: 700, img: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400', lat: 1.281, lng: 103.863, tier: 1, address: '18 Marina Gardens Dr, Singapore', rating: 4.9, reviewCount: 1600, contact: '+65 6420 6848', description: 'สวนอุทยานพฤกษศาสตร์ริมอ่าว โดดเด่นด้วยต้นไม้ยักษ์ Supertree Grove และโดมติดแอร์' },
-            { id: 'sg_att_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'มารีนา เบย์ แซนด์ส (Marina Bay Sands)', price: 0, img: 'https://images.unsplash.com/photo-1565967511849-76a459747061?w=400', lat: 1.283, lng: 103.860, tier: 1, address: '10 Bayfront Ave, Singapore', rating: 4.9, reviewCount: 2100, contact: '+65 6688 8868', description: 'สถาปัตยกรรมระดับโลก สัญลักษณ์แห่งสิงคโปร์ พร้อมดาดฟ้าชมวิวและคาสิโน' },
-            { id: 'sg_att_3', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'ยูนิเวอร์แซล สตูดิโอส์ สิงคโปร์ (USS)', price: 2100, img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400', lat: 1.254, lng: 103.823, tier: 1, address: '8 Sentosa Gateway, Singapore', rating: 4.8, reviewCount: 1750, contact: '+65 6577 8888', description: 'สวนสนุกฮอลลีวูดระดับโลกบนเกาะเซ็นโตซ่า เครื่องเล่น Transformers, Mummy, Sci-Fi' },
-            { id: 'sg_att_4', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'สวนสัตว์สิงคโปร์ (Singapore Zoo)', price: 1200, img: 'https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=400', lat: 1.404, lng: 103.793, tier: 1, address: '80 Mandai Lake Rd, Singapore', rating: 4.8, reviewCount: 890, contact: '+65 6269 3411', description: 'สวนสัตว์แบบเปิดระดับแนวหน้าของโลก สัมผัสสัตว์ป่าในบรรยากาศป่าฝนธรรมชาติ' },
-            { id: 'sg_att_5', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'สิงคโปร์ ฟลายเออร์ (Singapore Flyer)', price: 1000, img: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400', lat: 1.289, lng: 103.863, tier: 1, address: '30 Raffles Ave., Singapore', rating: 4.7, reviewCount: 620, contact: '+65 6333 3311', description: 'ชิงช้าสวรรค์ขนาดใหญ่ ชมวิวทัศนียภาพอันงดงามของสิงคโปร์จากความสูง 165 เมตร' },
-
-            // ที่พัก (5)
-            { id: 'sg_hot_1', category: 'hotel', catName: 'ที่พัก', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'Marina Bay Sands Hotel', price: 19500, img: 'https://images.unsplash.com/photo-1565967511849-76a459747061?w=400', lat: 1.283, lng: 103.860, tier: 2, address: '10 Bayfront Ave, Singapore', rating: 4.9, reviewCount: 890, contact: '+65 6688 8888', description: 'โรงแรมหรูพร้อมสระว่ายน้ำอินฟินิตี้บนชั้นดาดฟ้าที่ใหญ่ที่สุดในโลก' },
-            { id: 'sg_hot_2', category: 'hotel', catName: 'ที่พัก', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'Raffles Hotel Singapore', price: 23000, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 1.296, lng: 103.854, tier: 2, address: '1 Beach Rd, Singapore', rating: 5.0, reviewCount: 310, contact: '+65 6337 1886', description: 'โรงแรมหรูสไตล์โคโลเนียลระดับตำนาน แหล่งกำเนิดเครื่องดื่ม Singapore Sling' },
-            { id: 'sg_hot_3', category: 'hotel', catName: 'ที่พัก', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'Capella Singapore', price: 21000, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 1.248, lng: 103.825, tier: 2, address: '1 The Knolls, Sentosa Island, Singapore', rating: 4.9, reviewCount: 180, contact: '+65 6377 8888', description: 'รีสอร์ตหรูบนเกาะเซ็นโตซ่า โอบล้อมด้วยธรรมชาติ ผสมผสานสถาปัตยกรรมประวัติศาสตร์' },
-            { id: 'sg_hot_4', category: 'hotel', catName: 'ที่พัก', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'The Fullerton Hotel Singapore', price: 11000, img: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400', lat: 1.286, lng: 103.853, tier: 2, address: '1 Fullerton Square, Singapore', rating: 4.8, reviewCount: 420, contact: '+65 6733 8388', description: 'โรงแรมหรูอาคารมรดกทางประวัติศาสตร์ ริมแม่น้ำสิงคโปร์ ใกล้รูปปั้นเมอร์ไลออน' },
-            { id: 'sg_hot_5', category: 'hotel', catName: 'ที่พัก', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'YOTEL Singapore Orchard Road', price: 4200, img: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400', lat: 1.306, lng: 103.831, tier: 2, address: '366 Orchard Rd, Singapore', rating: 4.6, reviewCount: 550, contact: '+65 6866 8000', description: 'โรงแรมสไตล์โมเดิร์นสมาร์ตลิฟวิ่ง ใจกลางย่านช้อปปิ้งถนนออร์ชาร์ด' },
-
-            // กิจกรรม (5)
-            { id: 'sg_act_1', category: 'activity', catName: 'กิจกรรม', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'ชมโชว์แสงสี Garden Rhapsody', price: 0, img: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400', lat: 1.282, lng: 103.864, tier: 1, address: 'Supertree Grove, Gardens by the Bay', rating: 4.9, reviewCount: 1100, contact: '+65 6420 6848', description: 'การแสดงแสงสีเสียงตระการตาใต้ต้นไม้ยักษ์ Supertree เปิดตระการตาทุกค่ำคืน' },
-            { id: 'sg_act_2', category: 'activity', catName: 'กิจกรรม', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'นั่งกระเช้าลอยฟ้า Sentosa Cable Car', price: 750, img: 'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=400', lat: 1.264, lng: 103.818, tier: 1, address: '1 HarbourFront Ave, Singapore', rating: 4.8, reviewCount: 510, contact: '+65 6377 9688', description: 'นั่งกระเช้าลอยฟ้าจาก Mount Faber ข้ามไปยังเกาะเซ็นโตซ่า ชมวิวอ่าวสิงคโปร์' },
-            { id: 'sg_act_3', category: 'activity', catName: 'กิจกรรม', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'เที่ยวสวนสัตว์กลางคืน Night Safari', price: 1350, img: 'https://images.unsplash.com/photo-1534567153574-2b12153a87f0?w=400', lat: 1.402, lng: 103.788, tier: 1, address: '80 Mandai Lake Rd, Singapore', rating: 4.8, reviewCount: 780, contact: '+65 6269 3411', description: 'ประสบการณ์ท่องสวนสัตว์กลางคืนแห่งแรกของโลก นั่งรถนำเที่ยวชมสัตว์ป่าทรงเสน่ห์' },
-            { id: 'sg_act_4', category: 'activity', catName: 'กิจกรรม', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'ล่องเรือชมเมือง Singapore River Cruise', price: 650, img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400', lat: 1.290, lng: 103.846, tier: 1, address: 'Clarke Quay Jetty, Singapore', rating: 4.7, reviewCount: 420, contact: '+65 6336 6111', description: 'นั่งเรือไม้โบราณล่องแม่น้ำสิงคโปร์ ชม Clarke Quay, Marina Bay Sands และ Merlion' },
-            { id: 'sg_act_5', category: 'activity', catName: 'กิจกรรม', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'เข้าชมโดมดอกไม้ Flower Dome & Cloud Forest', price: 850, img: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400', lat: 1.284, lng: 103.865, tier: 1, address: '18 Marina Gardens Dr, Singapore', rating: 4.9, reviewCount: 950, contact: '+65 6420 6848', description: 'ตื่นตาตื่นใจกับน้ำตกในร่มที่สูงที่สุดในโลก และพรรณไม้เขตร้อนในเรือนกระจกปรับอากาศ' },
-
-            // ร้านค้า/ของฝาก (5)
-            { id: 'sg_shp_1', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'ถนนออร์ชาร์ด (Orchard Road)', price: 500, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', lat: 1.304, lng: 103.832, tier: 2, address: 'Orchard Rd, Singapore', rating: 4.8, reviewCount: 1400, contact: 'Orchard Road Business Association', description: 'ถนนสวรรค์ของนักช้อปปิ้ง แหล่งรวมศูนย์การค้าหรู ION Orchard, Ngee Ann City' },
-            { id: 'sg_shp_2', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'ย่านไชน่าทาวน์ (Chinatown Singapore)', price: 200, img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400', lat: 1.284, lng: 103.843, tier: 2, address: 'Pagoda Street, Singapore', rating: 4.7, reviewCount: 1100, contact: 'Chinatown Visitor Centre', description: 'ตลาดของฝากพวงกุญแจ ขนมพายสับปะรด หมูแผ่น Bakkwa และอาหารสตรีทฟู้ด' },
-            { id: 'sg_shp_3', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'ห้าง Jewel Changi Airport', price: 300, img: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400', lat: 1.360, lng: 103.989, tier: 2, address: '78 Airport Blvd., Singapore', rating: 4.9, reviewCount: 1800, contact: '+65 6956 9898', description: 'ห้างสรรพสินค้าในสนามบิน โดดเด่นด้วยน้ำตกในร่ม HSBC Rain Vortex และร้านค้าชั้นนำ' },
-            { id: 'sg_shp_4', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'ย่านฮาจิเลน (Haji Lane)', price: 250, img: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400', lat: 1.301, lng: 103.858, tier: 2, address: 'Haji Lane, Kampong Glam, Singapore', rating: 4.7, reviewCount: 830, contact: 'Kampong Glam Alliance', description: 'ตรอกสายฮิปสเตอร์ รวมร้านเสื้อผ้าบูติก สินค้าวินเทจ คาเฟ่เก๋ๆ และสตรีทอาร์ต' },
-            { id: 'sg_shp_5', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'ห้างมุสตาฟา เซ็นเตอร์ (Mustafa Centre)', price: 150, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400', lat: 1.310, lng: 103.855, tier: 2, address: '145 Syed Alwi Rd, Singapore', rating: 4.5, reviewCount: 1250, contact: '+65 6295 5855', description: 'ห้างช้อปปิ้งเปิด 24 ชั่วโมง ศูนย์รวมของฝาก น้ำหอม ขนม ช็อคโกแลตราคาประหยัด' },
-
-
-            // ================= ฝรั่งเศส (20 รายการ) =================
-            // ท่องเที่ยว (5)
-            { id: 'fr_att_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'หอไอเฟล (Eiffel Tower)', price: 900, img: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=400', lat: 48.858, lng: 2.294, tier: 1, address: 'Champ de Mars, 5 Av. Anatole France, Paris', rating: 4.9, reviewCount: 2500, contact: '+33 892 70 12 39', description: 'สัญลักษณ์อันโดดเด่นที่สุดของกรุงปารีสและประเทศฝรั่งเศส' },
-            { id: 'fr_att_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'พิพิธภัณฑ์ลูฟร์ (Louvre Museum)', price: 750, img: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=400', lat: 48.860, lng: 2.337, tier: 1, address: '75001 Paris, France', rating: 4.9, reviewCount: 2100, contact: '+33 1 40 20 53 17', description: 'พิพิธภัณฑ์ศิลปะที่ใหญ่ที่สุดในโลก สถานที่จัดแสดงภาพวาดโมนาลิซ่า' },
-            { id: 'fr_att_3', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'พระราชวังแวร์ซายส์ (Palace of Versailles)', price: 800, img: 'https://images.unsplash.com/photo-1543349689-9a4d426bee8e?w=400', lat: 48.804, lng: 2.120, tier: 1, address: 'Place d\'Armes, 78000 Versailles', rating: 4.8, reviewCount: 1600, contact: '+33 1 30 83 78 00', description: 'พระราชวังอันวิจิตรตระการตาและสวนสไตล์ฝรั่งเศสอันยิ่งใหญ่ระดับโลก' },
-            { id: 'fr_att_4', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'นีซ (Nice)', title: 'ถนนพรอเมอนาด เดส์ ซ็องเกลส์ (Nice)', price: 0, img: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400', lat: 43.695, lng: 7.265, tier: 1, address: 'Prom. des Anglais, 06000 Nice', rating: 4.8, reviewCount: 890, contact: 'Nice Tourist Board', description: 'ถนนเลียบชายหาดริเวียราอันโด่งดัง ทะเลสีฟ้าสดใสและอากาศอันอบอุ่น' },
-            { id: 'fr_att_5', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'มหาวิหารซาเคร-เกอร์ (Sacré-Cœur)', price: 0, img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400', lat: 48.886, lng: 2.343, tier: 1, address: '35 Rue du Chevalier de la Barre, Paris', rating: 4.8, reviewCount: 1100, contact: '+33 1 53 41 89 00', description: 'มหาวิหารโดมสีขาวบนยอดเขามงมาร์ต จุดชมวิวทัศนียภาพกรุงปารีสอันโรแมนติก' },
-
-            // ที่พัก (5)
-            { id: 'fr_hot_1', category: 'hotel', catName: 'ที่พัก', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'Ritz Paris', price: 42000, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 48.868, lng: 2.329, tier: 2, address: '15 Place Vendôme, 75001 Paris', rating: 5.0, reviewCount: 290, contact: '+33 1 43 16 30 30', description: 'สัญลักษณ์แห่งความหรูหราระดับพระราชวัง ใจกลางจัตุรัส Place Vendôme' },
-            { id: 'fr_hot_2', category: 'hotel', catName: 'ที่พัก', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'Le Meurice Paris', price: 38000, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 48.865, lng: 2.328, tier: 2, address: '228 Rue de Rivoli, 75001 Paris', rating: 4.9, reviewCount: 180, contact: '+33 1 44 58 10 10', description: 'โรงแรมพาเลซสไตล์คลาสสิกฝรั่งเศส มองเห็นสวน Tuileries Gardens' },
-            { id: 'fr_hot_3', category: 'hotel', catName: 'ที่พัก', country: 'ฝรั่งเศส', city: 'นีซ (Nice)', title: 'Hotel Negresco Nice', price: 16500, img: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400', lat: 43.694, lng: 7.258, tier: 2, address: '37 Prom. des Anglais, 06000 Nice', rating: 4.8, reviewCount: 340, contact: '+33 4 93 16 64 00', description: 'โรงแรมหรูสไตล์เบลล์เอปอกระดับตำนาน ริมชายหาดแถบ French Riviera' },
-            { id: 'fr_hot_4', category: 'hotel', catName: 'ที่พัก', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'Four Seasons Hotel George V', price: 45000, img: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400', lat: 48.868, lng: 2.301, tier: 2, address: '31 Av. George V, 75008 Paris', rating: 5.0, reviewCount: 410, contact: '+33 1 49 52 70 00', description: 'โรงแรมหรูระดับพาเลซ ตกแต่งด้วยดอกไม้ตระการตา ใกล้ถนนช็องเซลิเซ่' },
-            { id: 'fr_hot_5', category: 'hotel', catName: 'ที่พัก', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'Pullman Paris Tour Eiffel', price: 11500, img: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400', lat: 48.855, lng: 2.293, tier: 2, address: '18 Avenue De Suffren, 75015 Paris', rating: 4.7, reviewCount: 650, contact: '+33 1 44 38 56 00', description: 'โรงแรมทันสมัยตั้งอยู่ใกล้หอไอเฟล มองเห็นวิวหอไอเฟลอย่างใกล้ชิดจากห้องพัก' },
-
-            // กิจกรรม (5)
-            { id: 'fr_act_1', category: 'activity', catName: 'กิจกรรม', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'ล่องเรือชมเมือง แม่น้ำแซน (Seine River Cruise)', price: 600, img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400', lat: 48.860, lng: 2.297, tier: 1, address: 'Port de la Bourdonnais, Paris', rating: 4.8, reviewCount: 1200, contact: '+33 1 42 25 96 10', description: 'ล่องเรือชมสถานที่สำคัญริมแม่น้ำแซน หอไอเฟล พิพิธภัณฑ์ลูฟร์ มหาวิหารนอเทรอดาม' },
-            { id: 'fr_act_2', category: 'activity', catName: 'กิจกรรม', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'ชมการแสดงมูแลงรูจ (Moulin Rouge Show)', price: 4200, img: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=400', lat: 48.884, lng: 2.332, tier: 1, address: '82 Bd de Clichy, 75018 Paris', rating: 4.7, reviewCount: 830, contact: '+33 1 53 09 82 82', description: 'ชมการแสดงคาบาเรต์อันโด่งดังระดับตำนานในย่านมงมาร์ต พร้อมจิบแชมเปญ' },
-            { id: 'fr_act_3', category: 'activity', catName: 'กิจกรรม', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'ขึ้นชมวิวบนประตูชัยปารีส (Arc de Triomphe)', price: 500, img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400', lat: 48.873, lng: 2.295, tier: 1, address: 'Pl. Charles de Gaulle, 75008 Paris', rating: 4.8, reviewCount: 940, contact: '+33 1 55 37 73 77', description: 'เดินขึ้นบันไดดาดฟ้าประตูชัย ชมถนน 12 สายที่พุ่งตรงออกจากจุดศูนย์กลาง' },
-            { id: 'fr_act_4', category: 'activity', catName: 'กิจกรรม', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'ทัวร์ชิมไวน์และชีสสไตล์ฝรั่งเศส', price: 2800, img: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400', lat: 48.853, lng: 2.348, tier: 1, address: 'Latin Quarter, Paris', rating: 4.9, reviewCount: 380, contact: '+33 1 43 29 64 20', description: 'ลิ้มลองรสชาติไวน์ฝรั่งเศสคุณภาพเยี่ยมคู่กับชีสท้องถิ่นหลากหลายชนิด' },
-            { id: 'fr_act_5', category: 'activity', catName: 'กิจกรรม', country: 'ฝรั่งเศส', city: 'นีซ (Nice)', title: 'นั่งรถบัสเปิดประทุนทัวร์เมืองนีซ', price: 850, img: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400', lat: 43.700, lng: 7.268, tier: 1, address: 'Promenade des Anglais, Nice', rating: 4.6, reviewCount: 260, contact: '+33 4 93 92 82 82', description: 'ชมความสวยงามของเมืองชายทะเลและสถาปัตยกรรมแถบเมดิเตอร์เรเนียน' },
-
-            // ร้านค้า/ของฝาก (5)
-            { id: 'fr_shp_1', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'ถนนช็องเซลิเซ่ (Champs-Élysées)', price: 800, img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400', lat: 48.869, lng: 2.307, tier: 2, address: 'Av. des Champs-Élysées, Paris', rating: 4.8, reviewCount: 1800, contact: 'Comité Champs-Élysées', description: 'ถนนที่สวยที่สุดในโลก ศูนย์รวมแบรนด์เนมไฮเอนด์ Louis Vuitton, Sephora' },
-            { id: 'fr_shp_2', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'ห้างแกเลอรี ลาฟาแยตต์ (Galeries Lafayette)', price: 600, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', lat: 48.873, lng: 2.332, tier: 2, address: '40 Bd Haussmann, 75009 Paris', rating: 4.8, reviewCount: 1600, contact: '+33 1 42 82 34 56', description: 'ห้างสรรพสินค้าสุดอลังการ เด่นด้วยโดมกระจกสไตล์สเตนกลาสและสินค้าแบรนด์เนม' },
-            { id: 'fr_shp_3', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'ร้านขนมมาการอง Ladurée Paris', price: 450, img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400', lat: 48.871, lng: 2.323, tier: 2, address: '75 Av. des Champs-Élysées, Paris', rating: 4.7, reviewCount: 920, contact: '+33 1 40 75 08 75', description: 'ร้านต้นตำรับขนมมาการองระดับพรีเมียม บรรยากาศร้านสวยงามสไตล์ฝรั่งเศส' },
-            { id: 'fr_shp_4', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ฝรั่งเศส', city: 'นีซ (Nice)', title: 'ตลาดดอกไม้และของสด Cours Saleya', price: 250, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400', lat: 43.695, lng: 7.275, tier: 2, address: 'Cours Saleya, 06300 Nice', rating: 4.7, reviewCount: 610, contact: 'Nice Tourism', description: 'ตลาดกลางแจ้งย่านเมืองเก่านีซ ขายดอกไม้ สบู่หอมลาเวนเดอร์ น้ำมันมะกอก และ Socca' },
-            { id: 'fr_shp_5', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'ย่านเลอ มาเรส์ (Le Marais)', price: 350, img: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400', lat: 48.857, lng: 2.358, tier: 2, address: 'Le Marais, 75004 Paris', rating: 4.8, reviewCount: 880, contact: 'Paris Marais Info', description: 'ย่านช็อปปิ้งสุดเก๋ เต็มไปด้วยร้านเสื้อผ้าดีไซเนอร์ สินค้าศิลปะ คาเฟ่ และร้านวินเทจ' },
-
-
-            // ================= อังกฤษ (20 รายการ) =================
-            // ท่องเที่ยว (5)
-            { id: 'uk_att_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'หอนาฬิกาบิ๊กเบน (Big Ben)', price: 0, img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400', lat: 51.500, lng: -0.124, tier: 1, address: 'London SW1A 0AA, United Kingdom', rating: 4.9, reviewCount: 2200, contact: '+44 20 7219 4272', description: 'หอนาฬิกาพระราชวังเวสต์มินสเตอร์ สัญลักษณ์อมตะของสหราชอาณาจักร' },
-            { id: 'uk_att_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'พระราชวังบัคกิงแฮม (Buckingham Palace)', price: 0, img: 'https://images.unsplash.com/photo-1529655683826-aba9b3e77383?w=400', lat: 51.501, lng: -0.141, tier: 1, address: 'London SW1A 1AA, United Kingdom', rating: 4.8, reviewCount: 1800, contact: '+44 303 123 7300', description: 'พระราชฐานที่ประทับอย่างเป็นทางการ จุดชมพิธีเปลี่ยนเวรยามทหารมหาดเล็ก' },
-            { id: 'uk_att_3', category: 'attraction', catName: 'ท่องเที่ยว', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'ลอนดอนอาย (London Eye)', price: 1200, img: 'https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=400', lat: 51.503, lng: -0.119, tier: 1, address: 'Riverside Building, County Hall, London', rating: 4.8, reviewCount: 1950, contact: '+44 20 7967 8021', description: 'ชิงช้าสวรรค์ยักษ์ริมแม่น้ำเทมส์ ชมทัศนียภาพอันงดงามของมหานครลอนดอน' },
-            { id: 'uk_att_4', category: 'attraction', catName: 'ท่องเที่ยว', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'สะพานทาวเวอร์บริดจ์ (Tower Bridge)', price: 450, img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400', lat: 51.505, lng: -0.075, tier: 1, address: 'Tower Bridge Rd, London SE1 2UP', rating: 4.9, reviewCount: 1600, contact: '+44 20 7403 3761', description: 'สะพานเปิด-ปิดได้สไตล์โกธิก สัญลักษณ์อันงดงามริมแม่น้ำเทมส์' },
-            { id: 'uk_att_5', category: 'attraction', catName: 'ท่องเที่ยว', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'พิพิธภัณฑ์บริติช (British Museum)', price: 0, img: 'https://images.unsplash.com/photo-1529655683826-aba9b3e77383?w=400', lat: 51.519, lng: -0.127, tier: 1, address: 'Great Russell St, London WC1B 3DG', rating: 4.9, reviewCount: 2100, contact: '+44 20 7323 8299', description: 'พิพิธภัณฑ์ประวัติศาสตร์และวัฒนธรรมมนุษยชาติที่ยิ่งใหญ่ที่สุดแห่งหนึ่งของโลก' },
-
-            // ที่พัก (5)
-            { id: 'uk_hot_1', category: 'hotel', catName: 'ที่พัก', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'The Ritz London', price: 32000, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 51.507, lng: -0.141, tier: 2, address: '150 Piccadilly, St. James\'s, London', rating: 4.9, reviewCount: 380, contact: '+44 20 7493 8181', description: 'โรงแรมหรูระดับตำนานย่าน Mayfair สัญลักษณ์แห่งความหรูหราสไตล์นีโอคลาสสิก' },
-            { id: 'uk_hot_2', category: 'hotel', catName: 'ที่พัก', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'The Savoy', price: 28000, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 51.510, lng: -0.120, tier: 2, address: 'Strand, London WC2R 0EZ', rating: 4.9, reviewCount: 420, contact: '+44 20 7836 4343', description: 'โรงแรมหรูริมแม่น้ำเทมส์ บริการระดับโลกและบรรยากาศสไตล์อาร์ตเดโค' },
-            { id: 'uk_hot_3', category: 'hotel', catName: 'ที่พัก', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'The Langham London', price: 19500, img: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400', lat: 51.516, lng: -0.143, tier: 2, address: '1C Portland Pl, London W1B 1JA', rating: 4.8, reviewCount: 290, contact: '+44 20 7636 1000', description: 'โรงแรมหรูแห่งแรกของยุโรป โดดเด่นด้วยการบริการและน้ำชา Afternoon Tea ระดับตำนาน' },
-            { id: 'uk_hot_4', category: 'hotel', catName: 'ที่พัก', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'Rosewood London', price: 24000, img: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400', lat: 51.517, lng: -0.117, tier: 2, address: '252 High Holborn, London WC1V 7EN', rating: 4.9, reviewCount: 210, contact: '+44 20 7781 8888', description: 'โรงแรมหรูใจกลางย่าน Holborn ผสมผสานเสน่ห์สไตล์บริติชและความร่วมสมัย' },
-            { id: 'uk_hot_5', category: 'hotel', catName: 'ที่พัก', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'CitizenM Tower of London', price: 5800, img: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400', lat: 51.509, lng: -0.076, tier: 2, address: '40 Trinity Square, London EC3N 4DJ', rating: 4.7, reviewCount: 780, contact: '+44 20 3519 1680', description: 'โรงแรมดีไซน์ทันสมัยติดสถานีรถไฟใต้ดิน มองเห็นวิวหอคอยแห่งลอนดอน' },
-
-            // กิจกรรม (5)
-            { id: 'uk_act_1', category: 'activity', catName: 'กิจกรรม', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'จิบชาบ่ายสไตล์อังกฤษ (Afternoon Tea)', price: 2400, img: 'https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=400', lat: 51.507, lng: -0.141, tier: 1, address: 'The Palm Court at The Ritz, London', rating: 4.9, reviewCount: 650, contact: '+44 20 7493 8181', description: 'สัมผัสประเพณีจิบชาบ่ายดั้งเดิม เสิร์ฟพร้อมสคอน แซนด์วิชชิ้นพอดีคำ และขนมหวาน' },
-            { id: 'uk_act_2', category: 'activity', catName: 'กิจกรรม', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'ชมละครเวทีเด็ด West End Musical', price: 2800, img: 'https://images.unsplash.com/photo-1505761671935-60b3a7427bad?w=400', lat: 51.511, lng: -0.130, tier: 1, address: 'West End Theatre District, London', rating: 4.9, reviewCount: 890, contact: 'Official London Theatre', description: 'ชมการแสดงละครเวทีระดับโลก เช่น Phantom of the Opera, Les Misérables, Lion King' },
-            { id: 'uk_act_3', category: 'activity', catName: 'กิจกรรม', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'ทัวร์สตูดิโอแฮร์รี่ พอตเตอร์ (Warner Bros.)', price: 2500, img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400', lat: 51.690, lng: -0.418, tier: 1, address: 'Studio Tour Dr, Leavesden, Watford', rating: 4.9, reviewCount: 1400, contact: '+44 800 648 2182', description: 'ตะลุยฉากจริงและพร็อบประกอบภาพยนตร์แฮร์รี่ พอตเตอร์ ชิมบัตเตอร์เบียร์' },
-            { id: 'uk_act_4', category: 'activity', catName: 'กิจกรรม', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'ทัวร์สนามฟุตบอลสโมสรอาร์เซนอล/เชลซี', price: 1400, img: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=400', lat: 51.554, lng: -0.108, tier: 1, address: 'Emirates Stadium, Hornsey Rd, London', rating: 4.8, reviewCount: 520, contact: '+44 20 7619 5000', description: 'เยี่ยมชมห้องแต่งตัวนักเตะ อุโมงค์ลงสนาม และพิพิธภัณฑ์ประวัติศาสตร์สโมสร' },
-            { id: 'uk_act_5', category: 'activity', catName: 'กิจกรรม', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'นั่งรถบัสสองชั้นเปิดประทุนทัวร์ลอนดอน', price: 1100, img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400', lat: 51.508, lng: -0.128, tier: 1, address: 'Trafalgar Square, London', rating: 4.7, reviewCount: 410, contact: '+44 20 7694 9494', description: 'นั่งรถบัสสีแดงสองชั้น Hop-on Hop-off ชมแลนด์มาร์กสำคัญรอบเมืองลอนดอน' },
-
-            // ร้านค้า/ของฝาก (5)
-            { id: 'uk_shp_1', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'ห้างแฮร์รอดส์ (Harrods)', price: 800, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', lat: 51.499, lng: -0.163, tier: 2, address: '87-135 Brompton Rd, Knightsbridge, London', rating: 4.8, reviewCount: 1900, contact: '+44 20 7730 1234', description: 'ห้างสรรพสินค้าที่หรูหราและมีชื่อเสียงที่สุดในอังกฤษ ถุงผ้า Harrods ขาชาพรีเมียม' },
-            { id: 'uk_shp_2', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'ตลาดพอร์โทเบลโล (Portobello Market)', price: 300, img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400', lat: 51.516, lng: -0.205, tier: 2, address: 'Portobello Rd, Notting Hill, London', rating: 4.7, reviewCount: 1100, contact: 'Notting Hill Tourism', description: 'ตลาดของโบราณแอนทีคใหญ่ที่สุดในโลก สินค้ามือสอง วินเทจ ในย่านน็อตติ้งฮิลล์' },
-            { id: 'uk_shp_3', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'ถนนออกซ์ฟอร์ด (Oxford Street)', price: 500, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', lat: 51.514, lng: -0.144, tier: 2, address: 'Oxford St, London', rating: 4.8, reviewCount: 1500, contact: 'New Oxford Street Association', description: 'ย่านช็อปปิ้งหลักใจกลางเมืองลอนดอน รวมร้านค้าแบรนด์เนม ไฮสตรีทแฟชั่น' },
-            { id: 'uk_shp_4', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'ตลาดบอโร (Borough Market)', price: 350, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400', lat: 51.505, lng: -0.091, tier: 2, address: '8 Southwark St, London SE1 1TL', rating: 4.8, reviewCount: 1350, contact: '+44 20 7407 1002', description: 'ตลาดสตรีทฟู้ดวัตถุดิบอาหารสดเก่าแก่กว่า 1,000 ปี ชิมพายเนื้อ ชีสสด และสตรอว์เบอร์รีดิปช็อกโกแลต' },
-            { id: 'uk_shp_5', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'ร้านชา Fortnum & Mason', price: 650, img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400', lat: 51.508, lng: -0.138, tier: 2, address: '181 Piccadilly, St. James\'s, London', rating: 4.9, reviewCount: 880, contact: '+44 20 7734 8040', description: 'ร้านชาหลวงถวายราชวงศ์อังกฤษ กล่องชาดีไซน์คลาสสิก ขนมบิสกิต ของฝากผู้ใหญ่ชั้นดี' },
-
-
-            // ================= สหรัฐอเมริกา (20 รายการ) =================
-            // ท่องเที่ยว (5)
-            { id: 'us_att_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'เทพีเสรีภาพ (Statue of Liberty)', price: 850, img: 'https://images.unsplash.com/photo-1609825488888-3a766db05542?w=400', lat: 40.689, lng: -74.044, tier: 1, address: 'New York, NY 10004, United States', rating: 4.9, reviewCount: 2800, contact: '+1 212-363-3200', description: 'สัญลักษณ์อิสรภาพระดับโลก ตั้งโดดเด่นบนเกาะลิเบอร์ตี อ่าวลอนดอน' },
-            { id: 'us_att_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'ไทม์สแควร์ (Times Square)', price: 0, img: 'https://images.unsplash.com/photo-1500916434205-0c77489c6cf7?w=400', lat: 40.758, lng: -73.985, tier: 1, address: 'Manhattan, NY 10036, United States', rating: 4.8, reviewCount: 3100, contact: 'Times Square Alliance', description: 'สี่แยกป้ายไฟโฆษณาอันโด่งดัง ใจกลางย่านละครเวทีบรอดเวย์ มหานครนิวยอร์ก' },
-            { id: 'us_att_3', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'ป้ายฮอลลีวูด (Hollywood Sign)', price: 0, img: 'https://images.unsplash.com/photo-1580655653885-65763b2597d0?w=400', lat: 34.134, lng: -118.321, tier: 1, address: 'Los Angeles, CA 90068, United States', rating: 4.7, reviewCount: 1600, contact: 'Hollywood Chamber of Commerce', description: 'สัญลักษณ์แห่งอุตสาหกรรมภาพยนตร์โลก บนเนินเขา Griffith Park' },
-            { id: 'us_att_4', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'สวนสาธารณะเซ็นทรัลพาร์ก (Central Park)', price: 0, img: 'https://images.unsplash.com/photo-1500916434205-0c77489c6cf7?w=400', lat: 40.782, lng: -73.965, tier: 1, address: 'New York, NY, United States', rating: 4.9, reviewCount: 2400, contact: '+1 212-310-6600', description: 'สวนสาธารณะขนาดใหญ่ใจกลางแมนฮัตตัน ปอดใหญ่ของคนนิวยอร์ก' },
-            { id: 'us_att_5', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'ท่าเรือซานตาโมนิกา (Santa Monica Pier)', price: 0, img: 'https://images.unsplash.com/photo-1580655653885-65763b2597d0?w=400', lat: 34.010, lng: -118.496, tier: 1, address: '200 Santa Monica Pier, Santa Monica, CA', rating: 4.8, reviewCount: 1450, contact: '+1 310-458-8900', description: 'ท่าเรือไม้ประวัติศาสตร์พร้อมสวนสนุก Pacific Park และจุดสิ้นสุดถนนสาย Route 66' },
-
-            // ที่พัก (5)
-            { id: 'us_hot_1', category: 'hotel', catName: 'ที่พัก', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'The Plaza Hotel NY', price: 29000, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 40.764, lng: -73.974, tier: 2, address: '768 5th Ave, New York, NY 10019', rating: 4.9, reviewCount: 520, contact: '+1 212-759-3000', description: 'โรงแรมหรูระดับสถาปัตยกรรมคลาสสิกริม Central Park ปรากฏในภาพยนตร์ชื่อดังหลายเรื่อง' },
-            { id: 'us_hot_2', category: 'hotel', catName: 'ที่พัก', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'The Beverly Hills Hotel', price: 31000, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 34.081, lng: -118.413, tier: 2, address: '9641 Sunset Blvd, Beverly Hills, CA', rating: 4.9, reviewCount: 310, contact: '+1 310-276-2251', description: 'โรงแรมพาเลซสีชมพูระดับตำนานย่านเบเวอร์ลีฮิลส์ ที่พักของดาราดังระดับฮอลลีวูด' },
-            { id: 'us_hot_3', category: 'hotel', catName: 'ที่พัก', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'The Ritz-Carlton New York, Central Park', price: 34000, img: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=400', lat: 40.765, lng: -73.975, tier: 2, address: '50 Central Park S, New York, NY 10019', rating: 4.9, reviewCount: 280, contact: '+1 212-308-9100', description: 'โรงแรมหรูทำเลทอง มองเห็นทัศนียภาพอันงดงามของสวนเซ็นทรัลพาร์ก' },
-            { id: 'us_hot_4', category: 'hotel', catName: 'ที่พัก', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'The Standard, High Line', price: 12500, img: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400', lat: 40.740, lng: -74.008, tier: 2, address: '848 Washington St, New York, NY 10014', rating: 4.7, reviewCount: 610, contact: '+1 212-645-4646', description: 'โรงแรมดีไซน์ชิคในย่าน Meatpacking District คร่อมสวนลอยฟ้า High Line' },
-            { id: 'us_hot_5', category: 'hotel', catName: 'ที่พัก', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'Loews Hollywood Hotel', price: 8200, img: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400', lat: 34.102, lng: -118.340, tier: 2, address: '1755 N Highland Ave, Hollywood, CA', rating: 4.6, reviewCount: 730, contact: '+1 321-491-0600', description: 'โรงแรมทำเลดีติดถนนฮอลลีวูดวอล์กออฟเฟม เดินทางท่องเที่ยวสะดวก' },
-
-            // กิจกรรม (5)
-            { id: 'us_act_1', category: 'activity', catName: 'กิจกรรม', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'ชมละครเวทีบรอดเวย์ (Broadway Show)', price: 3800, img: 'https://images.unsplash.com/photo-1500916434205-0c77489c6cf7?w=400', lat: 40.759, lng: -73.984, tier: 1, address: 'Broadway Theatre District, New York', rating: 4.9, reviewCount: 1100, contact: 'Broadway.org', description: 'ตื่นตาตื่นใจกับโชว์ระดับโลก Lion King, Hamilton, Wicked บนถนนบรอดเวย์' },
-            { id: 'us_act_2', category: 'activity', catName: 'กิจกรรม', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'ทัวร์เบื้องหลัง Universal Studios Hollywood', price: 3200, img: 'https://images.unsplash.com/photo-1580655653885-65763b2597d0?w=400', lat: 34.138, lng: -118.353, tier: 1, address: '100 Universal City Plaza, Universal City, CA', rating: 4.9, reviewCount: 1650, contact: '+1 800-864-8377', description: 'นั่งรถทัวร์ชมสตูดิโอถ่ายทำภาพยนตร์จริง และเล่นเครื่องเล่นสวนสนุกสุดตื่นเต้น' },
-            { id: 'us_act_3', category: 'activity', catName: 'กิจกรรม', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'ขึ้นชมวิวตึกเอ็มไพร์สเตต (Empire State Building)', price: 1500, img: 'https://images.unsplash.com/photo-1609825488888-3a766db05542?w=400', lat: 40.748, lng: -73.985, tier: 1, address: '20 W 34th St., New York, NY 10001', rating: 4.8, reviewCount: 1890, contact: '+1 212-736-3100', description: 'ชมวิวทัศนียภาพ 360 องศาของมหานครนิวยอร์กจากดาดฟ้าชั้น 86' },
-            { id: 'us_act_4', category: 'activity', catName: 'กิจกรรม', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'ชมกลุ่มดาว ณ หอดูดาวกรีฟฟิท (Griffith Observatory)', price: 0, img: 'https://images.unsplash.com/photo-1580655653885-65763b2597d0?w=400', lat: 34.118, lng: -118.300, tier: 1, address: '2800 E Observatory Rd, Los Angeles, CA', rating: 4.9, reviewCount: 1200, contact: '+1 213-473-0800', description: 'ส่องกล้องดูดาว ชมการแสดงดาราศาสตร์ และชมวิวพาโนรามาของเมืองแอลเอ' },
-            { id: 'us_act_5', category: 'activity', catName: 'กิจกรรม', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'เดินรับลมบนสะพานบรูคลิน (Brooklyn Bridge)', price: 0, img: 'https://images.unsplash.com/photo-1609825488888-3a766db05542?w=400', lat: 40.706, lng: -73.996, tier: 1, address: 'Brooklyn Bridge, New York, NY', rating: 4.9, reviewCount: 1420, contact: 'NYC Parks', description: 'เดินข้ามสะพานแขวนขอนเหล็กอันเก่าแก่ ถ่ายรูปวิวตึกสูงระฟ้าฝั่งแมนฮัตตัน' },
-
-            // ร้านค้า/ของฝาก (5)
-            { id: 'us_shp_1', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'ถนนฟิฟธ์อะเวนิว (Fifth Avenue)', price: 800, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', lat: 40.762, lng: -73.973, tier: 2, address: 'Fifth Ave, New York, NY', rating: 4.9, reviewCount: 2100, contact: 'Fifth Avenue Association', description: 'ถนนช็อปปิ้งไฮเอนด์ชื่อดังระดับโลก ตึก Tiffany & Co., Saks Fifth Avenue, Apple Store' },
-            { id: 'us_shp_2', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'ถนนโรดิโอไดรฟ์ (Rodeo Drive)', price: 1000, img: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=400', lat: 34.067, lng: -118.401, tier: 2, address: 'Rodeo Dr, Beverly Hills, CA', rating: 4.8, reviewCount: 1300, contact: 'Rodeo Drive Committee', description: 'ย่านช็อปปิ้งสินค้าแบรนด์เนมสุดหรูใจกลางเบเวอร์ลีฮิลส์ สัมผัสความลักชัวรีสไตล์แอลเอ' },
-            { id: 'us_shp_3', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'ตลาดเชลซี (Chelsea Market)', price: 400, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400', lat: 40.742, lng: -74.006, tier: 2, address: '75 9th Ave, New York, NY 10011', rating: 4.8, reviewCount: 1600, contact: '+1 212-652-2110', description: 'ตลาดอาหารในอาคารอิฐแดงเก่า ชิมกุ้งมังกรสด ลอบสเตอร์ม้วน ขนมเบเกอรี และของฝาก' },
-            { id: 'us_shp_4', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'ตลาดเกษตรกรกรีนมาร์เก็ต (LA Farmers Market)', price: 300, img: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=400', lat: 34.072, lng: -118.360, tier: 2, address: '6333 W 3rd St, Los Angeles, CA', rating: 4.7, reviewCount: 950, contact: '+1 323-933-9211', description: 'ตลาดกลางแจ้งดั้งเดิมตั้งแต่ปี 1934 ขายอาหารนานาชาติ ผลไม้สด ช็อคโกแลต และของฝาก' },
-            { id: 'us_shp_5', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'ห้างเมซีส์ สาขาใหญ่ (Macy\'s Herald Square)', price: 500, img: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400', lat: 40.750, lng: -73.989, tier: 2, address: '151 W 34th St., New York, NY 10001', rating: 4.7, reviewCount: 2200, contact: '+1 212-695-4400', description: 'ห้างสรรพสินค้าที่ใหญ่ที่สุดในอเมริกา มีสินค้าแฟชั่น น้ำหอม เสื้อผ้าแบรนด์อเมริกันครบครัน' }
+            // ================= สหรัฐอเมริกา (10 รายการ) =================
+            { 
+                id: 'us_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'เทพีเสรีภาพ (Statue of Liberty)', price: 900, img: 'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=400', lat: 40.689, lng: -74.044, tier: 1,
+                address: 'New York, NY 10004, United States', rating: 4.9, reviewCount: 3500,
+                contact: 'Statue City Cruises Center',
+                description: 'สัญลักษณ์แห่งอิสรภาพของสหรัฐอเมริกา ตั้งอยู่บนเกาะลิเบอร์ตี มองเห็นทิวทัศน์อ่าวนิวยอร์กตระการตา',
+                reviews: [{ author: 'Michael B.', rating: 5, comment: 'Iconic monument of freedom and democracy!' }]
+            },
+            { 
+                id: 'us_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'สวนสาธารณะ Central Park', price: 0, img: 'https://images.unsplash.com/photo-1500673922987-e212871fec22?w=400', lat: 40.782, lng: -73.965, tier: 1,
+                address: 'New York, NY, United States', rating: 4.9, reviewCount: 2900,
+                contact: 'Central Park Conservancy Desk',
+                description: 'สวนสาธารณะขนาดใหญ่ใจกลางเกาะแมนฮัตตัน ปอดแห่งเมืองนิวยอร์ก เหมาะสำหรับการปั่นจักรยาน เดินเล่น และพักผ่อน',
+                reviews: [{ author: 'Jessica M.', rating: 5, comment: 'Beautiful green oasis in the middle of concrete jungle.' }]
+            },
+            { 
+                id: 'us_3', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'ย่านไทม์สแควร์ (Times Square)', price: 500, img: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400', lat: 40.758, lng: -73.985, tier: 1,
+                address: 'Manhattan, NY 10036, United States', rating: 4.8, reviewCount: 2200,
+                contact: 'Times Square Alliance Desk',
+                description: 'ศูนย์กลางความบันเทิงและย่านธุรกิจระดับโลก ตระการตาด้วยป้ายโฆษณาไฟนีออนขนาดยักษ์ตลอด 24 ชั่วโมง',
+                reviews: [{ author: 'David S.', rating: 5, comment: 'Electrifying atmosphere, true city that never sleeps!' }]
+            },
+            { 
+                id: 'us_4', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'ป้ายฮอลลีวูด (Hollywood Sign)', price: 0, img: 'https://images.unsplash.com/photo-1580655653885-65763b2597d0?w=400', lat: 34.134, lng: -118.321, tier: 1,
+                address: 'Los Angeles, CA 90068, United States', rating: 4.7, reviewCount: 1450,
+                contact: 'Hollywood Sign Trust Office',
+                description: 'ป้ายตัวอักษรสีขาวขนาดใหญ่บนเทือกเขาลี สัญลักษณ์อันโด่งดังระดับโลกของอุตสาหกรรมภาพยนตร์ฮอลลีวูด',
+                reviews: [{ author: 'Sarah T.', rating: 5, comment: 'Classic LA landmark and great hiking spots nearby.' }]
+            },
+            { 
+                id: 'us_5', category: 'activity', catName: 'กิจกรรม', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'ยูนิเวอร์แซล สตูดิโอ ฮอลลีวูด', price: 3800, img: 'https://images.unsplash.com/photo-1513889961551-628c1e5e2ee9?w=400', lat: 34.138, lng: -118.353, tier: 1,
+                address: '100 Universal City Plaza, Universal City, CA 91608', rating: 4.8, reviewCount: 1900,
+                contact: 'Universal Studios Hollywood Guest Relations',
+                description: 'สัมผัสประสบการณ์เบื้องหลังการถ่ายทำภาพยนตร์ระดับโลกพร้อมเครื่องเล่นสุดตื่นเต้นตระการตา',
+                reviews: [{ author: 'Brian K.', rating: 5, comment: 'The Studio Tour and Harry Potter world are amazing!' }]
+            },
+            { 
+                id: 'us_6', category: 'hotel', catName: 'ที่พัก', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'The Plaza Hotel NYC', price: 32000, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 40.764, lng: -73.974, tier: 2,
+                address: '768 5th Ave, New York, NY 10019, United States', rating: 4.9, reviewCount: 450,
+                contact: 'Tel: +1 212-759-3000',
+                description: 'โรงแรมหรูหราทรงคุณค่าระดับตำนาน บริเวณหัวมุมสวนเซ็นทรัลพาร์ก สัญลักษณ์แห่งความคลาสสิกของนิวยอร์ก',
+                reviews: [{ author: 'Robert E.', rating: 5, comment: 'Unmatched luxury and heritage location.' }]
+            },
+            { 
+                id: 'us_7', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'ชายหาดซานตามอนิกา', price: 0, img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400', lat: 34.019, lng: -118.491, tier: 2,
+                address: 'Pacific Coast Hwy, Santa Monica, CA 90401', rating: 4.8, reviewCount: 1200,
+                contact: 'Santa Monica Pier Information',
+                description: 'ชายหาดและท่าเรือประวัติศาสตร์ จุดสิ้นสุดของถนน Route 66 พร้อมสวนสนุกริมทะเลอันคึกคัก',
+                reviews: [{ author: 'Samantha L.', rating: 5, comment: 'Beautiful sunset and fun vibe at the pier!' }]
+            },
+            { 
+                id: 'us_8', category: 'hotel', catName: 'ที่พัก', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'Beverly Wilshire Hotel', price: 25000, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 34.067, lng: -118.401, tier: 2,
+                address: '9500 Wilshire Blvd, Beverly Hills, CA 90212', rating: 4.9, reviewCount: 310,
+                contact: 'Tel: +1 310-275-5200',
+                description: 'โรงแรมระดับตำนานย่านเบเวอร์ลีฮิลส์ ใกล้ถนนโรดิโอไดรฟ์ มอบบริการสุดหรูแก่ดาราและนักเดินทางชั้นนำ',
+                reviews: [{ author: 'Daniel F.', rating: 5, comment: 'Prime location right at Rodeo Drive.' }]
+            },
+            { 
+                id: 'us_9', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'ตลาด Grand Central Market', price: 400, img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=400', lat: 34.051, lng: -118.249, tier: 3,
+                address: '317 S Broadway, Los Angeles, CA 90013', rating: 4.7, reviewCount: 880,
+                contact: 'Grand Central Market Information',
+                description: 'ตลาดอาหารในร่มเก่าแก่ของลอสแอนเจลิส รวบรวมอาหารพหุวัฒนธรรมและร้านรสเด็ดขึ้นชื่อมากมาย',
+                reviews: [{ author: 'Kevin R.', rating: 5, comment: 'Great food hall with incredible food variety!' }]
+            },
+            { 
+                id: 'us_10', category: 'activity', catName: 'กิจกรรม', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'ชมละครบรอดเวย์ (Broadway Show)', price: 4500, img: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=400', lat: 40.759, lng: -73.984, tier: 3,
+                address: 'Theater District, Manhattan, NY 10036', rating: 4.9, reviewCount: 1100,
+                contact: 'Broadway Box Office Information',
+                description: 'สัมผัสสุดยอดการแสดงละครเวทีมิวสิเคิลระดับพรีเมียมในย่านการละครบรอดเวย์ที่มีชื่อเสียงที่สุดในโลก',
+                reviews: [{ author: 'Amanda H.', rating: 5, comment: 'A Broadway show in NYC is an absolute bucket list experience!' }]
+            }
         ];
 
         // MOMENTS DATA
