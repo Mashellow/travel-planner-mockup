@@ -146,6 +146,7 @@
             backdrop-filter: blur(4px);
             border: 1px solid rgba(255,255,255,0.3) !important;
             transition: all 0.2s ease;
+            z-index: 10;
         }
 
         .cat-pill-active {
@@ -787,7 +788,9 @@
 
         const fallbackImg = "https://picsum.photos/400/300";
 
+        // ข้อมูลสถานที่และป๊อปอัพจำลองครอบคลุมทุกเมือง
         const allPinsData = [
+            // --- ประเทศไทย ---
             { 
                 id: 'th_1', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ประเพณียี่เป็ง โคมลอย', price: 0, img: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=400', lat: 18.790, lng: 98.985, tier: 1,
                 address: 'สะพานนวรัฐ และพื้นที่จัดกิจกรรมรอบเมืองเชียงใหม่ จ.เชียงใหม่', rating: 4.9, reviewCount: 320,
@@ -830,12 +833,28 @@
                 description: 'ตลาดเก่าแก่คู่เมืองเชียงใหม่ แหล่งรวมของฝากขึ้นชื่อ เช่น แคบหมู น้ำพริกหนุ่ม ไส้อั่ว และของกินพื้นเมืองมากมาย',
                 reviews: [{ author: 'ปรียาภรณ์', rating: 5, comment: 'ของฝากครบครัน ไส้อั่วอร่อยมาก' }]
             },
+            {
+                id: 'th_kb1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'อ่าวนาง (Ao Nang)', price: 0, img: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400', lat: 8.035, lng: 98.825, tier: 1,
+                address: 'ต.อ่าวนาง อ.เมือง จ.กระบี่', rating: 4.8, reviewCount: 390,
+                contact: 'ททท. สำนักงานกระบี่: 075-622163',
+                description: 'ชายหาดยอดนิยมที่เป็นจุดขึ้นเรือเดินทางไปเที่ยวตามเกาะต่างๆ เช่น เกาะพีพี อ่าวไร่เลย์ บรรยากาศคึกคักยามเย็น',
+                reviews: [{ author: 'วิภาวี', rating: 5, comment: 'พระอาทิตย์ตกดินสวยงามมาก มีร้านอาหารเยอะ' }]
+            },
+            {
+                id: 'th_pt1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'พัทยา', title: 'ปราสาทสัจธรรม', price: 500, img: 'https://images.unsplash.com/photo-1598971861713-54ad16a7e72e?w=400', lat: 12.971, lng: 100.888, tier: 1,
+                address: '207/2 หมู่ 5 ถ.พัทยา-นาเกลือ อ.บางละมุง จ.ชลบุรี', rating: 4.9, reviewCount: 620,
+                contact: 'โทร: 038-110-653',
+                description: 'ปราสาทไม้ที่ใหญ่ที่สุดในโลก สร้างด้วยงานแกะสลักไม้โบราณไร้ตะปู สะท้อนปรัชญาและศิลปะเอเชีย',
+                reviews: [{ author: 'ธนากร', rating: 5, comment: 'งานแกะสลักประณีต วิจิตรบรรจงมากๆ' }]
+            },
+
+            // --- ญี่ปุ่น ---
             { 
-                id: 'jp_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'ภูเขาไฟฟูจิ (Mt. Fuji)', price: 0, img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400', lat: 35.360, lng: 138.727, tier: 1,
-                address: 'Kitayama, Fujinomiya, Shizuoka, Japan', rating: 5.0, reviewCount: 1540,
-                contact: 'Fujinomiya Tourist Information Center',
-                description: 'สัญลักษณ์อันทรงคุณค่าของประเทศญี่ปุ่น ภูเขาไฟที่สูงและงดงามที่สุด โอบล้อมด้วยธรรมชาติสวยงามตลอดสี่ฤดู',
-                reviews: [{ author: 'Kenji S.', rating: 5, comment: 'Breathtaking iconic views of Japan.' }]
+                id: 'jp_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'วัดอาซากุสะ (Sensoji)', price: 0, img: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400', lat: 35.714, lng: 139.796, tier: 1,
+                address: '2-3-1 Asakusa, Taito City, Tokyo, Japan', rating: 4.9, reviewCount: 1420,
+                contact: 'Asakusa Tourist Information Center',
+                description: 'วัดพุทธที่เก่าแก่ที่สุดในโตเกียว มีโคมไฟสีแดงยักษ์อันเป็นเอกลักษณ์ และถนนช้อปปิ้งนากามิเสะ',
+                reviews: [{ author: 'Kenji S.', rating: 5, comment: 'Must visit landmark in Tokyo!' }]
             },
             { 
                 id: 'jp_2', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ญี่ปุ่น', city: 'โอซาก้า (Osaka)', title: 'ย่านโดทงโบริ (Dotonbori)', price: 500, img: 'https://images.unsplash.com/photo-1565031491910-e57fac031c41?w=400', lat: 34.668, lng: 135.501, tier: 2,
@@ -843,6 +862,79 @@
                 contact: 'Osaka Tourist Info: +81 6-6211-3540',
                 description: 'ศูนย์รวมสตรีทฟู้ด คาเฟ่ ร้านค้าแฟชั่น และป้ายไฟกูลิโกะอันเป็นสัญลักษณ์สำคัญของโอซาก้า',
                 reviews: [{ author: 'Yuki M.', rating: 5, comment: 'Amazing street food and vibrant night life!' }]
+            },
+            { 
+                id: 'jp_3', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'เกียวโต (Kyoto)', title: 'วัดน้ำใส (Kiyomizu-dera)', price: 400, img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400', lat: 34.994, lng: 135.785, tier: 1,
+                address: '1-294 Kiyomizu, Higashiyama Ward, Kyoto, Japan', rating: 5.0, reviewCount: 1850,
+                contact: 'Kyoto Tourism Board',
+                description: 'วัดโบราณสร้างบนเนินเขา สร้างด้วยระเบียงไม้ใหญ่ไร้ตะปู ได้รับมรดกโลก UNESCO',
+                reviews: [{ author: 'Taro H.', rating: 5, comment: 'Stunning view of Kyoto in autumn and spring.' }]
+            },
+
+            // --- เกาหลีใต้ ---
+            {
+                id: 'kr_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'พระราชวังเคียงบกกุง', price: 300, img: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400', lat: 37.579, lng: 126.977, tier: 1,
+                address: '161 Sajik-ro, Jongno-gu, Seoul, South Korea', rating: 4.9, reviewCount: 980,
+                contact: 'Seoul Travel Info: +82 2-1330',
+                description: 'พระราชวังที่ใหญ่ที่สุดในเกาหลี มีสถาปัตยกรรมดั้งเดิมสวยงาม ใส่ชุดฮันบกเข้าชมฟรี!',
+                reviews: [{ author: 'Min-jee K.', rating: 5, comment: 'Wearing Hanbok here feels magical.' }]
+            },
+            {
+                id: 'kr_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'หมู่บ้านวัฒนธรรมคัมชอน', price: 0, img: 'https://images.unsplash.com/photo-1578637387939-43c525550085?w=400', lat: 35.097, lng: 129.010, tier: 1,
+                address: '203 Gamnae 2-ro, Saha-gu, Busan, South Korea', rating: 4.8, reviewCount: 740,
+                contact: 'Busan Tourist Info',
+                description: 'หมู่บ้านสีสันสดใสบนเนินเขา ฉายามาเชอการ์ปิกตเกาหลี เต็มไปด้วยงานศิลปะริมทาง',
+                reviews: [{ author: 'Ji-hoon P.', rating: 5, comment: 'Colorful houses and cute cafes!' }]
+            },
+
+            // --- สิงคโปร์ ---
+            {
+                id: 'sg_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'Gardens by the Bay', price: 700, img: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400', lat: 1.281, lng: 103.863, tier: 1,
+                address: '18 Marina Gardens Dr, Singapore 018953', rating: 4.9, reviewCount: 1620,
+                contact: 'Tel: +65 6420 6848',
+                description: 'สวนพฤกษศาสตร์ล้ำยุคกับต้นไม้ยักษ์ Supertree Grove และเรือนกระจกปรับอากาศยักษ์',
+                reviews: [{ author: 'David L.', rating: 5, comment: 'Futuristic atmosphere, brilliant light show!' }]
+            },
+
+            // --- ฝรั่งเศส ---
+            {
+                id: 'fr_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'หอไอเฟล (Eiffel Tower)', price: 950, img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400', lat: 48.858, lng: 2.294, tier: 1,
+                address: 'Champ de Mars, 5 Av. Anatole France, 75007 Paris, France', rating: 4.9, reviewCount: 2400,
+                contact: 'Paris Official Tourism Board',
+                description: 'สัญลักษณ์อันโด่งดังระดับโลกของฝรั่งเศส มองเห็นวิวทิวทัศน์ทั่วกรุงปารีสอย่างโรแมนติก',
+                reviews: [{ author: 'Sophie B.', rating: 5, comment: 'Breathtaking view, iconic landmark!' }]
+            },
+            {
+                id: 'fr_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'นีซ (Nice)', title: 'Promenade des Anglais', price: 0, img: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400', lat: 43.695, lng: 7.265, tier: 1,
+                address: 'Promenade des Anglais, 06000 Nice, France', rating: 4.8, reviewCount: 510,
+                contact: 'Nice Tourism Office',
+                description: 'ถนนเลียบชายหาดทะลริเวียราอันโด่งดัง เหมาะแก่การเดินเล่น รับลมทะเล และชมอาคารคลาสสิก',
+                reviews: [{ author: 'Pierre C.', rating: 5, comment: 'Relaxing Mediterranean coastline.' }]
+            },
+
+            // --- อังกฤษ ---
+            {
+                id: 'uk_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'หอนาฬิกาบิ๊กเบน (Big Ben)', price: 0, img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400', lat: 51.500, lng: -0.124, tier: 1,
+                address: 'London SW1A 0AA, United Kingdom', rating: 4.9, reviewCount: 2100,
+                contact: 'Visit London Tourism Office',
+                description: 'แลนด์มาร์กสำคัญประจำกรุงลอนดอน ตั้งอยู่ริมแม่น้ำเทมส์ ใกล้กับอาคารรัฐสภาเวสต์มินสเตอร์',
+                reviews: [{ author: 'Oliver W.', rating: 5, comment: 'Classic British symbol, beautiful architecture.' }]
+            },
+
+            // --- สหรัฐอเมริกา ---
+            {
+                id: 'us_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'ไทม์สแควร์ (Times Square)', price: 0, img: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400', lat: 40.758, lng: -73.985, tier: 1,
+                address: 'Manhattan, NY 10036, United States', rating: 4.8, reviewCount: 1950,
+                contact: 'NYC Go Info Center',
+                description: 'ย่านการค้าและป้ายโฆษณาดิจิทัลยักษ์ตระการตาที่เป็นหัวใจสีสันของมหานครนิวยอร์ก',
+                reviews: [{ author: 'Michael R.', rating: 5, comment: 'Unmatched energy and bright lights!' }]
+            },
+            {
+                id: 'us_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'ป้ายฮอลลีวูด (Hollywood Sign)', price: 0, img: 'https://images.unsplash.com/photo-1580655653885-65763b2597d0?w=400', lat: 34.134, lng: -118.321, tier: 1,
+                address: 'Los Angeles, CA 90068, United States', rating: 4.7, reviewCount: 1200,
+                contact: 'Discover LA Tourism',
+                description: 'สัญลักษณ์แห่งอุตสาหกรรมภาพยนตร์ระดับโลก ตั้งอยู่บนภูเขาลีมองเห็นวิว LA กว้างไกล',
+                reviews: [{ author: 'Chris T.', rating: 5, comment: 'Famous spot, nice hiking trail!' }]
             }
         ];
 
@@ -1174,8 +1266,9 @@
 
                 const marker = L.marker([pin.lat, pin.lng], { icon: customIcon }).addTo(map);
 
+                // ป๊อปอัพของแต่ละพื้นที่
                 const popupContent = `
-                    <div class="w-56 font-sans bg-white overflow-hidden rounded-2xl border-t-4 shadow-xl" style="border-top-color: ${theme.hex}">
+                    <div class="w-60 font-sans bg-white overflow-hidden rounded-2xl border-t-4 shadow-xl" style="border-top-color: ${theme.hex}">
                         <div class="relative h-32 w-full overflow-hidden bg-slate-900">
                             <img src="${pin.img}" class="w-full h-full object-cover" onerror="this.src='${fallbackImg}'">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/10"></div>
@@ -1197,14 +1290,19 @@
                                 <span class="font-extrabold text-emerald-600">${priceDisplay}</span>
                             </div>
 
-                            <button onclick="openFullDetailModal('${pin.id}')" class="w-full ${theme.bg} hover:opacity-90 text-white text-xs py-2 rounded-xl font-bold shadow-md active:scale-95 transition flex items-center justify-center gap-1.5 mt-1">
-                                <i class="fa-solid fa-eye text-[10px]"></i> ดูรายละเอียด
-                            </button>
+                            <div class="grid grid-cols-2 gap-1.5 pt-1">
+                                <button onclick="openFullDetailModal('${pin.id}')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] py-1.5 rounded-xl font-bold transition flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-eye text-[9px]"></i> รายละเอียด
+                                </button>
+                                <button onclick="addToItinerary('${pin.id}', '${pin.title.replace(/'/g, "\\'")}', ${pin.price}, '${pin.city}')" class="w-full ${theme.bg} hover:opacity-90 text-white text-[11px] py-1.5 rounded-xl font-bold shadow-md transition flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-plus text-[9px]"></i> ใส่ในทริป
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
 
-                marker.bindPopup(popupContent, { maxWidth: 260, closeButton: true });
+                marker.bindPopup(popupContent, { maxWidth: 280, closeButton: true });
                 activeMarkers.push(marker);
             });
         }
