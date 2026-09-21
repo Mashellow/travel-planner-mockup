@@ -1201,6 +1201,10 @@
             }
         }
 
+        function triggerLogin() {
+            alert("ระบบเข้าสู่ระบบจำลอง - เข้าสู่ระบบสำเร็จ");
+        }
+
         // INITIALIZATION
         window.addEventListener('load', () => {
             if (localStorage.getItem('theme') === 'dark') {
@@ -1214,6 +1218,7 @@
             }
 
             initMap();
+            initDatePicker();
             onCountryChange();
             renderRecommendations();
             renderMomentsFeed();
@@ -1544,33 +1549,37 @@
             document.getElementById('modal-full-location').querySelector('span').innerText = `${pin.country} > ${pin.city}`;
             document.getElementById('modal-full-rating').querySelector('span').innerText = `${pin.rating} / 5.0`;
             document.getElementById('modal-full-price').innerText = pin.price === 0 ? 'ฟรี (Free)' : formatCurr(pin.price);
-            document.getElementById('modal-full-address').innerText = pin.address || 'ไม่ระบุที่อยู่';
-            document.getElementById('modal-full-description').innerText = pin.description || 'ไม่มีคำอธิบายเพิ่มเติม';
-            document.getElementById('modal-full-contact').innerText = pin.contact || 'ไม่มีข้อมูลติดต่อ';
+            document.getElementById('modal-full-address').innerText = pin.address || '-';
+            document.getElementById('modal-full-description').innerText = pin.description || '-';
+            document.getElementById('modal-full-contact').innerText = pin.contact || '-';
 
-            const reviewCount = document.getElementById('modal-full-review-count');
-            reviewCount.innerText = `(${pin.reviewCount || 0} รีวิว)`;
+            const reviewCountEl = document.getElementById('modal-full-review-count');
+            if (reviewCountEl) reviewCountEl.innerText = `(${pin.reviewCount || 0} รีวิว)`;
 
             const reviewsList = document.getElementById('modal-full-reviews-list');
-            if (pin.reviews && pin.reviews.length > 0) {
-                reviewsList.innerHTML = pin.reviews.map(r => `
-                    <div class="bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700 text-xs">
-                        <div class="flex justify-between font-semibold text-slate-700 dark:text-slate-300">
-                            <span>${r.author}</span>
-                            <span class="text-amber-500"><i class="fa-solid fa-star"></i> ${r.rating}</span>
+            if (reviewsList) {
+                if (pin.reviews && pin.reviews.length > 0) {
+                    reviewsList.innerHTML = pin.reviews.map(r => `
+                        <div class="bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700 text-xs">
+                            <div class="flex justify-between items-center font-bold mb-1">
+                                <span>${r.author}</span>
+                                <span class="text-amber-500"><i class="fa-solid fa-star mr-1"></i>${r.rating}</span>
+                            </div>
+                            <p class="text-slate-600 dark:text-slate-300 text-[11px]">${r.comment}</p>
                         </div>
-                        <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-1">${r.comment}</p>
-                    </div>
-                `).join('');
-            } else {
-                reviewsList.innerHTML = '<p class="text-xs text-slate-400">ยังไม่มีรีวิว</p>';
+                    `).join('');
+                } else {
+                    reviewsList.innerHTML = `<p class="text-xs text-slate-400 italic">ยังไม่มีรีวิวสำหรับสถานที่นี้</p>`;
+                }
             }
 
             const addBtn = document.getElementById('btn-full-add-plan');
-            addBtn.onclick = () => {
-                addPinToPlan(pin.id);
-                closeModal('modal-full-detail');
-            };
+            if (addBtn) {
+                addBtn.onclick = () => {
+                    addPinToPlan(pin.id);
+                    closeModal('modal-full-detail');
+                };
+            }
 
             document.getElementById('modal-full-detail').classList.remove('hidden');
         }
@@ -1579,24 +1588,24 @@
             const pin = allPinsData.find(p => p.id === pinId);
             if (!pin) return;
 
-            if (!itineraryData[activeDay]) {
-                itineraryData[activeDay] = [];
-            }
+            if (!itineraryData[activeDay]) itineraryData[activeDay] = [];
 
-            itineraryData[activeDay].push({
+            const newItem = {
                 id: pin.id + '_' + Date.now(),
-                originalId: pin.id,
+                pinId: pin.id,
                 title: pin.title,
                 category: pin.category,
                 catName: pin.catName,
                 price: pin.price,
-                time: '10:00',
-                note: ''
-            });
+                img: pin.img,
+                city: pin.city,
+                time: '10:00'
+            };
 
+            itineraryData[activeDay].push(newItem);
             renderItinerary();
             updateBudgetUI();
-            alert(`เพิ่ม "${pin.title}" เข้าใน Day ${activeDay} เรียบร้อยแล้ว!`);
+            alert(`เพิ่ม "${pin.title}" เข้าตาราง DAY ${activeDay} เรียบร้อยแล้ว`);
         }
 
         function renderItinerary() {
@@ -1607,303 +1616,259 @@
 
             if (dayItems.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-12 text-slate-400 space-y-2">
+                    <div class="text-center py-12 text-slate-400 space-y-3">
                         <i class="fa-solid fa-calendar-plus text-4xl text-slate-300 dark:text-slate-600"></i>
-                        <p class="text-xs">ยังไม่มีกิจกรรมสำหรับ Day ${activeDay}</p>
-                        <p class="text-[11px] text-slate-400">คลิกปุ่ม "+ เพิ่มในทริป" จากสถานที่แนะนำ หรือแผนที่เพื่อเพิ่มกิจกรรม</p>
+                        <p class="text-xs font-medium">ยังไม่มีกิจกรรมใน DAY ${activeDay}</p>
+                        <button onclick="switchTab('search')" class="bg-sky-600 text-white text-xs px-4 py-2 rounded-xl font-bold shadow-sm">
+                            <i class="fa-solid fa-plus mr-1"></i> เพิ่มสถานที่จากแผนที่
+                        </button>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = dayItems.map((item, idx) => {
-                const catInfo = categoryThemeMap[item.category] || categoryThemeMap['attraction'];
-                const priceTxt = item.price === 0 ? 'ฟรี' : formatCurr(item.price);
-
-                let dayOptions = '';
-                for (let d = 1; d <= tripDays; d++) {
-                    dayOptions += `<option value="${d}" ${d === activeDay ? 'selected' : ''}>ย้ายไป Day ${d}</option>`;
-                }
-
-                return `
-                    <div draggable="true" 
-                         ondragstart="onDragStart(event, ${idx})" 
-                         ondragover="onDragOver(event)" 
-                         ondrop="onDrop(event, ${idx})"
-                         class="draggable-card bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm hover:border-sky-400 transition">
-                        <div class="flex items-center gap-3">
-                            <div class="cursor-grab text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 text-sm">
-                                <i class="fa-solid fa-grip-vertical"></i>
-                            </div>
-                            <div class="w-7 h-7 rounded-full bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-300 flex items-center justify-center text-xs font-bold shrink-0">
-                                ${idx + 1}
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full text-white ${catInfo.bg}">${item.catName}</span>
-                                    <h4 class="font-bold text-xs text-slate-800 dark:text-slate-100">${item.title}</h4>
+            container.innerHTML = `
+                <div class="flex justify-between items-center border-b dark:border-slate-700 pb-3">
+                    <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-calendar-day text-sky-600"></i> กิจกรรมสำหรับ DAY ${activeDay}
+                    </h3>
+                    <span class="text-xs text-slate-400 font-semibold">${dayItems.length} รายการ</span>
+                </div>
+                <div class="space-y-3" id="drag-drop-list">
+                    ${dayItems.map((item, idx) => {
+                        const catInfo = categoryThemeMap[item.category] || categoryThemeMap['attraction'];
+                        return `
+                            <div draggable="true" 
+                                 ondragstart="onCardDragStart(event, ${idx})"
+                                 ondragover="onCardDragOver(event, ${idx})"
+                                 ondrop="onCardDrop(event, ${idx})"
+                                 ondragend="onCardDragEnd(event)"
+                                 class="draggable-card bg-slate-50 dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm hover:border-sky-300 transition">
+                                
+                                <div class="flex items-center gap-3 w-full sm:w-auto">
+                                    <div class="cursor-grab text-slate-300 hover:text-slate-500 text-sm">
+                                        <i class="fa-solid fa-grip-vertical"></i>
+                                    </div>
+                                    <img src="${item.img}" class="w-16 h-16 rounded-xl object-cover shrink-0 cursor-pointer" onclick="showPinDetailModal('${item.pinId}')" onerror="this.src='${fallbackImg}'">
+                                    <div class="space-y-1">
+                                        <span class="text-[9px] font-bold px-2 py-0.5 rounded-full text-white ${catInfo.bg}">${item.catName}</span>
+                                        <h4 class="font-bold text-xs cursor-pointer hover:text-sky-600 dark:text-slate-100" onclick="showPinDetailModal('${item.pinId}')">${item.title}</h4>
+                                        <div class="flex items-center gap-2 text-[11px] text-slate-400">
+                                            <span><i class="fa-solid fa-clock text-sky-500 mr-1"></i>
+                                                <input type="time" value="${item.time || '10:00'}" onchange="updateItemTime(${idx}, this.value)" class="bg-transparent font-semibold border-b border-slate-300 dark:border-slate-600 outline-none">
+                                            </span>
+                                            <span><i class="fa-solid fa-tag text-emerald-500 mr-1"></i>${item.price === 0 ? 'FREE' : formatCurr(item.price)}</span>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="flex items-center gap-2 mt-1 text-[11px]">
-                                    <span class="text-slate-400"><i class="fa-regular fa-clock mr-1"></i>${item.time}</span>
-                                    <span class="font-bold text-emerald-600 dark:text-emerald-400">${priceTxt}</span>
+
+                                <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-2 border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200 dark:border-slate-800">
+                                    <select onchange="moveItemToDay(${idx}, this.value)" class="text-[11px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 font-semibold outline-none">
+                                        ${Array.from({ length: tripDays }, (_, i) => i + 1).map(d => `
+                                            <option value="${d}" ${d === activeDay ? 'selected' : ''}>ย้ายไป DAY ${d}</option>
+                                        `).join('')}
+                                    </select>
+                                    <button onclick="removeItineraryItem(${idx})" class="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-lg transition" title="ลบออก">
+                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    </button>
                                 </div>
+
                             </div>
-                        </div>
-
-                        <div class="flex items-center gap-2 self-end sm:self-center">
-                            <select onchange="moveItemToDay(${activeDay}, ${idx}, this.value)" class="text-[11px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 outline-none">
-                                ${dayOptions}
-                            </select>
-                            <button onclick="removeFromPlan(${activeDay}, ${idx})" class="p-1.5 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/50 rounded-lg transition" title="ลบออก">
-                                <i class="fa-solid fa-trash-can text-xs"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+                        `;
+                    }).join('')}
+                </div>
+            `;
         }
 
-        function onDragStart(e, idx) {
-            draggedIndex = idx;
-            e.dataTransfer.effectAllowed = 'move';
+        function updateItemTime(idx, timeVal) {
+            if (itineraryData[activeDay] && itineraryData[activeDay][idx]) {
+                itineraryData[activeDay][idx].time = timeVal;
+            }
         }
 
-        function onDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        }
-
-        function onDrop(e, targetIdx) {
-            e.preventDefault();
-            if (draggedIndex === null || draggedIndex === targetIdx) return;
-            const currentList = itineraryData[activeDay];
-            const movedItem = currentList.splice(draggedIndex, 1)[0];
-            currentList.splice(targetIdx, 0, movedItem);
-            draggedIndex = null;
-            renderItinerary();
-        }
-
-        function moveItemToDay(fromDay, idx, toDayTarget) {
-            const toDay = parseInt(toDayTarget);
-            if (fromDay === toDay) return;
-            if (!itineraryData[toDay]) itineraryData[toDay] = [];
-            const item = itineraryData[fromDay].splice(idx, 1)[0];
-            itineraryData[toDay].push(item);
+        function moveItemToDay(idx, targetDay) {
+            targetDay = parseInt(targetDay);
+            if (targetDay === activeDay) return;
+            if (!itineraryData[targetDay]) itineraryData[targetDay] = [];
+            const [item] = itineraryData[activeDay].splice(idx, 1);
+            if (item) itineraryData[targetDay].push(item);
             renderItinerary();
             updateBudgetUI();
         }
 
-        function removeFromPlan(dayNum, idx) {
-            if (itineraryData[dayNum]) {
-                itineraryData[dayNum].splice(idx, 1);
+        function removeItineraryItem(idx) {
+            if (itineraryData[activeDay]) {
+                itineraryData[activeDay].splice(idx, 1);
                 renderItinerary();
                 updateBudgetUI();
             }
         }
 
+        // DRAG AND DROP HANDLERS
+        function onCardDragStart(e, idx) {
+            draggedIndex = idx;
+            e.target.classList.add('dragging');
+        }
+
+        function onCardDragOver(e, idx) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function onCardDrop(e, targetIdx) {
+            e.preventDefault();
+            e.currentTarget.classList.remove('drag-over');
+            if (draggedIndex === null || draggedIndex === targetIdx) return;
+
+            const dayItems = itineraryData[activeDay];
+            const movedItem = dayItems.splice(draggedIndex, 1)[0];
+            dayItems.splice(targetIdx, 0, movedItem);
+            draggedIndex = null;
+            renderItinerary();
+        }
+
+        function onCardDragEnd(e) {
+            e.target.classList.remove('dragging');
+            document.querySelectorAll('.draggable-card').forEach(c => c.classList.remove('drag-over'));
+        }
+
+        // BUDGET UI UPDATES
         function updateBudgetUI() {
-            let usedBudget = 0;
+            let totalUsed = 0;
             let catCosts = { hotel: 0, transport: 0, food: 0, activity: 0 };
 
-            Object.keys(itineraryData).forEach(day => {
-                itineraryData[day].forEach(item => {
-                    const p = item.price || 0;
-                    usedBudget += p;
-                    if (item.category === 'hotel') catCosts.hotel += p;
-                    else if (item.category === 'activity') catCosts.activity += p;
-                    else if (item.category === 'shop') catCosts.food += p;
-                    else catCosts.transport += p;
+            Object.values(itineraryData).forEach(dayItems => {
+                dayItems.forEach(item => {
+                    const price = item.price || 0;
+                    totalUsed += price;
+                    if (item.category === 'hotel') catCosts.hotel += price;
+                    else if (item.category === 'activity') catCosts.activity += price;
+                    else if (item.category === 'shop') catCosts.food += price;
+                    else catCosts.transport += price;
                 });
             });
 
-            const remaining = totalBudget - usedBudget;
-            
-            const remElem = document.getElementById('budget-remaining-text');
-            if (remElem) {
-                remElem.innerText = `${formatCurr(remaining)} / ${formatCurr(totalBudget)}`;
-                remElem.className = remaining < 0 ? "text-rose-600 font-bold" : "text-emerald-600 font-bold";
+            const remaining = totalBudget - totalUsed;
+            const progressPct = totalBudget > 0 ? Math.min(Math.max((totalUsed / totalBudget) * 100, 0), 100) : 0;
+
+            const remText = document.getElementById('budget-remaining-text');
+            if (remText) {
+                remText.innerText = `${formatCurr(remaining)} / ${formatCurr(totalBudget)}`;
+                remText.className = remaining < 0 ? 'text-rose-600 font-bold' : 'text-emerald-600 font-bold';
             }
 
-            const progBar = document.getElementById('budget-progress-bar');
-            if (progBar) {
-                const pct = Math.min(100, Math.max(0, (usedBudget / (totalBudget || 1)) * 100));
-                progBar.style.width = `${pct}%`;
-                progBar.className = pct > 100 ? "bg-rose-500 h-3 rounded-full transition-all duration-300" : "bg-emerald-500 h-3 rounded-full transition-all duration-300";
+            const bar = document.getElementById('budget-progress-bar');
+            if (bar) {
+                bar.style.width = `${progressPct}%`;
+                bar.className = remaining < 0 ? 'bg-rose-500 h-3 rounded-full transition-all duration-300' : 'bg-emerald-500 h-3 rounded-full transition-all duration-300';
             }
 
-            const usedElem = document.getElementById('budget-used-text');
-            if (usedElem) usedElem.innerText = formatCurr(usedBudget);
+            const usedText = document.getElementById('budget-used-text');
+            if (usedText) usedText.innerText = formatCurr(totalUsed);
 
-            const totalElem = document.getElementById('budget-total-text');
-            if (totalElem) totalElem.innerText = formatCurr(totalBudget);
+            const totalText = document.getElementById('budget-total-text');
+            if (totalText) totalText.innerText = formatCurr(totalBudget);
 
-            document.getElementById('cat-cost-hotel').innerText = formatCurr(catCosts.hotel);
-            document.getElementById('cat-cost-transport').innerText = formatCurr(catCosts.transport);
-            document.getElementById('cat-cost-food').innerText = formatCurr(catCosts.food);
-            document.getElementById('cat-cost-activity').innerText = formatCurr(catCosts.activity);
+            const catHotel = document.getElementById('cat-cost-hotel');
+            if (catHotel) catHotel.innerText = formatCurr(catCosts.hotel);
 
+            const catTrans = document.getElementById('cat-cost-transport');
+            if (catTrans) catTrans.innerText = formatCurr(catCosts.transport);
+
+            const catFood = document.getElementById('cat-cost-food');
+            if (catFood) catFood.innerText = formatCurr(catCosts.food);
+
+            const catAct = document.getElementById('cat-cost-activity');
+            if (catAct) catAct.innerText = formatCurr(catCosts.activity);
+
+            // Split bill calculation
             const travelersInput = document.getElementById('input-travelers-count');
-            const travelers = parseInt(travelersInput?.value) || 1;
-            const perPerson = usedBudget / travelers;
-            document.getElementById('split-bill-per-person').innerText = formatCurr(perPerson);
+            const travelersCount = Math.max(parseInt(travelersInput?.value) || 1, 1);
+            const splitText = document.getElementById('split-bill-per-person');
+            if (splitText) splitText.innerText = formatCurr(totalUsed / travelersCount);
         }
 
-        // AUTO PLAN WIZARD FUNCTIONS
-        function openAutoPlanModal() {
-            currentWizardStep = 1;
-            updateWizardStepUI();
-            document.getElementById('modal-auto-plan').classList.remove('hidden');
+        // PDF EXPORT
+        function exportPDF() {
+            window.print();
         }
 
-        function prevAutoPlanStep() {
-            if (currentWizardStep > 1) {
-                currentWizardStep--;
-                updateWizardStepUI();
-            }
-        }
+        // ICS CALENDAR EXPORT
+        function downloadICS() {
+            let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Lets U Plan//Travel Itinerary//TH\n";
+            let startDate = new Date();
 
-        function nextAutoPlanStep() {
-            if (currentWizardStep < 3) {
-                currentWizardStep++;
-                updateWizardStepUI();
-            }
-        }
-
-        function updateWizardStepUI() {
-            document.getElementById('wizard-step-1').classList.toggle('hidden', currentWizardStep !== 1);
-            document.getElementById('wizard-step-2').classList.toggle('hidden', currentWizardStep !== 2);
-            document.getElementById('wizard-step-3').classList.toggle('hidden', currentWizardStep !== 3);
-
-            document.getElementById('wizard-btn-prev').classList.toggle('hidden', currentWizardStep === 1);
-            document.getElementById('wizard-btn-next').classList.toggle('hidden', currentWizardStep === 3);
-            document.getElementById('wizard-btn-confirm').classList.toggle('hidden', currentWizardStep !== 3);
-
-            const ind1 = document.getElementById('wizard-step-1-indicator');
-            const ind2 = document.getElementById('wizard-step-2-indicator');
-            const ind3 = document.getElementById('wizard-step-3-indicator');
-
-            if (ind1) ind1.className = currentWizardStep >= 1 ? "flex items-center gap-1.5 text-sky-600 dark:text-sky-400 font-bold" : "flex items-center gap-1.5 text-slate-400";
-            if (ind2) ind2.className = currentWizardStep >= 2 ? "flex items-center gap-1.5 text-sky-600 dark:text-sky-400 font-bold" : "flex items-center gap-1.5 text-slate-400";
-            if (ind3) ind3.className = currentWizardStep >= 3 ? "flex items-center gap-1.5 text-sky-600 dark:text-sky-400 font-bold" : "flex items-center gap-1.5 text-slate-400";
-
-            if (currentWizardStep === 3) {
-                updateAutoPlanSummary();
-            }
-        }
-
-        function onAccStatusChange() {
-            const accStatus = document.querySelector('input[name="acc_status"]:checked')?.value;
-            const subExt = document.getElementById('sub-external-box');
-            const subNone = document.getElementById('sub-none-box');
-
-            if (subExt) subExt.classList.toggle('hidden', accStatus !== 'external');
-            if (subNone) subNone.classList.toggle('hidden', accStatus !== 'none');
-
-            updateAutoPlanSummary();
-        }
-
-        function onExtBudgetTypeChange() {
-            const extType = document.querySelector('input[name="ext_budget_type"]:checked')?.value;
-            const priceBox = document.getElementById('ext-hotel-price-box');
-            if (priceBox) priceBox.classList.toggle('hidden', extType !== 'included');
-
-            updateAutoPlanSummary();
-        }
-
-        function updateAutoPlanSummary() {
-            const summaryBox = document.getElementById('wizard-summary-details');
-            if (!summaryBox) return;
-
-            const country = document.getElementById('select-country')?.value;
-            const city = document.getElementById('select-city')?.value;
-            const budget = document.getElementById('input-budget')?.value || 25000;
-            const days = document.getElementById('input-days')?.value || 4;
-
-            const style = document.querySelector('input[name="travel_style"]:checked')?.value || 'relax';
-            const styleMap = { relax: 'ชิลล์ผ่อนคลาย', photo: 'ถ่ายรูป/คาเฟ่', foodie: 'สายกิน/สตรีทฟู้ด', nature: 'สายลุย/ธรรมชาติ' };
-
-            const transport = document.getElementById('transport-mode-select')?.value || 'car';
-            const transportMap = { car: 'รถยนต์ส่วนตัว/เช่ารถ', public: 'ขนส่งสาธารณะ/รถไฟฟ้า', walk: 'เดิน/ปั่นจักรยาน' };
-
-            const accStatus = document.querySelector('input[name="acc_status"]:checked')?.value || 'none';
-
-            let accText = '';
-            if (accStatus === 'in_app') accText = 'จองผ่านระบบแล้ว';
-            else if (accStatus === 'external') {
-                const hotelName = document.getElementById('auto-ext-hotel-name')?.value || 'ยังไม่ระบุ';
-                accText = `มีที่พักข้างนอกแล้ว (${hotelName})`;
-            } else {
-                accText = 'ยังไม่มีที่พัก (ระบบช่วยแนะนำ)';
-            }
-
-            summaryBox.innerHTML = `
-                <p>• <strong>จุดหมาย:</strong> ${country} (${city}) - ${days} วัน (${formatCurr(budget)})</p>
-                <p>• <strong>สไตล์:</strong> ${styleMap[style] || style} | <strong>เดินทาง:</strong> ${transportMap[transport] || transport}</p>
-                <p>• <strong>สถานะที่พัก:</strong> ${accText}</p>
-            `;
-        }
-
-        function executeAutoPlan() {
-            const country = document.getElementById('select-country')?.value;
-            const city = document.getElementById('select-city')?.value;
-            const days = parseInt(document.getElementById('input-days')?.value) || 4;
-            
-            tripDays = days;
-            updateDaysCount();
-
-            for (let d = 1; d <= tripDays; d++) {
-                itineraryData[d] = [];
-            }
-
-            const available = allPinsData.filter(pin => {
-                const matchCountry = pin.country === country;
-                const matchCity = city === '-- ทั้งประเทศ --' || pin.city === city;
-                return matchCountry && matchCity;
-            });
-
-            const pool = available.length > 0 ? available : allPinsData;
-
-            pool.forEach((pin, index) => {
-                const dayTarget = (index % tripDays) + 1;
-                itineraryData[dayTarget].push({
-                    id: pin.id + '_auto_' + index,
-                    originalId: pin.id,
-                    title: pin.title,
-                    category: pin.category,
-                    catName: pin.catName,
-                    price: pin.price,
-                    time: `${9 + (index % 3) * 3}:00`,
-                    note: 'Auto planned'
+            Object.keys(itineraryData).forEach((day, dIdx) => {
+                const items = itineraryData[day];
+                items.forEach((item) => {
+                    const eventDate = new Date(startDate);
+                    eventDate.setDate(startDate.getDate() + dIdx);
+                    const dateStr = eventDate.toISOString().replace(/-|:|\.\d\d\d/g, "").substring(0, 8);
+                    
+                    icsContent += "BEGIN:VEVENT\n";
+                    icsContent += `SUMMARY:DAY ${day} - ${item.title}\n`;
+                    icsContent += `DESCRIPTION:หมวดหมู่: ${item.catName} | เมือง: ${item.city}\n`;
+                    icsContent += `DTSTART:${dateStr}T090000Z\n`;
+                    icsContent += `DTEND:${dateStr}T100000Z\n`;
+                    icsContent += "END:VEVENT\n";
                 });
             });
 
-            closeModal('modal-auto-plan');
-            startPlanning('auto');
-            alert('จัดแพลนทริปอัตโนมัติสำเร็จแล้ว!');
+            icsContent += "END:VCALENDAR";
+
+            const blob = new Blob([icsContent], { type: "text/calendar;charset=utf-8" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "LetsUPlan_Trip.ics";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
-        // SAVED PLANS & PRESETS
+        // SHARE MODAL & COPY
+        function openShareModal() {
+            const shareInput = document.getElementById('share-url-input');
+            if (shareInput) shareInput.value = `${window.location.origin}${window.location.pathname}?trip=lets_u_plan_shared`;
+            const modal = document.getElementById('modal-share-trip');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function copyShareLink() {
+            const shareInput = document.getElementById('share-url-input');
+            if (shareInput) {
+                shareInput.select();
+                navigator.clipboard.writeText(shareInput.value);
+                const toast = document.getElementById('share-copied-toast');
+                if (toast) {
+                    toast.classList.remove('hidden');
+                    setTimeout(() => toast.classList.add('hidden'), 2500);
+                }
+            }
+        }
+
+        // SAVED PLANS MANAGEMENT
         function openSavedPlansModal() {
             renderSavedPlansList();
-            document.getElementById('modal-saved-plans').classList.remove('hidden');
+            const modal = document.getElementById('modal-saved-plans');
+            if (modal) modal.classList.remove('hidden');
         }
 
         function saveCurrentPlan() {
-            const title = document.getElementById('trip-title-display')?.innerText || 'ทริปของฉัน';
-            const savedList = JSON.parse(localStorage.getItem('user_saved_plans') || '[]');
+            const planTitle = document.getElementById('trip-title-display')?.innerText || 'ทริปของฉัน';
+            const savedList = JSON.parse(localStorage.getItem('lets_u_plans') || '[]');
 
             const newPlan = {
                 id: 'plan_' + Date.now(),
-                title: title,
+                title: planTitle,
+                date: new Date().toLocaleDateString('th-TH'),
                 budget: totalBudget,
                 days: tripDays,
-                data: itineraryData,
-                savedAt: new Date().toLocaleDateString('th-TH')
+                itinerary: itineraryData
             };
 
             savedList.push(newPlan);
-            localStorage.setItem('user_saved_plans', JSON.stringify(savedList));
-            alert('บันทึกแพลนทริปเรียบร้อยแล้ว!');
+            localStorage.setItem('lets_u_plans', JSON.stringify(savedList));
+            alert('บันทึกแพลนเรียบร้อยแล้ว!');
             renderSavedPlansList();
         }
 
@@ -1911,190 +1876,286 @@
             const container = document.getElementById('user-saved-plans-container');
             if (!container) return;
 
-            const savedList = JSON.parse(localStorage.getItem('user_saved_plans') || '[]');
+            const savedList = JSON.parse(localStorage.getItem('lets_u_plans') || '[]');
 
             if (savedList.length === 0) {
-                container.innerHTML = '<p class="text-xs text-slate-400 py-2">ยังไม่มีทริปที่คุณบันทึกไว้</p>';
+                container.innerHTML = `<p class="text-xs text-slate-400 italic">ยังไม่มีทริปที่คุณบันทึกไว้</p>`;
                 return;
             }
 
-            container.innerHTML = savedList.map((plan, idx) => `
+            container.innerHTML = savedList.map(plan => `
                 <div class="p-3 border rounded-xl dark:border-slate-700 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
                     <div>
-                        <span class="font-bold text-xs block text-slate-800 dark:text-slate-100">${plan.title}</span>
-                        <span class="text-[10px] text-slate-400">บันทึกเมื่อ: ${plan.savedAt} • ${formatCurr(plan.budget)}</span>
+                        <span class="font-bold text-xs block dark:text-slate-100">${plan.title}</span>
+                        <span class="text-[10px] text-slate-400">บันทึกเมื่อ: ${plan.date} • ${formatCurr(plan.budget)}</span>
                     </div>
                     <div class="flex gap-1">
-                        <button onclick="loadUserPlan(${idx})" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 py-1 rounded-lg font-semibold shadow-sm">
+                        <button onclick="loadUserPlan('${plan.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 py-1 rounded-lg font-semibold shadow-sm">
                             โหลด
                         </button>
-                        <button onclick="deleteSavedPlan(${idx})" class="bg-rose-500 hover:bg-rose-600 text-white text-xs px-2 py-1 rounded-lg font-semibold shadow-sm">
-                            <i class="fa-solid fa-trash-can"></i>
+                        <button onclick="deleteUserPlan('${plan.id}')" class="text-rose-500 hover:bg-rose-50 p-1.5 rounded-lg">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
                         </button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function loadUserPlan(idx) {
-            const savedList = JSON.parse(localStorage.getItem('user_saved_plans') || '[]');
-            const plan = savedList[idx];
+        function loadUserPlan(planId) {
+            const savedList = JSON.parse(localStorage.getItem('lets_u_plans') || '[]');
+            const plan = savedList.find(p => p.id === planId);
             if (!plan) return;
 
-            totalBudget = plan.budget || 25000;
-            tripDays = plan.days || 4;
-            itineraryData = plan.data || {};
+            totalBudget = plan.budget;
+            tripDays = plan.days;
+            itineraryData = plan.itinerary;
 
             document.getElementById('trip-title-display').innerText = plan.title;
-            document.getElementById('input-budget').value = totalBudget;
-            document.getElementById('input-days').value = tripDays;
-
-            updateDaysCount();
+            renderDayButtons();
+            renderItinerary();
+            updateBudgetUI();
             closeModal('modal-saved-plans');
             switchTab('plan');
         }
 
-        function deleteSavedPlan(idx) {
-            const savedList = JSON.parse(localStorage.getItem('user_saved_plans') || '[]');
-            savedList.splice(idx, 1);
-            localStorage.setItem('user_saved_plans', JSON.stringify(savedList));
+        function deleteUserPlan(planId) {
+            let savedList = JSON.parse(localStorage.getItem('lets_u_plans') || '[]');
+            savedList = savedList.filter(p => p.id !== planId);
+            localStorage.setItem('lets_u_plans', JSON.stringify(savedList));
             renderSavedPlansList();
         }
 
         function loadPresetPlan(presetKey) {
-            if (presetKey === 'chiangmai_3d') {
-                document.getElementById('select-country').value = 'ประเทศไทย';
-                onCountryChange();
-                document.getElementById('select-city').value = 'เชียงใหม่';
-                onCityChange();
-                document.getElementById('input-budget').value = 12000;
-                document.getElementById('input-days').value = 3;
-                totalBudget = 12000;
-                tripDays = 3;
+            const presets = {
+                'chiangmai_3d': {
+                    title: '🌿 ทริปเชียงใหม่ (3 วัน 2 คืน)',
+                    days: 3, budget: 12000,
+                    data: {
+                        1: [allPinsData[0], allPinsData[4]],
+                        2: [allPinsData[5]],
+                        3: []
+                    }
+                },
+                'tokyo_4d': {
+                    title: '⛩️ ทริปโตเกียว (4 วัน 3 คืน)',
+                    days: 4, budget: 35000,
+                    data: { 1: [allPinsData[6]], 2: [], 3: [], 4: [] }
+                },
+                'phuket_3d': {
+                    title: '🌊 ทริปภูเก็ต (3 วัน 2 คืน)',
+                    days: 3, budget: 20000,
+                    data: { 1: [allPinsData[1], allPinsData[3]], 2: [], 3: [] }
+                },
+                'seoul_4d': {
+                    title: '🇰🇷 ทริปโซล (4 วัน 3 คืน)',
+                    days: 4, budget: 28000,
+                    data: { 1: [allPinsData[7]], 2: [], 3: [], 4: [] }
+                }
+            };
 
-                itineraryData = {
-                    1: [{ id: 'cm1', originalId: 'th_1', title: 'ประเพณียี่เป็ง โคมลอย', category: 'activity', catName: 'กิจกรรม', price: 0, time: '18:00', note: '' }],
-                    2: [{ id: 'cm2', originalId: 'th_5', title: 'Anantara Chiang Mai', category: 'hotel', catName: 'ที่พัก', price: 7200, time: '14:00', note: '' }],
-                    3: [{ id: 'cm3', originalId: 'th_6', title: 'กาดหลวง วโรรส', category: 'shop', catName: 'ร้านค้า/ของฝาก', price: 250, time: '10:00', note: '' }]
-                };
-            } else if (presetKey === 'tokyo_4d') {
-                document.getElementById('select-country').value = 'ญี่ปุ่น';
-                onCountryChange();
-                document.getElementById('select-city').value = 'โตเกียว (Tokyo)';
-                onCityChange();
-                document.getElementById('input-budget').value = 35000;
-                document.getElementById('input-days').value = 4;
-                totalBudget = 35000;
-                tripDays = 4;
+            const preset = presets[presetKey];
+            if (!preset) return;
 
-                itineraryData = {
-                    1: [{ id: 'jp1', originalId: 'jp_1', title: 'วัดอาซากุสะ (Sensoji)', category: 'attraction', catName: 'ท่องเที่ยว', price: 0, time: '09:00', note: '' }],
-                    2: [{ id: 'jp2', originalId: 'jp_2', title: 'ย่านโดทงโบริ (Dotonbori)', category: 'shop', catName: 'ร้านค้า/ของฝาก', price: 500, time: '17:00', note: '' }],
-                    3: [], 4: []
-                };
-            } else if (presetKey === 'phuket_3d') {
-                document.getElementById('select-country').value = 'ประเทศไทย';
-                onCountryChange();
-                document.getElementById('select-city').value = 'ภูเก็ต';
-                onCityChange();
-                document.getElementById('input-budget').value = 20000;
-                document.getElementById('input-days').value = 3;
-                totalBudget = 20000;
-                tripDays = 3;
+            tripDays = preset.days;
+            totalBudget = preset.budget;
+            itineraryData = {};
 
-                itineraryData = {
-                    1: [{ id: 'pk1', originalId: 'th_2', title: 'ทะเลภูเก็ต หาดป่าตอง', category: 'attraction', catName: 'ท่องเที่ยว', price: 0, time: '10:00', note: '' }],
-                    2: [{ id: 'pk2', originalId: 'th_4', title: 'Sri Panwa Resort', category: 'hotel', catName: 'ที่พัก', price: 16500, time: '15:00', note: '' }],
-                    3: []
-                };
-            } else if (presetKey === 'seoul_4d') {
-                document.getElementById('select-country').value = 'เกาหลีใต้';
-                onCountryChange();
-                document.getElementById('select-city').value = 'โซล (Seoul)';
-                onCityChange();
-                document.getElementById('input-budget').value = 28000;
-                document.getElementById('input-days').value = 4;
-                totalBudget = 28000;
-                tripDays = 4;
-
-                itineraryData = {
-                    1: [{ id: 'kr1', originalId: 'kr_1', title: 'พระราชวังเคียงบกกุง', category: 'attraction', catName: 'ท่องเที่ยว', price: 300, time: '10:00', note: '' }],
-                    2: [], 3: [], 4: []
-                };
+            for (let d = 1; d <= tripDays; d++) {
+                itineraryData[d] = [];
+                const rawPins = preset.data[d] || [];
+                rawPins.forEach(p => {
+                    if (p) {
+                        itineraryData[d].push({
+                            id: p.id + '_' + Date.now(),
+                            pinId: p.id,
+                            title: p.title,
+                            category: p.category,
+                            catName: p.catName,
+                            price: p.price,
+                            img: p.img,
+                            city: p.city,
+                            time: '10:00'
+                        });
+                    }
+                });
             }
 
-            updateDaysCount();
+            document.getElementById('trip-title-display').innerText = preset.title;
+            renderDayButtons();
+            renderItinerary();
+            updateBudgetUI();
             closeModal('modal-saved-plans');
-            startPlanning('preset');
+            switchTab('plan');
         }
 
-        // SHARE & EXPORT
-        function openShareModal() {
-            const urlInput = document.getElementById('share-url-input');
-            const toast = document.getElementById('share-copied-toast');
-            if (toast) toast.classList.add('hidden');
-
-            const currentUrl = window.location.href.split('?')[0];
-            const perm = document.getElementById('share-permission-select')?.value || 'view';
-            urlInput.value = `${currentUrl}?trip=${encodeURIComponent(document.getElementById('trip-title-display')?.innerText || 'my-trip')}&perm=${perm}`;
-
-            document.getElementById('modal-share-trip').classList.remove('hidden');
+        // WIZARD AUTO PLAN
+        function openAutoPlanModal() {
+            currentWizardStep = 1;
+            showWizardStep(1);
+            const modal = document.getElementById('modal-auto-plan');
+            if (modal) modal.classList.remove('hidden');
         }
 
-        function copyShareLink() {
-            const urlInput = document.getElementById('share-url-input');
-            urlInput.select();
-            navigator.clipboard.writeText(urlInput.value).then(() => {
-                const toast = document.getElementById('share-copied-toast');
-                if (toast) toast.classList.remove('hidden');
-            });
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) modal.classList.add('hidden');
         }
 
-        function exportPDF() {
-            window.print();
+        function showWizardStep(step) {
+            currentWizardStep = step;
+            document.getElementById('wizard-step-1').classList.add('hidden');
+            document.getElementById('wizard-step-2').classList.add('hidden');
+            document.getElementById('wizard-step-3').classList.add('hidden');
+
+            document.getElementById(`wizard-step-${step}`).classList.remove('hidden');
+
+            for (let i = 1; i <= 3; i++) {
+                const ind = document.getElementById(`wizard-step-${i}-indicator`);
+                if (ind) {
+                    const circle = ind.querySelector('span');
+                    if (i === step) {
+                        ind.className = "flex items-center gap-1.5 text-sky-600 dark:text-sky-400 font-bold";
+                        if (circle) circle.className = "w-5 h-5 rounded-full bg-sky-600 text-white flex items-center justify-center text-[10px]";
+                    } else if (i < step) {
+                        ind.className = "flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-bold";
+                        if (circle) circle.className = "w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px]";
+                    } else {
+                        ind.className = "flex items-center gap-1.5 text-slate-400";
+                        if (circle) circle.className = "w-5 h-5 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px]";
+                    }
+                }
+            }
+
+            const btnPrev = document.getElementById('wizard-btn-prev');
+            const btnNext = document.getElementById('wizard-btn-next');
+            const btnConfirm = document.getElementById('wizard-btn-confirm');
+
+            if (step === 1) {
+                btnPrev.classList.add('hidden');
+                btnNext.classList.remove('hidden');
+                btnConfirm.classList.add('hidden');
+            } else if (step === 2) {
+                btnPrev.classList.remove('hidden');
+                btnNext.classList.remove('hidden');
+                btnConfirm.classList.add('hidden');
+            } else if (step === 3) {
+                btnPrev.classList.remove('hidden');
+                btnNext.classList.add('hidden');
+                btnConfirm.classList.remove('hidden');
+                updateAutoPlanSummary();
+            }
         }
 
-        function downloadICS() {
-            let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Lets U Plan//EN\n";
+        function prevAutoPlanStep() {
+            if (currentWizardStep > 1) showWizardStep(currentWizardStep - 1);
+        }
+
+        function nextAutoPlanStep() {
+            if (currentWizardStep < 3) showWizardStep(currentWizardStep + 1);
+        }
+
+        function onAccStatusChange() {
+            const accStatus = document.querySelector('input[name="acc_status"]:checked')?.value || 'none';
+            const subExt = document.getElementById('sub-external-box');
+            const subNone = document.getElementById('sub-none-box');
+
+            if (subExt) subExt.className = (accStatus === 'external') ? 'p-3.5 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 space-y-3' : 'hidden';
+            if (subNone) subNone.className = (accStatus === 'none') ? 'p-3.5 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 space-y-2' : 'hidden';
+
+            updateAutoPlanSummary();
+        }
+
+        function onExtBudgetTypeChange() {
+            const extType = document.querySelector('input[name="ext_budget_type"]:checked')?.value || 'included';
+            const priceBox = document.getElementById('ext-hotel-price-box');
+            if (priceBox) priceBox.style.display = (extType === 'included') ? 'block' : 'none';
+            updateAutoPlanSummary();
+        }
+
+        function updateAutoPlanSummary() {
+            const summaryEl = document.getElementById('wizard-summary-details');
+            if (!summaryEl) return;
+
+            const country = document.getElementById('select-country')?.value || 'ประเทศไทย';
+            const city = document.getElementById('select-city')?.value || '-- ทั้งประเทศ --';
+            const budget = document.getElementById('input-budget')?.value || 25000;
+            const days = document.getElementById('input-days')?.value || 4;
+            const style = document.querySelector('input[name="travel_style"]:checked')?.parentElement?.innerText?.trim() || 'ชิลล์ผ่อนคลาย';
+            const transport = document.getElementById('transport-mode-select')?.selectedOptions[0]?.innerText || 'รถยนต์ส่วนตัว';
+            const accStatus = document.querySelector('input[name="acc_status"]:checked')?.value || 'none';
+
+            let accText = 'ยังไม่มีที่พัก (ระบบจะช่วยแนะนำที่พัก)';
+            if (accStatus === 'in_app') accText = 'จองที่พักผ่านระบบ';
+            else if (accStatus === 'external') {
+                const hName = document.getElementById('auto-ext-hotel-name')?.value || 'ระบุข้างนอก';
+                accText = `มีที่พักแล้ว (${hName})`;
+            }
+
+            summaryEl.innerHTML = `
+                <p>• <strong>จุดหมาย:</strong> ${country} ${city !== '-- ทั้งประเทศ --' ? '(' + city + ')' : ''}</p>
+                <p>• <strong>ระยะเวลา & งบ:</strong> ${days} วัน | ${formatCurr(budget)}</p>
+                <p>• <strong>สไตล์ & การเดินทาง:</strong> ${style} | ${transport}</p>
+                <p>• <strong>สถานะที่พัก:</strong> ${accText}</p>
+            `;
+        }
+
+        function executeAutoPlan() {
+            const country = document.getElementById('select-country')?.value || 'ประเทศไทย';
+            const city = document.getElementById('select-city')?.value || '-- ทั้งประเทศ --';
             
-            Object.keys(itineraryData).forEach(day => {
-                itineraryData[day].forEach(item => {
-                    icsContent += "BEGIN:VEVENT\n";
-                    icsContent += `SUMMARY:Day ${day}: ${item.title}\n`;
-                    icsContent += `DESCRIPTION:${item.catName} - ${formatCurr(item.price)}\n`;
-                    icsContent += "END:VEVENT\n";
+            let availablePins = allPinsData.filter(p => p.country === country && (city === '-- ทั้งประเทศ --' || p.city === city));
+            if (availablePins.length === 0) availablePins = allPinsData;
+
+            itineraryData = {};
+            for (let d = 1; d <= tripDays; d++) {
+                itineraryData[d] = [];
+            }
+
+            let dayIdx = 1;
+            availablePins.forEach((pin, idx) => {
+                if (!itineraryData[dayIdx]) itineraryData[dayIdx] = [];
+                const times = ['09:00', '12:00', '15:00', '18:00'];
+                const timeStr = times[itineraryData[dayIdx].length % times.length];
+                itineraryData[dayIdx].push({
+                    id: pin.id + '_' + Date.now() + '_' + idx,
+                    pinId: pin.id,
+                    title: pin.title,
+                    category: pin.category,
+                    catName: pin.catName,
+                    price: pin.price,
+                    img: pin.img,
+                    city: pin.city,
+                    time: timeStr
                 });
+                dayIdx++;
+                if (dayIdx > tripDays) dayIdx = 1;
             });
-            
-            icsContent += "END:VCALENDAR";
 
-            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'trip_itinerary.ics';
-            link.click();
+            closeModal('modal-auto-plan');
+            startPlanning('auto');
         }
 
         // MOMENTS COMMUNITY FEED
         function renderMomentsFeed() {
             const container = document.getElementById('moment-feed-container');
-            const countText = document.getElementById('moment-count-text');
             if (!container) return;
+
+            const countText = document.getElementById('moment-count-text');
 
             const filtered = momentsData.filter(m => {
                 const matchTag = (activeMomentFilter === 'all' || m.tag === activeMomentFilter);
-                const q = currentSearchQuery.toLowerCase();
-                const matchSearch = !q || m.title.toLowerCase().includes(q) || m.city.toLowerCase().includes(q) || m.content.toLowerCase().includes(q);
-                return matchTag && matchSearch;
+                const query = currentSearchQuery.toLowerCase();
+                const matchQuery = !query || m.title.toLowerCase().includes(query) || m.content.toLowerCase().includes(query) || m.city.toLowerCase().includes(query);
+                return matchTag && matchQuery;
             });
 
             if (countText) countText.innerText = `แสดง ${filtered.length} เรื่องราว`;
 
             if (filtered.length === 0) {
                 container.innerHTML = `
-                    <div class="col-span-full text-center py-12 text-slate-400 space-y-2">
-                        <i class="fa-solid fa-camera-retro text-4xl text-slate-300 dark:text-slate-600"></i>
-                        <p class="text-xs">ไม่พบเรื่องราว Moments ในหมวดหมู่นี้</p>
+                    <div class="col-span-full text-center py-12 text-slate-400 text-xs">
+                        <i class="fa-solid fa-camera-retro text-4xl mb-2 text-slate-300 dark:text-slate-600"></i>
+                        <p>ยังไม่มี Travel Moment ในหมวดหมู่นี้</p>
                     </div>
                 `;
                 return;
@@ -2103,46 +2164,58 @@
             container.innerHTML = filtered.map(m => `
                 <div class="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md transition flex flex-col justify-between">
                     <div>
-                        <div class="p-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/60">
+                        <div class="p-4 flex items-center justify-between border-b dark:border-slate-700/60">
                             <div class="flex items-center gap-2.5">
-                                <img src="${m.avatar}" class="w-8 h-8 rounded-full object-cover">
+                                <img src="${m.avatar}" class="w-8 h-8 rounded-full object-cover border border-slate-200">
                                 <div>
                                     <h4 class="font-bold text-xs text-slate-800 dark:text-slate-100">${m.author}</h4>
                                     <span class="text-[10px] text-slate-400">${m.time} • ${m.city}</span>
                                 </div>
                             </div>
-                            <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-300 border border-rose-200/60">${m.tagName}</span>
+                            <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-rose-800">${m.tagName}</span>
                         </div>
 
                         <div class="relative h-48 bg-slate-900 overflow-hidden">
-                            ${m.mediaType === 'video' ? 
-                                `<video src="${m.mediaUrl}" controls class="w-full h-full object-cover"></video>` : 
-                                `<img src="${m.mediaUrl}" class="w-full h-full object-cover" onerror="this.src='${fallbackImg}'">`
-                            }
+                            ${m.mediaType === 'video' ? `
+                                <video src="${m.mediaUrl}" controls class="w-full h-full object-cover"></video>
+                            ` : `
+                                <img src="${m.mediaUrl}" class="w-full h-full object-cover" onerror="this.src='${fallbackImg}'">
+                            `}
                         </div>
 
                         <div class="p-4 space-y-2">
                             <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">${m.title}</h3>
-                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${m.content}</p>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed line-clamp-3">${m.content}</p>
                         </div>
                     </div>
 
-                    <div class="p-4 pt-0 flex items-center justify-between text-xs text-slate-500 border-t border-slate-100 dark:border-slate-700/60 mt-2 pt-3">
-                        <button onclick="toggleLike('${m.id}')" class="flex items-center gap-1.5 hover:text-rose-500 transition">
-                            <i class="fa-regular fa-heart"></i> <span>${m.likes}</span>
+                    <div class="p-4 pt-0 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700/60 mt-2">
+                        <button onclick="likeMoment('${m.id}')" class="flex items-center gap-1.5 hover:text-rose-500 transition">
+                            <i class="fa-regular fa-heart text-rose-500"></i>
+                            <span id="like-count-${m.id}">${m.likes}</span>
                         </button>
-                        <div class="flex items-center gap-1.5">
-                            <i class="fa-regular fa-comment"></i> <span>${m.comments}</span>
-                        </div>
+                        <span class="flex items-center gap-1.5">
+                            <i class="fa-regular fa-comment text-sky-500"></i>
+                            <span>${m.comments} ความเห็น</span>
+                        </span>
                     </div>
                 </div>
             `).join('');
         }
 
+        function likeMoment(id) {
+            const moment = momentsData.find(m => m.id === id);
+            if (moment) {
+                moment.likes++;
+                const countEl = document.getElementById(`like-count-${id}`);
+                if (countEl) countEl.innerText = moment.likes;
+            }
+        }
+
         function filterMoments(tag) {
             activeMomentFilter = tag;
-            const tagList = ['all', 'food', 'cafe', 'hidden', 'sea', 'mountain', 'hotel', 'activity', 'camping', 'mu', 'pet', 'solo'];
-            tagList.forEach(t => {
+            const tags = ['all', 'food', 'cafe', 'hidden', 'sea', 'mountain', 'hotel', 'activity', 'camping', 'mu', 'pet', 'solo'];
+            tags.forEach(t => {
                 const btn = document.getElementById(`m-btn-${t}`);
                 if (btn) {
                     if (t === tag) {
@@ -2158,58 +2231,69 @@
         function onSearchMoments() {
             const input = document.getElementById('moment-search-input');
             const clearBtn = document.getElementById('btn-clear-search');
-            currentSearchQuery = input.value;
-            if (clearBtn) clearBtn.classList.toggle('hidden', !currentSearchQuery);
+            currentSearchQuery = input ? input.value : '';
+
+            if (clearBtn) {
+                if (currentSearchQuery.length > 0) clearBtn.classList.remove('hidden');
+                else clearBtn.classList.add('hidden');
+            }
+
             renderMomentsFeed();
         }
 
         function clearSearch() {
             const input = document.getElementById('moment-search-input');
-            const clearBtn = document.getElementById('btn-clear-search');
             if (input) input.value = '';
             currentSearchQuery = '';
-            if (clearBtn) clearBtn.classList.add('hidden');
+            document.getElementById('btn-clear-search')?.classList.add('hidden');
             renderMomentsFeed();
         }
 
         function openCreateMomentModal() {
-            document.getElementById('modal-create-moment').classList.remove('hidden');
+            const modal = document.getElementById('modal-create-moment');
+            if (modal) modal.classList.remove('hidden');
         }
 
-        function handleMediaPreview(event) {
-            const file = event.target.files[0];
-            const container = document.getElementById('media-preview-container');
-            const content = document.getElementById('media-preview-content');
-
+        function handleMediaPreview(e) {
+            const file = e.target.files[0];
             if (!file) return;
 
-            const url = URL.createObjectURL(file);
-            const isVideo = file.type.startsWith('video');
+            const previewContainer = document.getElementById('media-preview-container');
+            const previewContent = document.getElementById('media-preview-content');
 
-            tempUploadedMedia = { url, isVideo };
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                tempUploadedMedia = {
+                    type: file.type.startsWith('video') ? 'video' : 'image',
+                    url: evt.target.result
+                };
 
-            if (isVideo) {
-                content.innerHTML = `<video src="${url}" controls class="w-full h-44 object-cover"></video>`;
-            } else {
-                content.innerHTML = `<img src="${url}" class="w-full h-44 object-cover">`;
-            }
-
-            container.classList.remove('hidden');
+                if (previewContent && previewContainer) {
+                    if (tempUploadedMedia.type === 'video') {
+                        previewContent.innerHTML = `<video src="${evt.target.result}" class="w-full h-40 object-cover" controls></video>`;
+                    } else {
+                        previewContent.innerHTML = `<img src="${evt.target.result}" class="w-full h-40 object-cover">`;
+                    }
+                    previewContainer.classList.remove('hidden');
+                }
+            };
+            reader.readAsDataURL(file);
         }
 
         function clearMediaPreview() {
             tempUploadedMedia = null;
-            document.getElementById('new-moment-file').value = '';
-            document.getElementById('media-preview-container').classList.add('hidden');
+            const fileInput = document.getElementById('new-moment-file');
+            if (fileInput) fileInput.value = '';
+            document.getElementById('media-preview-container')?.classList.add('hidden');
         }
 
         function submitNewMoment() {
-            const title = document.getElementById('new-moment-title').value.trim();
-            const city = document.getElementById('new-moment-city').value.trim() || 'ประเทศไทย';
-            const tag = document.getElementById('new-moment-tag').value;
+            const title = document.getElementById('new-moment-title')?.value.trim();
+            const city = document.getElementById('new-moment-city')?.value.trim() || 'ทั่วไป';
             const tagSelect = document.getElementById('new-moment-tag');
-            const tagName = tagSelect.options[tagSelect.selectedIndex].text;
-            const content = document.getElementById('new-moment-content').value.trim();
+            const tag = tagSelect?.value || 'food';
+            const tagName = tagSelect?.options[tagSelect.selectedIndex]?.innerText || '🍜 สายกิน';
+            const content = document.getElementById('new-moment-content')?.value.trim();
 
             if (!title) {
                 alert('กรุณากรอกชื่อสถานที่หรือทริป');
@@ -2222,44 +2306,88 @@
                 city: city,
                 tag: tag,
                 tagName: tagName,
-                author: 'You (ผู้ใช้งาน)',
+                author: 'คุณ (ผู้ใช้งาน)',
                 avatar: 'https://i.pravatar.cc/100?img=12',
-                time: 'เมื่อสักครู่',
+                time: 'เมื่อซักครู่',
                 likes: 0,
                 comments: 0,
-                mediaType: tempUploadedMedia ? (tempUploadedMedia.isVideo ? 'video' : 'image') : 'image',
-                mediaUrl: tempUploadedMedia ? tempUploadedMedia.url : 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600',
-                content: content || 'ไม่มีข้อความเพิ่มเติม'
+                mediaType: tempUploadedMedia ? tempUploadedMedia.type : 'image',
+                mediaUrl: tempUploadedMedia ? tempUploadedMedia.url : 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600',
+                content: content || 'แบ่งปันช่วงเวลาดีๆ จากการเดินทาง'
             };
 
             momentsData.unshift(newMoment);
             renderMomentsFeed();
-            closeModal('modal-create-moment');
-            clearMediaPreview();
 
             document.getElementById('new-moment-title').value = '';
             document.getElementById('new-moment-city').value = '';
             document.getElementById('new-moment-content').value = '';
+            clearMediaPreview();
 
-            alert('โพสต์ Moment ของคุณเรียบร้อยแล้ว!');
+            closeModal('modal-create-moment');
+            alert('โพสต์ Moment เรียบร้อยแล้ว!');
         }
 
-        function toggleLike(momentId) {
-            const item = momentsData.find(m => m.id === momentId);
-            if (item) {
-                item.likes++;
-                renderMomentsFeed();
+        // CALENDAR DATE PICKER SELECTION LOGIC
+        function initDatePicker() {
+            const daysInput = document.getElementById('input-days');
+            if (!daysInput || !daysInput.parentElement) return;
+
+            const parent = daysInput.parentElement;
+
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const startDateStr = `${yyyy}-${mm}-${dd}`;
+
+            const endDateObj = new Date(today);
+            endDateObj.setDate(today.getDate() + 3);
+            const endYyyy = endDateObj.getFullYear();
+            const endMm = String(endDateObj.getMonth() + 1).padStart(2, '0');
+            const endDd = String(endDateObj.getDate()).padStart(2, '0');
+            const endDateStr = `${endYyyy}-${endMm}-${endDd}`;
+
+            const label = parent.querySelector('label');
+            if (label) label.innerText = 'เลือกวันเดินทาง (ไป - กลับ)';
+
+            daysInput.type = 'hidden';
+
+            const dateGroup = document.createElement('div');
+            dateGroup.className = 'grid grid-cols-2 gap-1.5 mt-1';
+            dateGroup.innerHTML = `
+                <div>
+                    <span class="text-[10px] text-slate-400 block mb-0.5">วันไป</span>
+                    <input id="input-start-date" type="date" value="${startDateStr}" class="w-full px-2 py-1.5 border rounded-xl text-xs font-semibold focus:ring-2 focus:ring-sky-500 outline-none border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:text-slate-100">
+                </div>
+                <div>
+                    <span class="text-[10px] text-slate-400 block mb-0.5">วันกลับ</span>
+                    <input id="input-end-date" type="date" value="${endDateStr}" class="w-full px-2 py-1.5 border rounded-xl text-xs font-semibold focus:ring-2 focus:ring-sky-500 outline-none border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 dark:text-slate-100">
+                </div>
+            `;
+
+            parent.appendChild(dateGroup);
+
+            const startDateInput = document.getElementById('input-start-date');
+            const endDateInput = document.getElementById('input-end-date');
+
+            function calcDaysFromDates() {
+                const start = new Date(startDateInput.value);
+                const end = new Date(endDateInput.value);
+                if (isNaN(start.getTime()) || isNaN(end.getTime())) return;
+
+                if (end < start) {
+                    endDateInput.value = startDateInput.value;
+                }
+
+                const diffTime = Math.abs(new Date(endDateInput.value) - new Date(startDateInput.value));
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                daysInput.value = Math.min(Math.max(diffDays, 1), 14);
+                updateDaysCount();
             }
-        }
 
-        // GENERAL UTILS
-        function closeModal(modalId) {
-            const elem = document.getElementById(modalId);
-            if (elem) elem.classList.add('hidden');
-        }
-
-        function triggerLogin() {
-            alert('ระบบเข้าสู่ระบบแบบเต็มจะเปิดให้บริการในเร็วๆ นี้!');
+            startDateInput.addEventListener('change', calcDaysFromDates);
+            endDateInput.addEventListener('change', calcDaysFromDates);
         }
     </script>
 </body>
