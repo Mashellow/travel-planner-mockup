@@ -389,7 +389,7 @@
                         <span><i class="fa-solid fa-list-check text-sky-600 mr-2"></i>ข้อแนะนำทริป</span>
                     </h3>
                     <p class="text-xs text-slate-500 leading-relaxed">
-                        ท่านสามารถเลือกดูสถานที่แนะนำจากแท็บ <span class="font-bold text-sky-600">"ค้นหา & วางแผน"</span> แล้วกดปุ่ม "รายละเอียด" เพื่อเพิ่มรายการสถานที่เข้าตารางทริปได้ทันที
+                        ท่านสามารถเลือกดูสถานที่แนะนำจากแท็บ <span class="font-bold text-sky-600">"ค้นหา & วางแผน"</span> หรือคลิกที่รายการกิจกรรมในตารางเพื่อดูรายละเอียดเพิ่มเติม รูปภาพ ตำแหน่ง คำอธิบาย และข้อมูลติดต่อได้ตลอดเวลา
                     </p>
                 </div>
             </div>
@@ -470,7 +470,7 @@
 
     </main>
 
-    <!-- MODAL: AUTO PLAN POPUP (เพิ่มใหม่ตามตรรกะที่กำหนด) -->
+    <!-- MODAL: AUTO PLAN POPUP -->
     <div id="modal-auto-plan" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
             <div class="bg-gradient-to-r from-sky-600 to-indigo-600 p-5 text-white flex items-center justify-between shrink-0">
@@ -1210,22 +1210,49 @@
         }
 
         function openFullDetailModal(pinId) {
-            const pin = allPinsData.find(p => p.id === pinId);
+            let pin = allPinsData.find(p => p.id === pinId);
+            
+            // ค้นหาเพิ่มเติมจากตารางทริป หากไม่พบใน allPinsData
+            if (!pin) {
+                for (let d in itineraryData) {
+                    const found = itineraryData[d].find(item => item.id === pinId);
+                    if (found) {
+                        pin = {
+                            id: found.id,
+                            title: found.title,
+                            price: found.price || 0,
+                            city: found.city || 'ทั่วไป',
+                            country: 'ประเทศไทย',
+                            category: found.category || 'attraction',
+                            catName: found.catName || 'กิจกรรม/สถานที่',
+                            img: found.img || fallbackImg,
+                            address: found.address || (found.city ? `ย่าน/เมือง ${found.city}` : 'ตามระบุในแผนการเดินทาง'),
+                            rating: 4.8,
+                            reviewCount: 50,
+                            contact: found.contact || 'ติดต่อสอบถามเพิ่มเติม ณ จุดบริการสถานที่',
+                            description: found.description || `รายละเอียดกิจกรรมและสถานที่ "${found.title}" ในตารางทริปของคุณ`,
+                            reviews: [{ author: 'ผู้ใช้งาน Let\'s U Plan', rating: 5, comment: 'สถานที่/กิจกรรมน่าสนใจ เพิ่มเข้าตารางทริปแล้ว' }]
+                        };
+                        break;
+                    }
+                }
+            }
+
             if (!pin) return;
 
             const theme = categoryThemeMap[pin.category] || categoryThemeMap['attraction'];
 
-            document.getElementById('modal-full-img').src = pin.img;
+            document.getElementById('modal-full-img').src = pin.img || fallbackImg;
             document.getElementById('modal-full-title').innerText = pin.title;
-            document.getElementById('modal-full-location').querySelector('span').innerText = `${pin.city}, ${pin.country}`;
+            document.getElementById('modal-full-location').querySelector('span').innerText = `${pin.city || ''}, ${pin.country || ''}`;
             document.getElementById('modal-full-rating').querySelector('span').innerText = `${pin.rating || 4.8} (${pin.reviewCount || 100}+ รีวิว)`;
             document.getElementById('modal-full-price').innerText = pin.price === 0 ? 'เข้าฟรีไม่มีค่าใช้จ่าย' : `${pin.price.toLocaleString()} บาท / ท่าน`;
-            document.getElementById('modal-full-address').innerText = pin.address || `${pin.city}, ${pin.country}`;
+            document.getElementById('modal-full-address').innerText = pin.address || `${pin.city || ''}, ${pin.country || ''}`;
             document.getElementById('modal-full-description').innerText = pin.description || 'สถานที่ท่องเที่ยวยอดนิยม บรรยากาศดี การเดินทางสะดวกสบาย';
             document.getElementById('modal-full-contact').innerText = pin.contact || 'ไม่มีข้อมูลติดต่อเพิ่มเติม';
 
             const badge = document.getElementById('modal-full-cat-badge');
-            badge.innerText = pin.catName;
+            badge.innerText = pin.catName || 'ท่องเที่ยว';
             badge.className = `absolute top-3 left-3 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md ${theme.bg}`;
 
             const reviewsContainer = document.getElementById('modal-full-reviews-list');
@@ -1383,7 +1410,13 @@
                     id: hotel.id,
                     title: '🏨 ' + hotel.title + ' (In-App)',
                     price: hotel.price,
-                    city: hotel.city
+                    city: hotel.city,
+                    img: hotel.img,
+                    address: hotel.address,
+                    description: hotel.description,
+                    contact: hotel.contact,
+                    category: hotel.category,
+                    catName: hotel.catName
                 };
                 travelBudget = Math.max(0, totalBudget - hotel.price);
             } else if (status === 'external') {
@@ -1398,7 +1431,10 @@
                     id: 'ext_h_' + Date.now(),
                     title: '🏨 ' + extName + ' (ที่พักภายนอก)',
                     price: extPrice,
-                    city: targetLocationName
+                    city: targetLocationName,
+                    address: extName,
+                    description: 'ที่พักภายนอกที่จองเรียบร้อยแล้ว ใช้เป็นจุดอิงตำแหน่งทริป',
+                    contact: 'โปรดดูข้อมูลการจองภายนอกของคุณ'
                 };
             } else if (status === 'none') {
                 const noneOpt = document.querySelector('input[name="none_hotel_option"]:checked')?.value || 'recommend';
@@ -1416,14 +1452,22 @@
                             id: hotel.id,
                             title: '🏨 [แนะนำ] ' + hotel.title,
                             price: hotel.price,
-                            city: hotel.city
+                            city: hotel.city,
+                            img: hotel.img,
+                            address: hotel.address,
+                            description: hotel.description,
+                            contact: hotel.contact,
+                            category: hotel.category,
+                            catName: hotel.catName
                         };
                     } else {
                         selectedHotelItem = {
                             id: 'rec_h_' + Date.now(),
                             title: '🏨 [แนะนำที่พัก] โรงแรมใกล้ย่านท่องเที่ยว ' + targetLocationName,
                             price: hBudget,
-                            city: targetLocationName
+                            city: targetLocationName,
+                            description: 'แนะนำโรงแรมใกล้ย่านท่องเที่ยวในงบประมาณที่กำหนด',
+                            contact: 'สอบถามข้อมูลเพิ่มเติมกับศูนย์บริการ'
                         };
                     }
                 } else {
@@ -1453,7 +1497,13 @@
                             id: p.id,
                             title: p.title,
                             price: p.price,
-                            city: p.city
+                            city: p.city,
+                            img: p.img,
+                            address: p.address,
+                            description: p.description,
+                            contact: p.contact,
+                            category: p.category,
+                            catName: p.catName
                         });
                         currentSpent += p.price;
                     }
@@ -1488,7 +1538,13 @@
                 id: pinId || ('custom_' + Date.now()),
                 title: title || (pin ? pin.title : 'สถานที่ท่องเที่ยว'),
                 price: price !== undefined ? price : (pin ? pin.price : 0),
-                city: city || (pin ? pin.city : 'ทั่วไป')
+                city: city || (pin ? pin.city : 'ทั่วไป'),
+                img: pin ? pin.img : undefined,
+                address: pin ? pin.address : undefined,
+                description: pin ? pin.description : undefined,
+                contact: pin ? pin.contact : undefined,
+                category: pin ? pin.category : undefined,
+                catName: pin ? pin.catName : undefined
             };
 
             if (!itineraryData[activeDay]) itineraryData[activeDay] = [];
@@ -1543,17 +1599,20 @@
             }
 
             container.innerHTML = items.map((item, idx) => `
-                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-center justify-between gap-3 hover:border-sky-300 transition">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center font-bold text-xs shrink-0">
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-center justify-between gap-3 hover:border-sky-300 hover:bg-sky-50/30 transition group">
+                    <div class="flex items-center space-x-3 cursor-pointer flex-grow" onclick="openFullDetailModal('${item.id}')" title="คลิกเพื่อดูรายละเอียด">
+                        <div class="w-8 h-8 rounded-xl bg-sky-100 group-hover:bg-sky-600 group-hover:text-white text-sky-600 flex items-center justify-center font-bold text-xs shrink-0 transition">
                             ${idx + 1}
                         </div>
                         <div>
-                            <h4 class="text-xs font-bold text-slate-800">${item.title}</h4>
+                            <h4 class="text-xs font-bold text-slate-800 group-hover:text-sky-600 transition flex items-center gap-1.5">
+                                <span>${item.title}</span>
+                                <i class="fa-solid fa-circle-info text-sky-500 text-[11px] opacity-70 group-hover:opacity-100"></i>
+                            </h4>
                             <span class="text-[10px] text-slate-400 font-medium">${item.city ? item.city + ' • ' : ''}ค่าใช้จ่าย: ${item.price === 0 ? 'ฟรี' : item.price.toLocaleString() + ' B'}</span>
                         </div>
                     </div>
-                    <button onclick="removeFromItinerary(${activeDay}, ${idx})" class="text-rose-500 hover:text-rose-700 p-2 text-xs transition" title="ลบออกจากทริป">
+                    <button onclick="event.stopPropagation(); removeFromItinerary(${activeDay}, ${idx})" class="text-rose-500 hover:text-rose-700 p-2 text-xs transition shrink-0" title="ลบออกจากทริป">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </div>
