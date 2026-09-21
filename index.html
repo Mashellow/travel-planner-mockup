@@ -1,16 +1,11 @@
 <!DOCTYPE html>
-<html lang="th" class="light">
+<html lang="th">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Let's U Plan - Modern Travel Map Planner</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-        }
-    </script>
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts (Prompt) -->
@@ -126,18 +121,11 @@
             box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.35) !important;
             background: #ffffff !important;
         }
-        .dark .leaflet-popup-content-wrapper {
-            background: #1e293b !important;
-            color: #f8fafc !important;
-        }
         .leaflet-popup-tip-container {
             margin-top: -1px;
         }
         .leaflet-popup-tip {
             background: #ffffff !important;
-        }
-        .dark .leaflet-popup-tip {
-            background: #1e293b !important;
         }
         .leaflet-popup-content {
             margin: 0 !important;
@@ -177,17 +165,12 @@
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        .dragging {
-            opacity: 0.4;
-            border: 2px dashed #0284c7 !important;
-        }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 min-h-screen text-slate-800 dark:text-slate-100 flex flex-col transition-colors duration-200">
+<body class="bg-slate-50 min-h-screen text-slate-800 flex flex-col">
 
     <!-- Header / Navbar -->
-    <header class="bg-white/90 dark:bg-slate-800/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100 dark:border-slate-700">
+    <header class="bg-white/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-2.5 cursor-pointer" onclick="switchTab('search')">
                 <div class="w-10 h-10 bg-gradient-to-tr from-sky-600 to-indigo-600 text-white rounded-xl flex items-center justify-center font-bold text-xl shadow-md">
@@ -195,7 +178,7 @@
                 </div>
                 <div>
                     <span class="text-xl font-extrabold bg-gradient-to-r from-sky-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">Let's U Plan</span>
-                    <span class="block text-[9px] text-slate-400 dark:text-slate-500 -mt-1 font-medium tracking-wide">SMART TRAVEL MAP</span>
+                    <span class="block text-[9px] text-slate-400 -mt-1 font-medium tracking-wide">SMART TRAVEL MAP</span>
                 </div>
             </div>
 
@@ -203,24 +186,19 @@
                 <button id="nav-search" onclick="switchTab('search')" class="py-5 px-1 tab-active flex items-center space-x-2">
                     <i class="fa-solid fa-compass"></i><span>ค้นหา & วางแผน</span>
                 </button>
-                <button id="nav-plan" onclick="switchTab('plan')" class="py-5 px-1 text-slate-500 dark:text-slate-400 hover:text-sky-600 flex items-center space-x-2 transition">
+                <button id="nav-plan" onclick="switchTab('plan')" class="py-5 px-1 text-slate-500 hover:text-sky-600 flex items-center space-x-2 transition">
                     <i class="fa-solid fa-route"></i><span>ตารางทริปของฉัน</span>
                 </button>
-                <button id="nav-moment" onclick="switchTab('moment')" class="py-5 px-1 text-slate-500 dark:text-slate-400 hover:text-sky-600 flex items-center space-x-2 transition">
+                <button id="nav-moment" onclick="switchTab('moment')" class="py-5 px-1 text-slate-500 hover:text-sky-600 flex items-center space-x-2 transition">
                     <i class="fa-solid fa-camera-retro"></i><span>Moments (รีวิว)</span>
                 </button>
             </nav>
 
             <div class="flex items-center space-x-3">
-                <!-- Dark / Light Mode Toggle -->
-                <button onclick="toggleDarkMode()" title="สลับธีม สว่าง/มืด" class="p-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-600 transition flex items-center justify-center">
-                    <i id="theme-toggle-icon" class="fa-solid fa-moon text-sm"></i>
-                </button>
-
-                <span class="hidden sm:flex text-xs bg-sky-50 dark:bg-sky-950/50 text-sky-700 dark:text-sky-300 px-3 py-1 rounded-full font-semibold border border-sky-200/60 dark:border-sky-800/60 items-center gap-1.5">
+                <span class="text-xs bg-sky-50 text-sky-700 px-3 py-1 rounded-full font-semibold border border-sky-200/60 flex items-center gap-1.5">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> โหมดระบบแผนที่ใหม่
                 </span>
-                <button onclick="triggerLogin()" class="bg-slate-900 dark:bg-sky-600 hover:bg-slate-800 dark:hover:bg-sky-500 text-white text-xs px-4 py-2 rounded-xl font-medium shadow-md transition">
+                <button onclick="triggerLogin()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs px-4 py-2 rounded-xl font-medium shadow-md transition">
                     <i class="fa-solid fa-user-circle mr-1.5"></i> เข้าสู่ระบบ
                 </button>
             </div>
@@ -272,20 +250,20 @@
                     </div>
 
                     <!-- RIGHT COLUMN: Search Form Card -->
-                    <div class="lg:col-span-5 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-6 rounded-2xl shadow-xl space-y-4">
-                        <div class="border-b dark:border-slate-700 pb-3">
-                            <h3 class="font-bold text-lg text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                                <i class="fa-solid fa-sliders text-sky-600 dark:text-sky-400"></i>ค้นหาจุดหมาย & วางแผน
+                    <div class="lg:col-span-5 bg-white text-slate-800 p-6 rounded-2xl shadow-xl space-y-4">
+                        <div class="border-b pb-3">
+                            <h3 class="font-bold text-lg text-slate-800 flex items-center gap-2">
+                                <i class="fa-solid fa-sliders text-sky-600"></i>ค้นหาจุดหมาย & วางแผน
                             </h3>
-                            <p class="text-xs text-slate-500 dark:text-slate-400">คลิกการ์ดบนแผนที่เพื่อดูรายละเอียดและใส่ทริป</p>
+                            <p class="text-xs text-slate-500">คลิกการ์ดบนแผนที่เพื่อดูรายละเอียดและใส่ทริป</p>
                         </div>
                         
                         <div class="space-y-2">
-                            <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300">เลือกประเทศและเมือง *</label>
+                            <label class="block text-xs font-semibold text-slate-700">เลือกประเทศและเมือง *</label>
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label class="block text-[10px] text-slate-400 mb-0.5">เลือกประเทศ</label>
-                                    <select id="select-country" onchange="onCountryChange()" class="w-full px-2.5 py-2 border rounded-xl text-xs bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold focus:ring-2 focus:ring-sky-500 outline-none border-slate-200 dark:border-slate-700">
+                                    <select id="select-country" onchange="onCountryChange()" class="w-full px-2.5 py-2 border rounded-xl text-xs bg-slate-50 text-slate-800 font-semibold focus:ring-2 focus:ring-sky-500 outline-none border-slate-200">
                                         <option value="ประเทศไทย">🇹🇭 ประเทศไทย</option>
                                         <option value="ญี่ปุ่น">🇯🇵 ญี่ปุ่น</option>
                                         <option value="เกาหลีใต้">🇰🇷 เกาหลีใต้</option>
@@ -297,34 +275,34 @@
                                 </div>
                                 <div>
                                     <label class="block text-[10px] text-slate-400 mb-0.5">เลือกเมือง / จังหวัด</label>
-                                    <select id="select-city" onchange="onCityChange()" class="w-full px-2.5 py-2 border rounded-xl text-xs bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold focus:ring-2 focus:ring-sky-500 outline-none border-slate-200 dark:border-slate-700">
+                                    <select id="select-city" onchange="onCityChange()" class="w-full px-2.5 py-2 border rounded-xl text-xs bg-slate-50 text-slate-800 font-semibold focus:ring-2 focus:ring-sky-500 outline-none border-slate-200">
                                     </select>
                                 </div>
                             </div>
 
                             <div class="relative pt-1">
                                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-400 text-xs"></i>
-                                <input id="input-destination-custom" type="text" placeholder="หรือพิมพ์ค้นหาสถานที่เฉพาะ..." class="w-full pl-8 pr-3 py-2 border rounded-xl text-xs bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-sky-500 outline-none border-slate-200 dark:border-slate-700">
+                                <input id="input-destination-custom" type="text" placeholder="หรือพิมพ์ค้นหาสถานที่เฉพาะ..." class="w-full pl-8 pr-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-sky-500 outline-none border-slate-200">
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">งบประมาณ (บาท)</label>
-                                <input id="input-budget" type="number" value="25000" class="w-full px-3 py-2 border rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-sky-500 outline-none border-slate-200 dark:border-slate-700">
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">งบประมาณ (บาท)</label>
+                                <input id="input-budget" type="number" value="25000" class="w-full px-3 py-2 border rounded-xl text-xs font-semibold focus:ring-2 focus:ring-sky-500 outline-none border-slate-200">
                             </div>
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">จำนวนวัน (วัน)</label>
-                                <input id="input-days" type="number" value="4" min="1" max="14" onchange="updateDaysCount()" oninput="updateDaysCount()" class="w-full px-3 py-2 border rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-sky-500 outline-none border-slate-200 dark:border-slate-700">
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">จำนวนวัน (วัน)</label>
+                                <input id="input-days" type="number" value="4" min="1" max="14" onchange="updateDaysCount()" oninput="updateDaysCount()" class="w-full px-3 py-2 border rounded-xl text-xs font-semibold focus:ring-2 focus:ring-sky-500 outline-none border-slate-200">
                             </div>
                         </div>
 
                         <div class="pt-2 grid grid-cols-2 gap-2">
                             <!-- เรียกใช้งาน Modal สำหรับ Auto Plan -->
                             <button onclick="openAutoPlanModal()" class="w-full bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-semibold py-2.5 rounded-xl text-xs shadow-md transition flex items-center justify-center gap-1.5">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i><span>Auto Plan Wizard</span>
+                                <i class="fa-solid fa-wand-magic-sparkles"></i><span>Auto Plan</span>
                             </button>
-                            <button onclick="startPlanning('diy')" class="w-full bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-semibold py-2.5 rounded-xl text-xs border border-slate-200 dark:border-slate-600 transition flex items-center justify-center gap-1.5">
+                            <button onclick="startPlanning('diy')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-xs border border-slate-200 transition flex items-center justify-center gap-1.5">
                                 <i class="fa-solid fa-pen-to-square"></i><span>Plan เอง (DIY)</span>
                             </button>
                         </div>
@@ -335,29 +313,29 @@
 
             <!-- RECOMMENDATIONS SECTION -->
             <div class="space-y-4">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b dark:border-slate-800 pb-3">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b pb-3">
                     <div>
-                        <h2 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                            <i class="fa-solid fa-layer-group text-sky-600 dark:text-sky-400"></i>
+                        <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-layer-group text-sky-600"></i>
                             สำรวจจุดแนะนำยอดนิยม
                         </h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">เลือกกรองดูสถานที่ ที่พัก กิจกรรม ร้านค้าและของฝาก</p>
+                        <p class="text-xs text-slate-500">เลือกกรองดูสถานที่ ที่พัก กิจกรรม ร้านค้าและของฝาก</p>
                     </div>
 
                     <div class="flex flex-wrap gap-1.5" id="category-filter-bar">
-                        <button onclick="setCategoryFilter('all')" id="cat-btn-all" class="cat-pill-active px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition">
+                        <button onclick="setCategoryFilter('all')" id="cat-btn-all" class="cat-pill-active px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 transition">
                             ทั้งหมด
                         </button>
-                        <button onclick="setCategoryFilter('attraction')" id="cat-btn-attraction" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                        <button onclick="setCategoryFilter('attraction')" id="cat-btn-attraction" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition">
                             🏖️ ท่องเที่ยว
                         </button>
-                        <button onclick="setCategoryFilter('hotel')" id="cat-btn-hotel" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                        <button onclick="setCategoryFilter('hotel')" id="cat-btn-hotel" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition">
                             🏨 ที่พัก
                         </button>
-                        <button onclick="setCategoryFilter('activity')" id="cat-btn-activity" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                        <button onclick="setCategoryFilter('activity')" id="cat-btn-activity" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition">
                             🏄‍♂️ กิจกรรม
                         </button>
-                        <button onclick="setCategoryFilter('shop')" id="cat-btn-shop" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition">
+                        <button onclick="setCategoryFilter('shop')" id="cat-btn-shop" class="px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition">
                             🛍️ ร้านค้า/ของฝาก
                         </button>
                     </div>
@@ -369,97 +347,51 @@
 
         <!-- ================= PAGE 2: TRIP PLANNER ================= -->
         <section id="page-plan" class="hidden space-y-6">
-            <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <span class="text-xs font-bold uppercase tracking-wider text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-950/60 px-3 py-1 rounded-full border border-sky-100 dark:border-sky-800">สรุปแพลนทริป</span>
-                    <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-1" id="trip-title-display">ประเทศไทย (4 วัน 3 คืน)</h2>
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-600 bg-sky-50 px-3 py-1 rounded-full border border-sky-100">สรุปแพลนทริป</span>
+                    <h2 class="text-2xl font-bold text-slate-800 mt-1" id="trip-title-display">ประเทศไทย (4 วัน 3 คืน)</h2>
                 </div>
 
-                <!-- Currency & Split Bill Controls Bar -->
-                <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
-                    <div class="bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-2">
-                        <i class="fa-solid fa-coins text-amber-500 text-xs"></i>
-                        <span class="text-xs font-bold text-slate-600 dark:text-slate-300">สกุลเงิน:</span>
-                        <select id="currency-select" onchange="changeCurrency(this.value)" class="text-xs font-bold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 outline-none text-slate-800 dark:text-slate-100">
-                            <option value="THB">🇹🇭 THB (฿)</option>
-                            <option value="USD">🇺🇸 USD ($)</option>
-                            <option value="JPY">🇯🇵 JPY (¥)</option>
-                            <option value="EUR">🇪🇺 EUR (€)</option>
-                            <option value="KRW">🇰🇷 KRW (₩)</option>
-                        </select>
-                    </div>
-
-                    <div class="bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-2">
-                        <i class="fa-solid fa-users text-sky-500 text-xs"></i>
-                        <span class="text-xs font-bold text-slate-600 dark:text-slate-300">จำนวนคน:</span>
-                        <input id="split-people-input" type="number" min="1" value="1" onchange="renderItinerary()" oninput="renderItinerary()" class="w-14 text-xs font-bold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 outline-none text-slate-800 dark:text-slate-100">
-                    </div>
-                </div>
-
-                <div class="bg-slate-50 dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-700 w-full md:w-80 space-y-2">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 w-full md:w-80 space-y-2">
                     <div class="flex justify-between text-xs font-semibold">
                         <span>งบประมาณคงเหลือ:</span>
-                        <span id="budget-remaining-text" class="text-emerald-600 dark:text-emerald-400 font-bold">25,000 / 25,000 B</span>
+                        <span id="budget-remaining-text" class="text-emerald-600 font-bold">25,000 / 25,000 B</span>
                     </div>
-                    <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden">
+                    <div class="w-full bg-slate-200 rounded-full h-2.5 overflow-hidden">
                         <div id="budget-progress-bar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-300" style="width: 100%"></div>
-                    </div>
-                    <div id="split-bill-result" class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-700 pt-1.5 flex justify-between">
-                        <span>หารเฉลี่ยรวมต่อคน:</span>
-                        <span id="split-cost-per-person" class="font-bold text-sky-600 dark:text-sky-400">0 THB</span>
                     </div>
                 </div>
 
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="switchTab('search')" class="px-3.5 py-2 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl text-xs font-semibold border border-slate-200 dark:border-slate-600 flex items-center gap-1.5">
+                <div class="flex gap-2">
+                    <button onclick="switchTab('search')" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold border flex items-center gap-1.5">
                         <i class="fa-solid fa-arrow-left"></i> กลับไปค้นหา
                     </button>
-                    
-                    <!-- Export & Sharing Action Buttons -->
-                    <button onclick="exportTripPDF()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-md flex items-center gap-1.5" title="ส่งออกเป็น PDF/Print">
-                        <i class="fa-solid fa-file-pdf"></i> Export PDF
-                    </button>
-                    <button onclick="syncCalendar()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-md flex items-center gap-1.5" title="ซิงค์ลง Calendar">
-                        <i class="fa-solid fa-calendar-check"></i> iCal
-                    </button>
-                    <button onclick="openShareModal()" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-semibold shadow-md flex items-center gap-1.5" title="แชร์ทริป">
-                        <i class="fa-solid fa-share-nodes"></i> แชร์
+                    <button onclick="triggerLogin('save')" class="px-4 py-2 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-xs font-semibold shadow-md flex items-center gap-1.5">
+                        <i class="fa-solid fa-bookmark"></i> บันทึกทริป
                     </button>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 space-y-4">
-                    <div id="day-buttons-container" class="flex space-x-2 border-b border-slate-200 dark:border-slate-700 pb-2 overflow-x-auto">
+                    <div id="day-buttons-container" class="flex space-x-2 border-b border-slate-200 pb-2 overflow-x-auto">
                         <button onclick="switchDay(1)" id="day-btn-1" class="px-4 py-2 rounded-xl font-semibold text-xs bg-sky-600 text-white shadow-sm">DAY 1</button>
-                        <button onclick="switchDay(2)" id="day-btn-2" class="px-4 py-2 rounded-xl font-semibold text-xs bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">DAY 2</button>
-                        <button onclick="switchDay(3)" id="day-btn-3" class="px-4 py-2 rounded-xl font-semibold text-xs bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">DAY 3</button>
-                        <button onclick="switchDay(4)" id="day-btn-4" class="px-4 py-2 rounded-xl font-semibold text-xs bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700">DAY 4</button>
+                        <button onclick="switchDay(2)" id="day-btn-2" class="px-4 py-2 rounded-xl font-semibold text-xs bg-white text-slate-600 hover:bg-slate-100">DAY 2</button>
+                        <button onclick="switchDay(3)" id="day-btn-3" class="px-4 py-2 rounded-xl font-semibold text-xs bg-white text-slate-600 hover:bg-slate-100">DAY 3</button>
+                        <button onclick="switchDay(4)" id="day-btn-4" class="px-4 py-2 rounded-xl font-semibold text-xs bg-white text-slate-600 hover:bg-slate-100">DAY 4</button>
                     </div>
 
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-4" id="itinerary-container"></div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4" id="itinerary-container"></div>
                 </div>
 
-                <div class="space-y-4">
-                    <!-- Detailed Budget Breakdown Panel -->
-                    <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-3">
-                        <h3 class="font-bold text-slate-800 dark:text-slate-100 text-xs border-b dark:border-slate-700 pb-2 flex items-center justify-between">
-                            <span><i class="fa-solid fa-chart-pie text-sky-600 mr-2"></i>จำแนกหมวดหมู่งบประมาณ</span>
-                            <span class="text-[10px] text-slate-400 font-normal">ทุกวันรวมกัน</span>
-                        </h3>
-                        <div id="budget-category-breakdown" class="space-y-2 text-xs">
-                            <!-- Filled dynamically in JS -->
-                        </div>
-                    </div>
-
-                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 space-y-4 h-fit">
-                        <h3 class="font-bold text-slate-800 dark:text-slate-100 flex items-center justify-between border-b dark:border-slate-700 pb-3">
-                            <span><i class="fa-solid fa-list-check text-sky-600 mr-2"></i>ข้อแนะนำ & Drag & Drop</span>
-                        </h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">
-                            💡 **คำแนะนำ:** คุณสามารถ **ลากวาง (Drag & Drop)** กิจกรรมในตารางสรุปแพลนเพื่อจัดลำดับใหม่ หรือใช้เมนูย้ายข้ามวันในการ์ดได้ตามต้องการ!
-                        </p>
-                    </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4 h-fit">
+                    <h3 class="font-bold text-slate-800 flex items-center justify-between border-b pb-3">
+                        <span><i class="fa-solid fa-list-check text-sky-600 mr-2"></i>ข้อแนะนำทริป</span>
+                    </h3>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        ท่านสามารถเลือกดูสถานที่แนะนำจากแท็บ <span class="font-bold text-sky-600">"ค้นหา & วางแผน"</span> หรือคลิกที่รายการกิจกรรมในตารางเพื่อดูรายละเอียดเพิ่มเติม รูปภาพ ตำแหน่ง คำอธิบาย และข้อมูลติดต่อได้ตลอดเวลา
+                    </p>
                 </div>
             </div>
         </section>
@@ -482,11 +414,11 @@
                 </button>
             </div>
 
-            <div class="space-y-3 border-b border-slate-200 dark:border-slate-700 pb-4">
+            <div class="space-y-3 border-b border-slate-200 pb-4">
                 <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div class="relative w-full sm:w-80">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                        <input id="moment-search-input" type="text" oninput="onSearchMoments()" placeholder="ค้นหาเรื่องราว, สถานที่, หรือแฮชแท็ก..." class="w-full pl-9 pr-8 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 transition shadow-sm text-slate-800 dark:text-slate-100">
+                        <input id="moment-search-input" type="text" oninput="onSearchMoments()" placeholder="ค้นหาเรื่องราว, สถานที่, หรือแฮชแท็ก..." class="w-full pl-9 pr-8 py-2 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 transition shadow-sm">
                         <button onclick="clearSearch()" id="btn-clear-search" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
@@ -495,40 +427,40 @@
                 </div>
 
                 <div class="flex items-center gap-1.5 overflow-x-auto py-1.5 no-scrollbar whitespace-nowrap" id="moment-filter-bar">
-                    <button onclick="filterMoments('all')" id="m-btn-all" class="moment-tag-active px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 transition shrink-0">
+                    <button onclick="filterMoments('all')" id="m-btn-all" class="moment-tag-active px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 transition shrink-0">
                         🌐 ทั้งหมด
                     </button>
-                    <button onclick="filterMoments('food')" id="m-btn-food" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0">
+                    <button onclick="filterMoments('food')" id="m-btn-food" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         🍜 สายกิน / สตรีทฟู้ด
                     </button>
-                    <button onclick="filterMoments('cafe')" id="m-btn-cafe" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0">
+                    <button onclick="filterMoments('cafe')" id="m-btn-cafe" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         ☕ คาเฟ่ / ถ่ายรูป
                     </button>
-                    <button onclick="filterMoments('hidden')" id="m-btn-hidden" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0">
+                    <button onclick="filterMoments('hidden')" id="m-btn-hidden" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         🕵️‍♂️ สถานที่ลับ
                     </button>
-                    <button onclick="filterMoments('sea')" id="m-btn-sea" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0">
+                    <button onclick="filterMoments('sea')" id="m-btn-sea" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         🌊 ทะเล
                     </button>
-                    <button onclick="filterMoments('mountain')" id="m-btn-mountain" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0">
+                    <button onclick="filterMoments('mountain')" id="m-btn-mountain" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         ⛰️ ภูเขา
                     </button>
-                    <button onclick="filterMoments('hotel')" id="m-btn-hotel" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0">
+                    <button onclick="filterMoments('hotel')" id="m-btn-hotel" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         🏨 ที่พัก / โรงแรม
                     </button>
-                    <button onclick="filterMoments('activity')" id="m-btn-activity" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0">
+                    <button onclick="filterMoments('activity')" id="m-btn-activity" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         🎟️ กิจกรรม
                     </button>
-                    <button onclick="filterMoments('camping')" id="m-btn-camping" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0">
+                    <button onclick="filterMoments('camping')" id="m-btn-camping" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         🏕️ แคมป์ปิ้ง / สายลุย
                     </button>
-                    <button onclick="filterMoments('mu')" id="m-btn-mu" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0">
+                    <button onclick="filterMoments('mu')" id="m-btn-mu" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         🔮 สายมู / วัฒนธรรม
                     </button>
-                    <button onclick="filterMoments('pet')" id="m-btn-pet" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0">
+                    <button onclick="filterMoments('pet')" id="m-btn-pet" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         🐕 Pet-Friendly
                     </button>
-                    <button onclick="filterMoments('solo')" id="m-btn-solo" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shrink-0">
+                    <button onclick="filterMoments('solo')" id="m-btn-solo" class="px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0">
                         🎒 Solo Traveler
                     </button>
                 </div>
@@ -539,17 +471,17 @@
 
     </main>
 
-    <!-- MODAL: AUTO PLAN POPUP (UPDATED TO MULTI-STEPPER WIZARD) -->
+    <!-- MODAL: AUTO PLAN POPUP -->
     <div id="modal-auto-plan" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-slate-100 dark:border-slate-700 max-h-[90vh] flex flex-col">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
             <div class="bg-gradient-to-r from-sky-600 to-indigo-600 p-5 text-white flex items-center justify-between shrink-0">
                 <div class="flex items-center gap-2.5">
                     <div class="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center text-lg">
                         <i class="fa-solid fa-wand-magic-sparkles"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-base leading-tight">Auto Plan Wizard (ตัวช่วยวางแผน)</h3>
-                        <p class="text-[11px] text-sky-100 font-normal">ระบบวิเคราะห์และจัดแพลนทริปอัตโนมัติทีละขั้นตอน</p>
+                        <h3 class="font-bold text-base leading-tight">วิเคราะห์และจัดแพลนอัตโนมัติ (Auto Plan)</h3>
+                        <p class="text-[11px] text-sky-100 font-normal">ระบุสถานะที่พักเพื่อคำนวณงบประมาณและเส้นทางท่องเที่ยวที่แม่นยำ</p>
                     </div>
                 </div>
                 <button onclick="closeModal('modal-auto-plan')" class="text-white/80 hover:text-white text-lg transition">
@@ -557,97 +489,53 @@
                 </button>
             </div>
 
-            <!-- Stepper Progress Header -->
-            <div class="bg-slate-100 dark:bg-slate-900 px-6 py-3 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center text-xs font-bold shrink-0">
-                <div id="wizard-step-1-indicator" class="flex items-center gap-1.5 text-sky-600 dark:text-sky-400">
-                    <span class="w-5 h-5 rounded-full bg-sky-600 text-white flex items-center justify-center text-[10px]">1</span>
-                    <span>สไตล์ทริป</span>
-                </div>
-                <i class="fa-solid fa-chevron-right text-slate-300 text-[10px]"></i>
-                <div id="wizard-step-2-indicator" class="flex items-center gap-1.5 text-slate-400">
-                    <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px]">2</span>
-                    <span>ที่พัก & งบ</span>
-                </div>
-                <i class="fa-solid fa-chevron-right text-slate-300 text-[10px]"></i>
-                <div id="wizard-step-3-indicator" class="flex items-center gap-1.5 text-slate-400">
-                    <span class="w-5 h-5 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px]">3</span>
-                    <span>สรุปการคำนวณ</span>
-                </div>
-            </div>
-
-            <div class="p-6 space-y-4 overflow-y-auto flex-grow text-xs text-slate-700 dark:text-slate-200">
+            <div class="p-6 space-y-4 overflow-y-auto flex-grow text-xs text-slate-700">
                 
-                <!-- STEP 1 CONTENT -->
-                <div id="wizard-step-1" class="space-y-4">
-                    <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        <i class="fa-solid fa-compass text-sky-600"></i> ขั้นที่ 1: เลือกสไตล์การเที่ยว & การเดินทาง
-                    </h4>
-                    
-                    <div class="space-y-2">
-                        <label class="block font-semibold">สไตล์การเดินทางที่ชอบ:</label>
-                        <select id="auto-travel-style" class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 outline-none">
-                            <option value="chill">☕ ชิลๆ คาเฟ่ พักผ่อนไม่เร่งรีบ</option>
-                            <option value="adventure">🎒 สายลุย กิจกรรมจัดเต็ม แอดเวนเจอร์</option>
-                            <option value="cultural">🔮 สายมู วัฒนธรรม ถ่ายรูปเช็คอิน</option>
-                            <option value="foodie">🍜 สายกิน ตะลุยร้านดัง สตรีทฟู้ด</option>
-                        </select>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="block font-semibold">โหมดการเดินทางหลัก:</label>
-                        <select id="auto-travel-mode" class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 outline-none">
-                            <option value="public">🚌 ขนส่งสาธารณะ / รถไฟ / เมโทร</option>
-                            <option value="car">🚗 รถส่วนตัว / รถเช่า</option>
-                            <option value="walk">🚶 Walk & Chill เดินเที่ยวในย่าน</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- STEP 2 CONTENT -->
-                <div id="wizard-step-2" class="space-y-4 hidden">
-                    <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        <i class="fa-solid fa-hotel text-sky-600"></i> ขั้นที่ 2: สถานะที่พัก & ตัวเลือกล่างบ
-                    </h4>
+                <div class="space-y-3">
+                    <label class="block font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-hotel text-sky-600"></i>
+                        สถานะที่พักสำหรับทริปนี้
+                    </label>
                     
                     <!-- กรณีที่ 1 -->
-                    <label class="flex items-start p-3 border rounded-2xl cursor-pointer hover:bg-sky-50/50 dark:hover:bg-slate-700/50 transition border-slate-200 dark:border-slate-700">
+                    <label class="flex items-start p-3 border rounded-2xl cursor-pointer hover:bg-sky-50/50 transition border-slate-200">
                         <input type="radio" name="acc_status" value="in_app" onchange="onAccStatusChange()" class="mt-1 text-sky-600 focus:ring-sky-500">
                         <div class="ml-3">
-                            <span class="font-bold text-slate-800 dark:text-slate-100 block text-xs">1. จองที่พักผ่านระบบของเราแล้ว (In-App Booking)</span>
-                            <span class="text-[11px] text-slate-500 dark:text-slate-400 block mt-0.5">ระบบจะดึงพิกัดและราคาที่พักมาคำนวณงบ/จัดแพลนใกล้อย่างอัตโนมัติ</span>
+                            <span class="font-bold text-slate-800 block text-xs">1. จองที่พักผ่านระบบของเราแล้ว (In-App Booking)</span>
+                            <span class="text-[11px] text-slate-500 block mt-0.5">ระบบจะดึงพิกัดและราคาที่พักมาคำนวณงบ/จัดแพลนใกล้อย่างอัตโนมัติ</span>
                         </div>
                     </label>
 
                     <!-- กรณีที่ 2 -->
-                    <div class="border rounded-2xl overflow-hidden border-slate-200 dark:border-slate-700">
-                        <label class="flex items-start p-3 cursor-pointer hover:bg-sky-50/50 dark:hover:bg-slate-700/50 transition">
+                    <div class="border rounded-2xl overflow-hidden border-slate-200">
+                        <label class="flex items-start p-3 cursor-pointer hover:bg-sky-50/50 transition">
                             <input type="radio" name="acc_status" value="external" onchange="onAccStatusChange()" class="mt-1 text-sky-600 focus:ring-sky-500">
                             <div class="ml-3">
-                                <span class="font-bold text-slate-800 dark:text-slate-100 block text-xs">2. มีที่พักแล้ว (จองจากเว็บอื่น / ข้างนอก)</span>
-                                <span class="text-[11px] text-slate-500 dark:text-slate-400 block mt-0.5">ระบุชื่อที่พักหรือย่าน เพื่อใช้อิงตำแหน่งในการจัดเส้นทาง</span>
+                                <span class="font-bold text-slate-800 block text-xs">2. มีที่พักแล้ว (จองจากเว็บอื่น / ข้างนอก)</span>
+                                <span class="text-[11px] text-slate-500 block mt-0.5">ระบุชื่อที่พักหรือย่าน เพื่อใช้อิงตำแหน่งในการจัดเส้นทาง</span>
                             </div>
                         </label>
 
-                        <div id="sub-external-box" class="hidden p-3.5 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 space-y-3">
+                        <div id="sub-external-box" class="hidden p-3.5 bg-slate-50 border-t border-slate-200 space-y-3">
                             <div>
-                                <label class="block font-semibold mb-1">ชื่อที่พัก หรือ พิกัด/ย่าน *</label>
-                                <input id="auto-ext-hotel-name" type="text" oninput="updateAutoPlanSummary()" placeholder="เช่น โรงแรมอามารี, ย่านนิมมาน..." class="w-full px-3 py-2 border rounded-xl text-xs bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-sky-500 outline-none">
+                                <label class="block font-semibold text-slate-700 mb-1">ชื่อที่พัก หรือ พิกัด/ย่าน *</label>
+                                <input id="auto-ext-hotel-name" type="text" oninput="updateAutoPlanSummary()" placeholder="เช่น โรงแรมอามารี, ย่านนิมมาน..." class="w-full px-3 py-2 border rounded-xl text-xs bg-white border-slate-200 focus:ring-2 focus:ring-sky-500 outline-none">
                             </div>
 
                             <div class="space-y-2">
-                                <label class="block font-semibold">ตัวเลือกงบประมาณ:</label>
+                                <label class="block font-semibold text-slate-700">ตัวเลือกงบประมาณ:</label>
                                 
-                                <label class="flex items-center gap-2 cursor-pointer">
+                                <label class="flex items-center gap-2 cursor-pointer text-slate-700">
                                     <input type="radio" name="ext_budget_type" value="included" onchange="onExtBudgetTypeChange()" checked class="text-sky-600">
                                     <span>🔘 งบที่กรอกมารวมค่าที่พักแล้ว (มีหักราคาที่พักออกจากงบรวม)</span>
                                 </label>
                                 
                                 <div id="ext-hotel-price-box" class="ml-6 pl-2 border-l-2 border-sky-300">
                                     <label class="block text-[11px] text-slate-500 mb-0.5">ระบุราคาที่พัก (บาท):</label>
-                                    <input id="auto-ext-hotel-price" type="number" oninput="updateAutoPlanSummary()" placeholder="เช่น 3000" class="w-full px-3 py-1.5 border rounded-xl text-xs bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 focus:ring-2 focus:ring-sky-500 outline-none">
+                                    <input id="auto-ext-hotel-price" type="number" oninput="updateAutoPlanSummary()" placeholder="เช่น 3000" class="w-full px-3 py-1.5 border rounded-xl text-xs bg-white border-slate-200 focus:ring-2 focus:ring-sky-500 outline-none">
                                 </div>
 
-                                <label class="flex items-center gap-2 cursor-pointer pt-1">
+                                <label class="flex items-center gap-2 cursor-pointer text-slate-700 pt-1">
                                     <input type="radio" name="ext_budget_type" value="excluded" onchange="onExtBudgetTypeChange()" class="text-sky-600">
                                     <span>🔘 งบที่กรอกมาไม่รวมค่าที่พัก (ใช้งบสำหรับ กิน/เที่ยว 100%)</span>
                                 </label>
@@ -656,111 +544,57 @@
                     </div>
 
                     <!-- กรณีที่ 3 -->
-                    <div class="border rounded-2xl overflow-hidden border-slate-200 dark:border-slate-700">
-                        <label class="flex items-start p-3 cursor-pointer hover:bg-sky-50/50 dark:hover:bg-slate-700/50 transition">
+                    <div class="border rounded-2xl overflow-hidden border-slate-200">
+                        <label class="flex items-start p-3 cursor-pointer hover:bg-sky-50/50 transition">
                             <input type="radio" name="acc_status" value="none" onchange="onAccStatusChange()" checked class="mt-1 text-sky-600 focus:ring-sky-500">
                             <div class="ml-3">
-                                <span class="font-bold text-slate-800 dark:text-slate-100 block text-xs">3. ยังไม่มีที่พัก</span>
-                                <span class="text-[11px] text-slate-500 dark:text-slate-400 block mt-0.5">เลือกให้ระบบช่วยแนะนำที่พักในงบ หรือวางแผนโดยใช้อยู่ย่านยอดนิยม</span>
+                                <span class="font-bold text-slate-800 block text-xs">3. ยังไม่มีที่พัก</span>
+                                <span class="text-[11px] text-slate-500 block mt-0.5">เลือกให้ระบบช่วยแนะนำที่พักในงบ หรือวางแผนโดยใช้อยู่ย่านยอดนิยม</span>
                             </div>
                         </label>
 
-                        <div id="sub-none-box" class="p-3.5 bg-slate-50 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 space-y-2">
-                            <p class="font-semibold">ต้องการให้ช่วยแนะนำที่พักในแพลนด้วยไหม?</p>
+                        <div id="sub-none-box" class="p-3.5 bg-slate-50 border-t border-slate-200 space-y-2">
+                            <p class="font-semibold text-slate-800">ต้องการให้ช่วยแนะนำที่พักในแพลนด้วยไหม?</p>
                             
-                            <label class="flex items-center gap-2 cursor-pointer">
+                            <label class="flex items-center gap-2 cursor-pointer text-slate-700">
                                 <input type="radio" name="none_hotel_option" value="recommend" onchange="updateAutoPlanSummary()" checked class="text-sky-600">
                                 <span>ต้องการ (แบ่งงบหาที่พัก ~35% + เที่ยว/กิน ~65%)</span>
                             </label>
 
-                            <label class="flex items-center gap-2 cursor-pointer">
+                            <label class="flex items-center gap-2 cursor-pointer text-slate-700">
                                 <input type="radio" name="none_hotel_option" value="self" onchange="updateAutoPlanSummary()" class="text-sky-600">
                                 <span>ไม่ต้องการ / หาเองทีหลัง (ใช้งบกิน/เที่ยว 100% อิงตามย่าน Center Zone)</span>
                             </label>
                         </div>
                     </div>
+
                 </div>
 
-                <!-- STEP 3 CONTENT -->
-                <div id="wizard-step-3" class="space-y-4 hidden">
-                    <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                        <i class="fa-solid fa-calculator text-sky-600"></i> ขั้นที่ 3: สรุปและกดยืนยันการวางแผน
-                    </h4>
-
-                    <!-- สรุปตรรกะงบประมาณก่อนวิเคราะห์ -->
-                    <div class="bg-sky-50/80 dark:bg-slate-900/90 p-4 rounded-2xl border border-sky-200 dark:border-sky-800 space-y-2 text-[11px] text-sky-900 dark:text-sky-200">
-                        <div class="font-bold flex items-center gap-1.5 text-xs text-sky-800 dark:text-sky-300">
-                            <i class="fa-solid fa-circle-check text-sky-600"></i> สรุปตรรกะการคำนวณงบ Auto Plan
-                        </div>
-                        <div id="summary-budget-text" class="leading-relaxed">
-                        </div>
+                <!-- สรุปตรรกะงบประมาณก่อนวิเคราะห์ -->
+                <div class="bg-sky-50/80 p-3.5 rounded-2xl border border-sky-200 space-y-1.5 text-[11px] text-sky-900">
+                    <div class="font-bold flex items-center gap-1.5 text-xs text-sky-800">
+                        <i class="fa-solid fa-calculator text-sky-600"></i> สรุปตรรกะการคำนวณงบ Auto Plan
+                    </div>
+                    <div id="summary-budget-text" class="leading-relaxed">
                     </div>
                 </div>
 
             </div>
 
-            <!-- Stepper Footer Buttons -->
-            <div class="p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-700 shrink-0 flex gap-2 justify-between">
-                <button id="wizard-prev-btn" onclick="changeWizardStep(-1)" class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 text-slate-700 dark:text-slate-200 text-xs px-5 py-2.5 rounded-2xl font-bold transition hidden">
-                    <i class="fa-solid fa-arrow-left mr-1"></i> ย้อนกลับ
+            <div class="p-4 bg-slate-50 border-t border-slate-100 shrink-0 flex gap-2">
+                <button onclick="closeModal('modal-auto-plan')" class="w-1/3 bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs py-3 rounded-2xl font-bold transition">
+                    ยกเลิก
                 </button>
-                <button id="wizard-next-btn" onclick="changeWizardStep(1)" class="ml-auto bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs px-6 py-2.5 rounded-2xl font-bold shadow-md transition flex items-center gap-2">
-                    <span>ถัดไป</span> <i class="fa-solid fa-arrow-right"></i>
-                </button>
-                <button id="wizard-submit-btn" onclick="executeAutoPlan()" class="ml-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white text-xs px-6 py-2.5 rounded-2xl font-bold shadow-md transition flex items-center gap-2 hidden">
+                <button onclick="executeAutoPlan()" class="w-2/3 bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs py-3 rounded-2xl font-bold shadow-md transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-wand-magic-sparkles"></i> วิเคราะห์และจัดแพลน
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: SHARE TRIP WITH PERMISSIONS -->
-    <div id="modal-share-trip" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 w-full max-w-md rounded-3xl shadow-2xl p-6 space-y-4 border border-slate-100 dark:border-slate-700">
-            <div class="flex items-center justify-between border-b dark:border-slate-700 pb-3">
-                <h3 class="font-bold text-base text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                    <i class="fa-solid fa-share-nodes text-purple-600"></i> แชร์ลิงก์ตารางแพลนทริป
-                </h3>
-                <button onclick="closeModal('modal-share-trip')" class="text-slate-400 hover:text-slate-600">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-
-            <div class="space-y-3 text-xs">
-                <label class="block font-bold">กำหนดสิทธิ์ของผู้รับลิงก์:</label>
-                <div class="space-y-2">
-                    <label class="flex items-center gap-2 border p-2.5 rounded-xl dark:border-slate-700 cursor-pointer">
-                        <input type="radio" name="share_permission" value="view" checked class="text-purple-600">
-                        <div>
-                            <span class="font-bold block">👁️ ดูได้อย่างเดียว (View Only)</span>
-                            <span class="text-[10px] text-slate-400">ผู้รับสามารถเปิดดูตารางทริปได้แต่ไม่สามารถแก้ไขได้</span>
-                        </div>
-                    </label>
-                    <label class="flex items-center gap-2 border p-2.5 rounded-xl dark:border-slate-700 cursor-pointer">
-                        <input type="radio" name="share_permission" value="edit" class="text-purple-600">
-                        <div>
-                            <span class="font-bold block">✏️ แก้ไขร่วมกัน (Co-Edit)</span>
-                            <span class="text-[10px] text-slate-400">ผู้รับสามารถสลับลำดับและเพิ่มลดสถานที่ร่วมกับคุณได้</span>
-                        </div>
-                    </label>
-                </div>
-
-                <div>
-                    <label class="block font-bold mb-1">ลิงก์สำหรับแชร์:</label>
-                    <div class="flex gap-2">
-                        <input id="share-link-input" type="text" readonly value="https://letsuplan.com/trip/share?id=89231" class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 outline-none">
-                        <button onclick="copyShareLink()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-xl font-bold shrink-0">
-                            คัดลอก
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- MODAL: Full Details Modal -->
     <div id="modal-full-detail" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-slate-100 dark:border-slate-700 max-h-[90vh] flex flex-col">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden border border-slate-100 max-h-[90vh] flex flex-col">
             <div class="relative h-52 w-full bg-slate-900 shrink-0">
                 <img id="modal-full-img" class="w-full h-full object-cover" src="" alt="" onerror="this.src='https://picsum.photos/500/350'">
                 <button onclick="closeModal('modal-full-detail')" class="absolute top-3 right-3 bg-slate-900/60 hover:bg-slate-900 text-white w-8 h-8 rounded-full flex items-center justify-center text-xs transition">
@@ -771,51 +605,51 @@
 
             <div class="p-6 space-y-4 overflow-y-auto flex-grow">
                 <div>
-                    <h2 id="modal-full-title" class="text-xl font-bold text-slate-800 dark:text-slate-100"></h2>
+                    <h2 id="modal-full-title" class="text-xl font-bold text-slate-800"></h2>
                     <div class="flex items-center gap-3 mt-1.5 flex-wrap">
-                        <span id="modal-full-location" class="text-xs text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
+                        <span id="modal-full-location" class="text-xs text-slate-500 font-medium flex items-center gap-1">
                             <i class="fa-solid fa-location-dot text-rose-500"></i> <span></span>
                         </span>
-                        <span id="modal-full-rating" class="text-xs font-bold text-amber-500 flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 px-2.5 py-0.5 rounded-lg border border-amber-200/60 dark:border-amber-800/60">
+                        <span id="modal-full-rating" class="text-xs font-bold text-amber-500 flex items-center gap-1 bg-amber-50 px-2.5 py-0.5 rounded-lg border border-amber-200/60">
                             <i class="fa-solid fa-star"></i> <span></span>
                         </span>
                     </div>
                 </div>
 
-                <div class="bg-slate-50 dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-700 flex items-center justify-between">
+                <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 flex items-center justify-between">
                     <div>
                         <span class="text-[10px] font-semibold text-slate-400 block">เรทราคา / อัตราค่าบริการ</span>
-                        <span id="modal-full-price" class="text-base font-extrabold text-emerald-600 dark:text-emerald-400"></span>
+                        <span id="modal-full-price" class="text-base font-extrabold text-emerald-600"></span>
                     </div>
                     <div class="text-right">
                         <span class="text-[10px] font-semibold text-slate-400 block">สถานะสถานที่</span>
-                        <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/50 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800">เปิดให้บริการ</span>
+                        <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">เปิดให้บริการ</span>
                     </div>
                 </div>
 
                 <div class="space-y-1">
-                    <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                         <i class="fa-solid fa-map-pin text-sky-600"></i> ตำแหน่ง / ที่อยู่
                     </h4>
-                    <p id="modal-full-address" class="text-xs text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700 leading-relaxed"></p>
+                    <p id="modal-full-address" class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 leading-relaxed"></p>
                 </div>
 
                 <div class="space-y-1">
-                    <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                         <i class="fa-solid fa-align-left text-sky-600"></i> คำอธิบายรายละเอียด
                     </h4>
-                    <p id="modal-full-description" class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700"></p>
+                    <p id="modal-full-description" class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-100"></p>
                 </div>
 
                 <div class="space-y-1">
-                    <h4 class="text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
                         <i class="fa-solid fa-address-book text-sky-600"></i> ช่องทางติดต่อ
                     </h4>
-                    <p id="modal-full-contact" class="text-xs text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700 leading-relaxed"></p>
+                    <p id="modal-full-contact" class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 leading-relaxed"></p>
                 </div>
 
-                <div class="space-y-2 border-t dark:border-slate-700 pt-3">
-                    <h4 class="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center justify-between">
+                <div class="space-y-2 border-t border-slate-100 pt-3">
+                    <h4 class="text-xs font-bold text-slate-800 flex items-center justify-between">
                         <span><i class="fa-solid fa-comments text-sky-600 mr-1.5"></i>รีวิวจากผู้ใช้งาน</span>
                         <span id="modal-full-review-count" class="text-[11px] text-slate-400 font-normal"></span>
                     </h4>
@@ -823,7 +657,7 @@
                 </div>
             </div>
 
-            <div class="p-4 bg-slate-50 dark:bg-slate-900 border-t border-slate-100 dark:border-slate-700 shrink-0">
+            <div class="p-4 bg-slate-50 border-t border-slate-100 shrink-0">
                 <button id="btn-full-add-plan" class="w-full bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs py-3 rounded-2xl font-bold shadow-md transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-plus text-xs"></i> เพิ่มเข้าแพลนทริป
                 </button>
@@ -833,9 +667,9 @@
 
     <!-- MODAL: Create New Moment -->
     <div id="modal-create-moment" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[10000] hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 w-full max-w-md rounded-3xl shadow-2xl p-6 space-y-4 border border-slate-100 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between border-b dark:border-slate-700 pb-3">
-                <h3 class="font-bold text-base text-slate-800 dark:text-slate-100 flex items-center gap-2">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl p-6 space-y-4 border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 class="font-bold text-base text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-camera-retro text-rose-500"></i> แชร์ Travel Moment ของคุณ
                 </h3>
                 <button onclick="closeModal('modal-create-moment')" class="text-slate-400 hover:text-slate-600">
@@ -845,18 +679,18 @@
 
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">ชื่อสถานที่ / ทริป *</label>
-                    <input id="new-moment-title" type="text" placeholder="เช่น รีวิวพูลวิลล่าริมหาด, ชาบูเจ้าเด็ด..." class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">ชื่อสถานที่ / ทริป *</label>
+                    <input id="new-moment-title" type="text" placeholder="เช่น รีวิวพูลวิลล่าริมหาด, ชาบูเจ้าเด็ด..." class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200">
                 </div>
                 
                 <div class="grid grid-cols-2 gap-2">
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">เมือง / จังหวัด</label>
-                        <input id="new-moment-city" type="text" placeholder="เช่น เชียงใหม่, ภูเก็ต" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">เมือง / จังหวัด</label>
+                        <input id="new-moment-city" type="text" placeholder="เช่น เชียงใหม่, ภูเก็ต" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">หมวดหมู่ *</label>
-                        <select id="new-moment-tag" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">หมวดหมู่ *</label>
+                        <select id="new-moment-tag" class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200 bg-white">
                             <option value="food">🍜 สายกิน / สตรีทฟู้ด</option>
                             <option value="cafe">☕ คาเฟ่ / ถ่ายรูป</option>
                             <option value="hidden">🕵️‍♂️ สถานที่ลับ</option>
@@ -873,12 +707,12 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">
                         <i class="fa-solid fa-photo-film text-rose-500 mr-1"></i> อัปโหลดรูปภาพ หรือ วิดีโอ
                     </label>
-                    <input id="new-moment-file" type="file" accept="image/*,video/*" onchange="handleMediaPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-rose-50 file:text-rose-600 hover:file:bg-rose-100 cursor-pointer border rounded-xl p-1 border-slate-200 dark:border-slate-700">
+                    <input id="new-moment-file" type="file" accept="image/*,video/*" onchange="handleMediaPreview(event)" class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-rose-50 file:text-rose-600 hover:file:bg-rose-100 cursor-pointer border rounded-xl p-1 border-slate-200">
                     
-                    <div id="media-preview-container" class="mt-2 hidden relative rounded-2xl overflow-hidden max-h-48 border border-slate-200 dark:border-slate-700 bg-slate-900">
+                    <div id="media-preview-container" class="mt-2 hidden relative rounded-2xl overflow-hidden max-h-48 border border-slate-200 bg-slate-900">
                         <div id="media-preview-content"></div>
                         <button onclick="clearMediaPreview()" class="absolute top-2 right-2 bg-slate-900/70 text-white w-6 h-6 rounded-full text-xs flex items-center justify-center hover:bg-slate-900">
                             <i class="fa-solid fa-xmark"></i>
@@ -887,8 +721,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">เล่าความรู้สึก / ประสบการณ์</label>
-                    <textarea id="new-moment-content" rows="3" placeholder="เขียนรีวิวสั้นๆ บอกเล่าความประทับใจ..." class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900"></textarea>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1">เล่าความรู้สึก / ประสบการณ์</label>
+                    <textarea id="new-moment-content" rows="3" placeholder="เขียนรีวิวสั้นๆ บอกเล่าความประทับใจ..." class="w-full px-3 py-2 border rounded-xl text-xs outline-none focus:ring-2 focus:ring-rose-400 border-slate-200"></textarea>
                 </div>
             </div>
 
@@ -952,18 +786,11 @@
             'shop': { bg: 'bg-purple-600', text: 'text-purple-600', hex: '#9333ea', name: 'ร้านค้า/ของฝาก' }
         };
 
-        const currencyRates = {
-            'THB': { rate: 1, symbol: '฿' },
-            'USD': { rate: 0.028, symbol: '$' },
-            'JPY': { rate: 4.25, symbol: '¥' },
-            'EUR': { rate: 0.026, symbol: '€' },
-            'KRW': { rate: 37.5, symbol: '₩' }
-        };
-
         const fallbackImg = "https://picsum.photos/400/300";
 
-        // ข้อมูลสถานที่จำลอง
+        // ข้อมูลสถานที่และป๊อปอัพจำลองครอบคลุมทุกเมือง
         const allPinsData = [
+            // --- ประเทศไทย ---
             { 
                 id: 'th_1', category: 'activity', catName: 'กิจกรรม', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'ประเพณียี่เป็ง โคมลอย', price: 0, img: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=400', lat: 18.790, lng: 98.985, tier: 1,
                 address: 'สะพานนวรัฐ และพื้นที่จัดกิจกรรมรอบเมืองเชียงใหม่ จ.เชียงใหม่', rating: 4.9, reviewCount: 320,
@@ -1005,6 +832,207 @@
                 contact: 'เปิดบริการทุกวัน: 05:00 - 18:00 น.',
                 description: 'ตลาดเก่าแก่คู่เมืองเชียงใหม่ แหล่งรวมของฝากขึ้นชื่อ เช่น แคบหมู น้ำพริกหนุ่ม ไส้อั่ว และของกินพื้นเมืองมากมาย',
                 reviews: [{ author: 'ปรียาภรณ์', rating: 5, comment: 'ของฝากครบครัน ไส้อั่วอร่อยมาก' }]
+            },
+            {
+                id: 'th_kb1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'กระบี่', title: 'อ่าวนาง (Ao Nang)', price: 0, img: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=400', lat: 8.035, lng: 98.825, tier: 1,
+                address: 'ต.อ่าวนาง อ.เมือง จ.กระบี่', rating: 4.8, reviewCount: 390,
+                contact: 'ททท. สำนักงานกระบี่: 075-622163',
+                description: 'ชายหาดยอดนิยมที่เป็นจุดขึ้นเรือเดินทางไปเที่ยวตามเกาะต่างๆ เช่น เกาะพีพี อ่าวไร่เลย์ บรรยากาศคึกคักยามเย็น',
+                reviews: [{ author: 'วิภาวี', rating: 5, comment: 'พระอาทิตย์ตกดินสวยงามมาก มีร้านอาหารเยอะ' }]
+            },
+            {
+                id: 'th_pt1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ประเทศไทย', city: 'พัทยา', title: 'ปราสาทสัจธรรม', price: 500, img: 'https://images.unsplash.com/photo-1598971861713-54ad16a7e72e?w=400', lat: 12.971, lng: 100.888, tier: 1,
+                address: '207/2 หมู่ 5 ถ.พัทยา-นาเกลือ อ.บางละมุง จ.ชลบุรี', rating: 4.9, reviewCount: 620,
+                contact: 'โทร: 038-110-653',
+                description: 'ปราสาทไม้ที่ใหญ่ที่สุดในโลก สร้างด้วยงานแกะสลักไม้โบราณไร้ตะปู สะท้อนปรัชญาและศิลปะเอเชีย',
+                reviews: [{ author: 'ธนากร', rating: 5, comment: 'งานแกะสลักประณีต วิจิตรบรรจงมากๆ' }]
+            },
+
+            // --- ญี่ปุ่น ---
+            { 
+                id: 'jp_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'วัดอาซากุสะ (Sensoji)', price: 0, img: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400', lat: 35.714, lng: 139.796, tier: 1,
+                address: '2-3-1 Asakusa, Taito City, Tokyo, Japan', rating: 4.9, reviewCount: 1420,
+                contact: 'Asakusa Tourist Information Center',
+                description: 'วัดพุทธที่เก่าแก่ที่สุดในโตเกียว มีโคมไฟสีแดงยักษ์อันเป็นเอกลักษณ์ และถนนช้อปปิ้งนากามิเสะ',
+                reviews: [{ author: 'Kenji S.', rating: 5, comment: 'Must visit landmark in Tokyo!' }]
+            },
+            { 
+                id: 'jp_2', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ญี่ปุ่น', city: 'โอซาก้า (Osaka)', title: 'ย่านโดทงโบริ (Dotonbori)', price: 500, img: 'https://images.unsplash.com/photo-1565031491910-e57fac031c41?w=400', lat: 34.668, lng: 135.501, tier: 2,
+                address: 'Dotonbori, Chuo Ward, Osaka, Japan', rating: 4.9, reviewCount: 1100,
+                contact: 'Osaka Tourist Info: +81 6-6211-3540',
+                description: 'ศูนย์รวมสตรีทฟู้ด คาเฟ่ ร้านค้าแฟชั่น และป้ายไฟกูลิโกะอันเป็นสัญลักษณ์สำคัญของโอซาก้า',
+                reviews: [{ author: 'Yuki M.', rating: 5, comment: 'Amazing street food and vibrant night life!' }]
+            },
+            { 
+                id: 'jp_3', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'เกียวโต (Kyoto)', title: 'วัดน้ำใส (Kiyomizu-dera)', price: 400, img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400', lat: 34.994, lng: 135.785, tier: 1,
+                address: '1-294 Kiyomizu, Higashiyama Ward, Kyoto, Japan', rating: 5.0, reviewCount: 1850,
+                contact: 'Kyoto Tourism Board',
+                description: 'วัดโบราณสร้างบนเนินเขา สร้างด้วยระเบียงไม้ใหญ่ไร้ตะปู ได้รับมรดกโลก UNESCO',
+                reviews: [{ author: 'Taro H.', rating: 5, comment: 'Stunning view of Kyoto in autumn and spring.' }]
+            },
+
+            // --- เกาหลีใต้ ---
+            {
+                id: 'kr_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'เกาหลีใต้', city: 'โซล (Seoul)', title: 'พระราชวังเคียงบกกุง', price: 300, img: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400', lat: 37.579, lng: 126.977, tier: 1,
+                address: '161 Sajik-ro, Jongno-gu, Seoul, South Korea', rating: 4.9, reviewCount: 980,
+                contact: 'Seoul Travel Info: +82 2-1330',
+                description: 'พระราชวังที่ใหญ่ที่สุดในเกาหลี มีสถาปัตยกรรมดั้งเดิมสวยงาม ใส่ชุดฮันบกเข้าชมฟรี!',
+                reviews: [{ author: 'Min-jee K.', rating: 5, comment: 'Wearing Hanbok here feels magical.' }]
+            },
+            {
+                id: 'kr_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'เกาหลีใต้', city: 'ปูซาน (Busan)', title: 'หมู่บ้านวัฒนธรรมคัมชอน', price: 0, img: 'https://images.unsplash.com/photo-1578637387939-43c525550085?w=400', lat: 35.097, lng: 129.010, tier: 1,
+                address: '203 Gamnae 2-ro, Saha-gu, Busan, South Korea', rating: 4.8, reviewCount: 740,
+                contact: 'Busan Tourist Info',
+                description: 'หมู่บ้านสีสันสดใสบนเนินเขา ฉายามาเชอการ์ปิกตเกาหลี เต็มไปด้วยงานศิลปะริมทาง',
+                reviews: [{ author: 'Ji-hoon P.', rating: 5, comment: 'Colorful houses and cute cafes!' }]
+            },
+
+            // --- สิงคโปร์ ---
+            {
+                id: 'sg_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สิงคโปร์', city: 'สิงคโปร์ (Singapore)', title: 'Gardens by the Bay', price: 700, img: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400', lat: 1.281, lng: 103.863, tier: 1,
+                address: '18 Marina Gardens Dr, Singapore 018953', rating: 4.9, reviewCount: 1620,
+                contact: 'Tel: +65 6420 6848',
+                description: 'สวนพฤกษศาสตร์ล้ำยุคกับต้นไม้ยักษ์ Supertree Grove และเรือนกระจกปรับอากาศยักษ์',
+                reviews: [{ author: 'David L.', rating: 5, comment: 'Futuristic atmosphere, brilliant light show!' }]
+            },
+
+            // --- ฝรั่งเศส ---
+            {
+                id: 'fr_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'ปารีส (Paris)', title: 'หอไอเฟล (Eiffel Tower)', price: 950, img: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400', lat: 48.858, lng: 2.294, tier: 1,
+                address: 'Champ de Mars, 5 Av. Anatole France, 75007 Paris, France', rating: 4.9, reviewCount: 2400,
+                contact: 'Paris Official Tourism Board',
+                description: 'สัญลักษณ์อันโด่งดังระดับโลกของฝรั่งเศส มองเห็นวิวทิวทัศน์ทั่วกรุงปารีสอย่างโรแมนติก',
+                reviews: [{ author: 'Sophie B.', rating: 5, comment: 'Breathtaking view, iconic landmark!' }]
+            },
+            {
+                id: 'fr_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ฝรั่งเศส', city: 'นีซ (Nice)', title: 'Promenade des Anglais', price: 0, img: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=400', lat: 43.695, lng: 7.265, tier: 1,
+                address: 'Promenade des Anglais, 06000 Nice, France', rating: 4.8, reviewCount: 510,
+                contact: 'Nice Tourism Office',
+                description: 'ถนนเลียบชายหาดทะลริเวียราอันโด่งดัง เหมาะแก่การเดินเล่น รับลมทะเล และชมอาคารคลาสสิก',
+                reviews: [{ author: 'Pierre C.', rating: 5, comment: 'Relaxing Mediterranean coastline.' }]
+            },
+
+            // --- อังกฤษ ---
+            {
+                id: 'uk_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'อังกฤษ', city: 'ลอนดอน (London)', title: 'หอนาฬิกาบิ๊กเบน (Big Ben)', price: 0, img: 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=400', lat: 51.500, lng: -0.124, tier: 1,
+                address: 'London SW1A 0AA, United Kingdom', rating: 4.9, reviewCount: 2100,
+                contact: 'Visit London Tourism Office',
+                description: 'แลนด์มาร์กสำคัญประจำกรุงลอนดอน ตั้งอยู่ริมแม่น้ำเทมส์ ใกล้กับอาคารรัฐสภาเวสต์มินสเตอร์',
+                reviews: [{ author: 'Oliver W.', rating: 5, comment: 'Classic British symbol, beautiful architecture.' }]
+            },
+
+            // --- สหรัฐอเมริกา ---
+            {
+                id: 'us_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'นิวยอร์ก (New York)', title: 'ไทม์สแควร์ (Times Square)', price: 0, img: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=400', lat: 40.758, lng: -73.985, tier: 1,
+                address: 'Manhattan, NY 10036, United States', rating: 4.8, reviewCount: 1950,
+                contact: 'NYC Go Info Center',
+                description: 'ย่านการค้าและป้ายโฆษณาดิจิทัลยักษ์ตระการตาที่เป็นหัวใจสีสันของมหานครนิวยอร์ก',
+                reviews: [{ author: 'Michael R.', rating: 5, comment: 'Unmatched energy and bright lights!' }]
+            },
+            {
+                id: 'us_2', category: 'attraction', catName: 'ท่องเที่ยว', country: 'สหรัฐอเมริกา', city: 'ลอสแอนเจลิส (Los Angeles)', title: 'ป้ายฮอลลีวูด (Hollywood Sign)', price: 0, img: 'https://images.unsplash.com/photo-1580655653885-65763b2597d0?w=400', lat: 34.134, lng: -118.321, tier: 1,
+                address: 'Los Angeles, CA 90068, United States', rating: 4.7, reviewCount: 1200,
+                contact: 'Discover LA Tourism',
+                description: 'สัญลักษณ์แห่งอุตสาหกรรมภาพยนตร์ระดับโลก ตั้งอยู่บนภูเขาลีมองเห็นวิว LA กว้างไกล',
+                reviews: [{ author: 'Chris T.', rating: 5, comment: 'Famous spot, nice hiking trail!' }]
+            }
+        ];
+
+        // MOMENTS DATA
+        const tagMap = {
+            'food': '🍜 สายกิน / สตรีทฟู้ด',
+            'cafe': '☕ คาเฟ่ / ถ่ายรูป',
+            'hidden': '🕵️‍♂️ สถานที่ลับ',
+            'sea': '🌊 ทะเล',
+            'mountain': '⛰️ ภูเขา',
+            'hotel': '🏨 ที่พัก / โรงแรม',
+            'activity': '🎟️ กิจกรรม',
+            'camping': '🏕️ แคมป์ปิ้ง / สายลุย',
+            'mu': '🔮 สายมู / วัฒนธรรม',
+            'pet': '🐕 Pet-Friendly',
+            'solo': '🎒 Solo Traveler'
+        };
+
+        let momentsData = [
+            {
+                id: 'm1',
+                author: 'Nisha_PhotoTravel',
+                avatar: 'https://i.pravatar.cc/150?img=32',
+                timeAgo: '2 ชั่วโมงที่แล้ว',
+                location: 'โตเกียว, ญี่ปุ่น',
+                tag: 'hidden',
+                tagLabel: '🕵️‍♂️ สถานที่ลับ',
+                title: 'แจกพิกัดมุมถ่ายรูปฟูจิยามเช้า ซอยลับไร้ผู้คน! 🗻✨',
+                content: 'ตรอกเล็กๆ ย่าน Shimoyoshida วิวเห็นภูเขาไฟฟูจิตรงกลางถนนสวยแบบตะโกน คนน้อยมากไม่ต้องแย่งกันถ่ายรูปครับ',
+                mediaType: 'image',
+                mediaUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600',
+                likes: 245,
+                isLiked: false,
+                hashtags: ['#SecretSpot', '#FujiView', '#สถานที่ลับ']
+            },
+            {
+                id: 'm2',
+                author: 'Ploy_LuxeEscape',
+                avatar: 'https://i.pravatar.cc/150?img=47',
+                timeAgo: '4 ชั่วโมงที่แล้ว',
+                location: 'ภูเก็ต, ประเทศไทย',
+                tag: 'hotel',
+                tagLabel: '🏨 ที่พัก / โรงแรม',
+                title: 'นอนวิลล่าวิวทะเลอันดามัน 360 องศา พักผ่อนแบบฉ่ำๆ 🌊🏝️',
+                content: 'พูลวิลล่าส่วนตัวพร้อมสระว่ายน้ำอินฟินิตี้ บรรยากาศเงียบสงบ ตื่นมาเจอวิวทะเลตั้งแต่บนเตียงนอน!',
+                mediaType: 'image',
+                mediaUrl: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=600',
+                likes: 512,
+                isLiked: true,
+                hashtags: ['#PhuketHotel', '#LuxuriousVilla', '#ที่พักวิวหลักล้าน']
+            },
+            {
+                id: 'm3',
+                author: 'Bank_StreetFood',
+                avatar: 'https://i.pravatar.cc/150?img=12',
+                timeAgo: '5 ชั่วโมงที่แล้ว',
+                location: 'โอซาก้า, ญี่ปุ่น',
+                tag: 'food',
+                tagLabel: '🍜 สายกิน / สตรีทฟู้ด',
+                title: 'ตะลุยกินโดทงโบริ 5 ร้านเด็ดสตรีทฟู้ด! 🐙🍢',
+                content: 'ทาโกยากิกรอบนอกนุ่มใน คุชิคาซึร้อนๆ แกล้มเครื่องดื่มยามค่ำคืน บรรยากาศป้ายไฟกูลิโกะคึกคักสุดๆ',
+                mediaType: 'image',
+                mediaUrl: 'https://images.unsplash.com/photo-1565031491910-e57fac031c41?w=600',
+                likes: 189,
+                isLiked: false,
+                hashtags: ['#OsakaEats', '#StreetFood', '#สายกิน']
+            },
+            {
+                id: 'm4',
+                author: 'Kae_CafeHopper',
+                avatar: 'https://i.pravatar.cc/150?img=25',
+                timeAgo: '6 ชั่วโมงที่แล้ว',
+                location: 'เชียงใหม่, ประเทศไทย',
+                tag: 'cafe',
+                tagLabel: '☕ คาเฟ่ / ถ่ายรูป',
+                title: 'จิบกาแฟฟินๆ กลางป่าเขียวขจีเชียงใหม่ ☕🌿',
+                content: 'คาเฟ่บรรยากาศสุดร่มรื่น เสียงน้ำตกไหลฟังแล้วผ่อนคลาย กาแฟดริปหอมละมุน เหมาะกับการมานั่งพักผ่อนสุดๆ',
+                mediaType: 'image',
+                mediaUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600',
+                likes: 310,
+                isLiked: false,
+                hashtags: ['#ChiangMaiCafe', '#CafeHopper', '#ธรรมชาติ']
+            },
+            {
+                id: 'm5',
+                author: 'Tee_OutdoorLife',
+                avatar: 'https://i.pravatar.cc/150?img=60',
+                timeAgo: '8 ชั่วโมงที่แล้ว',
+                location: 'กระบี่, ประเทศไทย',
+                tag: 'sea',
+                tagLabel: '🌊 ทะเล',
+                title: 'พายคายัคลอดถ้ำเกาะห้อง ชมหาดทรายขาวละเอียด! 🚣‍♂️🏝️',
+                content: 'น้ำทะเลใสเห็นตัวปลา บรรยากาศเงียบสงบ ชมวิวป่าเกาะกว้างใหญ่ สวยงามคุ้มค่าแก่การเดินทางมาก',
+                mediaType: 'image',
+                mediaUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600',
+                likes: 425,
+                isLiked: true,
+                hashtags: ['#KrabiTrip', '#SeaLovers', '#KohHong']
             }
         ];
 
@@ -1014,11 +1042,11 @@
         let selectedMapCategoryFilter = 'all';
         let selectedCategoryFilter = 'all';
         let selectedMomentFilter = 'all';
+        let searchQuery = '';
         let activeDay = 1;
         let itineraryData = {};
-        let currentCurrency = 'THB';
-        let currentWizardStep = 1;
-        let draggedItemIndex = null;
+        let uploadedMediaUrl = null;
+        let uploadedMediaType = 'image';
 
         window.onload = function() {
             initLeafletMap();
@@ -1028,100 +1056,6 @@
             renderMomentsFeed();
         };
 
-        // DARK MODE TOGGLE
-        function toggleDarkMode() {
-            const html = document.documentElement;
-            const icon = document.getElementById('theme-toggle-icon');
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                icon.className = "fa-solid fa-moon text-sm";
-            } else {
-                html.classList.add('dark');
-                icon.className = "fa-solid fa-sun text-sm text-amber-400";
-            }
-        }
-
-        // CURRENCY SWITCHER
-        function changeCurrency(curr) {
-            currentCurrency = curr;
-            renderItinerary();
-        }
-
-        function formatMoney(amountTHB) {
-            const info = currencyRates[currentCurrency] || currencyRates['THB'];
-            const converted = amountTHB * info.rate;
-            return `${converted.toLocaleString(undefined, {maximumFractionDigits: 1})} ${info.symbol}`;
-        }
-
-        // AUTO PLAN STEPPER WIZARD NAV
-        function changeWizardStep(dir) {
-            currentWizardStep += dir;
-            if (currentWizardStep < 1) currentWizardStep = 1;
-            if (currentWizardStep > 3) currentWizardStep = 3;
-
-            document.getElementById('wizard-step-1').classList.add('hidden');
-            document.getElementById('wizard-step-2').classList.add('hidden');
-            document.getElementById('wizard-step-3').classList.add('hidden');
-
-            document.getElementById(`wizard-step-${currentWizardStep}`).classList.remove('hidden');
-
-            // Update Header Indicators
-            for (let i = 1; i <= 3; i++) {
-                const el = document.getElementById(`wizard-step-${i}-indicator`);
-                if (i <= currentWizardStep) {
-                    el.className = "flex items-center gap-1.5 text-sky-600 dark:text-sky-400 font-bold";
-                    el.querySelector('span').className = "w-5 h-5 rounded-full bg-sky-600 text-white flex items-center justify-center text-[10px]";
-                } else {
-                    el.className = "flex items-center gap-1.5 text-slate-400 font-normal";
-                    el.querySelector('span').className = "w-5 h-5 rounded-full bg-slate-300 text-slate-700 flex items-center justify-center text-[10px]";
-                }
-            }
-
-            // Buttons Visibility
-            const prevBtn = document.getElementById('wizard-prev-btn');
-            const nextBtn = document.getElementById('wizard-next-btn');
-            const submitBtn = document.getElementById('wizard-submit-btn');
-
-            if (currentWizardStep === 1) {
-                prevBtn.classList.add('hidden');
-                nextBtn.classList.remove('hidden');
-                submitBtn.classList.add('hidden');
-            } else if (currentWizardStep === 2) {
-                prevBtn.classList.remove('hidden');
-                nextBtn.classList.remove('hidden');
-                submitBtn.classList.add('hidden');
-            } else if (currentWizardStep === 3) {
-                prevBtn.classList.remove('hidden');
-                nextBtn.classList.add('hidden');
-                submitBtn.classList.remove('hidden');
-                updateAutoPlanSummary();
-            }
-        }
-
-        // NAVIGATION TAB SWITCHER
-        function switchTab(tab) {
-            document.getElementById('page-search').classList.add('hidden');
-            document.getElementById('page-plan').classList.add('hidden');
-            document.getElementById('page-moment').classList.add('hidden');
-
-            document.getElementById('nav-search').className = "py-5 px-1 text-slate-500 dark:text-slate-400 hover:text-sky-600 flex items-center space-x-2 transition";
-            document.getElementById('nav-plan').className = "py-5 px-1 text-slate-500 dark:text-slate-400 hover:text-sky-600 flex items-center space-x-2 transition";
-            document.getElementById('nav-moment').className = "py-5 px-1 text-slate-500 dark:text-slate-400 hover:text-sky-600 flex items-center space-x-2 transition";
-
-            if (tab === 'search') {
-                document.getElementById('page-search').classList.remove('hidden');
-                document.getElementById('nav-search').className = "py-5 px-1 tab-active flex items-center space-x-2";
-                if (map) map.invalidateSize();
-            } else if (tab === 'plan') {
-                document.getElementById('page-plan').classList.remove('hidden');
-                document.getElementById('nav-plan').className = "py-5 px-1 tab-active flex items-center space-x-2";
-            } else if (tab === 'moment') {
-                document.getElementById('page-moment').classList.remove('hidden');
-                document.getElementById('nav-moment').className = "py-5 px-1 tab-active flex items-center space-x-2";
-            }
-        }
-
-        // DAYS & ITINERARY UPDATE LOGIC
         function updateDaysCount() {
             const daysInput = document.getElementById('input-days');
             let days = parseInt(daysInput ? daysInput.value : '4') || 1;
@@ -1141,7 +1075,9 @@
             }
             itineraryData = newItineraryData;
 
-            if (activeDay > days) activeDay = 1;
+            if (activeDay > days) {
+                activeDay = 1;
+            }
 
             const container = document.getElementById('day-buttons-container');
             if (container) {
@@ -1150,7 +1086,7 @@
                     const isActive = i === activeDay;
                     const btnClass = isActive 
                         ? "px-4 py-2 rounded-xl font-semibold text-xs bg-sky-600 text-white shadow-sm transition"
-                        : "px-4 py-2 rounded-xl font-semibold text-xs bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition";
+                        : "px-4 py-2 rounded-xl font-semibold text-xs bg-white text-slate-600 hover:bg-slate-100 transition";
                     html += `<button onclick="switchDay(${i})" id="day-btn-${i}" class="${btnClass}">DAY ${i}</button>`;
                 }
                 container.innerHTML = html;
@@ -1158,192 +1094,28 @@
             renderItinerary();
         }
 
-        // DRAG & DROP ITINERARY LOGIC
-        function onDragStart(e, index) {
-            draggedItemIndex = index;
-            e.currentTarget.classList.add('dragging');
-            e.dataTransfer.effectAllowed = 'move';
-        }
-
-        function onDragOver(e) {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        }
-
-        function onDrop(e, targetIndex) {
-            e.preventDefault();
-            if (draggedItemIndex === null || draggedItemIndex === targetIndex) return;
-            const items = itineraryData[activeDay];
-            const movedItem = items.splice(draggedItemIndex, 1)[0];
-            items.splice(targetIndex, 0, movedItem);
-            draggedItemIndex = null;
-            renderItinerary();
-        }
-
-        function onDragEnd(e) {
-            e.currentTarget.classList.remove('dragging');
-        }
-
-        function moveItemToDay(fromDay, itemIdx, targetDay) {
-            if (!itineraryData[targetDay]) itineraryData[targetDay] = [];
-            const item = itineraryData[fromDay].splice(itemIdx, 1)[0];
-            itineraryData[targetDay].push(item);
-            renderItinerary();
-        }
-
-        // RENDER ITINERARY & BUDGET CALCULATIONS
-        function renderItinerary() {
-            const container = document.getElementById('itinerary-container');
-            const items = itineraryData[activeDay] || [];
-
-            let totalSpentTHB = 0;
-            let catCosts = { 'hotel': 0, 'transport': 0, 'food': 0, 'activity': 0, 'shop': 0 };
-
-            Object.keys(itineraryData).forEach(d => {
-                itineraryData[d].forEach(item => {
-                    const price = item.price || 0;
-                    totalSpentTHB += price;
-                    const cat = item.category || 'activity';
-                    if (catCosts[cat] !== undefined) catCosts[cat] += price;
-                    else catCosts['activity'] += price;
-                });
-            });
-
-            const budgetInputTHB = parseInt(document.getElementById('input-budget')?.value || '25000');
-            const remainingTHB = budgetInputTHB - totalSpentTHB;
-            const percent = Math.max(0, Math.min(100, Math.round((remainingTHB / budgetInputTHB) * 100)));
-
-            const budgetText = document.getElementById('budget-remaining-text');
-            if (budgetText) {
-                budgetText.innerText = `${formatMoney(remainingTHB)} / ${formatMoney(budgetInputTHB)}`;
-                budgetText.className = remainingTHB < 0 ? "text-rose-600 dark:text-rose-400 font-bold" : "text-emerald-600 dark:text-emerald-400 font-bold";
-            }
-
-            const progressBar = document.getElementById('budget-progress-bar');
-            if (progressBar) {
-                progressBar.style.width = `${percent}%`;
-                progressBar.className = remainingTHB < 0 ? "bg-rose-500 h-2.5 rounded-full transition-all" : "bg-emerald-500 h-2.5 rounded-full transition-all";
-            }
-
-            // Split Bill Calculation
-            const numPeople = parseInt(document.getElementById('split-people-input')?.value || '1') || 1;
-            const costPerPerson = totalSpentTHB / numPeople;
-            const splitDisplay = document.getElementById('split-cost-per-person');
-            if (splitDisplay) splitDisplay.innerText = `${formatMoney(costPerPerson)} / คน`;
-
-            // Render Budget Breakdown Panel
-            const breakdownEl = document.getElementById('budget-category-breakdown');
-            if (breakdownEl) {
-                breakdownEl.innerHTML = `
-                    <div class="flex justify-between items-center text-slate-600 dark:text-slate-300">
-                        <span>🏨 ค่าที่พัก:</span> <span class="font-bold text-amber-500">${formatMoney(catCosts['hotel'])}</span>
-                    </div>
-                    <div class="flex justify-between items-center text-slate-600 dark:text-slate-300">
-                        <span>🎟️ กิจกรรม/ท่องเที่ยว:</span> <span class="font-bold text-sky-500">${formatMoney(catCosts['activity'] + catCosts['attraction'] || 0)}</span>
-                    </div>
-                    <div class="flex justify-between items-center text-slate-600 dark:text-slate-300">
-                        <span>🛍️ ช้อปปิ้ง/ของฝาก:</span> <span class="font-bold text-purple-500">${formatMoney(catCosts['shop'])}</span>
-                    </div>
-                `;
-            }
-
-            if (items.length === 0) {
-                container.innerHTML = `
-                    <div class="py-12 text-center text-slate-400 space-y-2">
-                        <i class="fa-solid fa-calendar-plus text-3xl text-slate-300"></i>
-                        <p class="text-xs">ยังไม่มีกิจกรรมใน DAY ${activeDay}</p>
-                        <button onclick="switchTab('search')" class="text-xs text-sky-600 hover:underline font-semibold">เลือกสถานที่จากแผนที่เพื่อเพิ่มกิจกรรม</button>
-                    </div>
-                `;
-                return;
-            }
-
-            const daysTotal = parseInt(document.getElementById('input-days')?.value || '4');
-
-            container.innerHTML = items.map((item, idx) => `
-                <div draggable="true" ondragstart="onDragStart(event, ${idx})" ondragover="onDragOver(event)" ondrop="onDrop(event, ${idx})" ondragend="onDragEnd(event)" class="p-4 bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-700 flex items-center justify-between gap-3 hover:border-sky-300 transition group cursor-grab active:cursor-grabbing">
-                    <div class="flex items-center space-x-3 cursor-pointer flex-grow" onclick="openFullDetailModal('${item.id}')">
-                        <div class="w-8 h-8 rounded-xl bg-sky-100 dark:bg-sky-950 text-sky-600 dark:text-sky-400 group-hover:bg-sky-600 group-hover:text-white flex items-center justify-center font-bold text-xs shrink-0 transition">
-                            ${idx + 1}
-                        </div>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-800 dark:text-slate-100 group-hover:text-sky-600 transition flex items-center gap-1.5">
-                                <span>${item.title}</span>
-                                <i class="fa-solid fa-circle-info text-sky-500 text-[11px] opacity-70"></i>
-                            </h4>
-                            <p class="text-[10px] text-slate-400">${item.city || 'จุดหมาย'} • ${item.price === 0 ? 'เข้าฟรี' : formatMoney(item.price)}</p>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <!-- Move Across Days Dropdown -->
-                        <select onchange="moveItemToDay(${activeDay}, ${idx}, parseInt(this.value))" class="text-[10px] bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-2 py-1 outline-none text-slate-600 dark:text-slate-300">
-                            <option value="">ย้ายวัน...</option>
-                            ${Array.from({length: daysTotal}, (_, i) => i + 1).map(d => `<option value="${d}">ย้ายไป DAY ${d}</option>`).join('')}
-                        </select>
-                        <button onclick="removeFromItinerary(${activeDay}, ${idx})" class="text-rose-500 hover:text-rose-700 text-xs p-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/50 transition" title="ลบออก">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function removeFromItinerary(day, index) {
-            if (itineraryData[day]) {
-                itineraryData[day].splice(index, 1);
-            }
-            renderItinerary();
-        }
-
-        // EXPORT & SHARING FUNCTIONS
-        function exportTripPDF() {
-            window.print();
-        }
-
-        function syncCalendar() {
-            let icsData = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Let's U Plan//EN\n";
-            Object.keys(itineraryData).forEach(day => {
-                itineraryData[day].forEach((item, idx) => {
-                    icsData += `BEGIN:VEVENT\nSUMMARY:DAY ${day} - ${item.title}\nDESCRIPTION:สถานที่ท่องเที่ยวในทริป Let's U Plan\nEND:VEVENT\n`;
-                });
-            });
-            icsData += "END:VCALENDAR";
-
-            const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = window.URL.createObjectURL(blob);
-            link.setAttribute('download', 'my-travel-plan.ics');
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function openShareModal() {
-            document.getElementById('modal-share-trip').classList.remove('hidden');
-        }
-
-        function copyShareLink() {
-            const input = document.getElementById('share-link-input');
-            input.select();
-            document.execCommand('copy');
-            alert('คัดลอกลิงก์แชร์เรียบร้อยแล้ว!');
-        }
-
-        // MAP & SEARCH HELPERS
+        // ---------------- MAP & SEARCH LOGIC ----------------
         function initLeafletMap() {
-            map = L.map('map', { zoomControl: true, scrollWheelZoom: true }).setView([13.0, 101.5], 5);
+            map = L.map('map', {
+                zoomControl: true,
+                scrollWheelZoom: true
+            }).setView([13.0, 101.5], 5);
+
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 maxZoom: 18,
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
-            map.on('zoomend', refreshMapPins);
+
+            map.on('zoomend', function() {
+                refreshMapPins();
+            });
         }
 
         function onCountryChange() {
             const country = document.getElementById('select-country').value;
             const citySelect = document.getElementById('select-city');
             const cities = cityMap[country] || [];
+            
             citySelect.innerHTML = cities.map(c => `<option value="${c}">${c}</option>`).join('');
             onCityChange();
         }
@@ -1364,7 +1136,11 @@
             }
 
             updateDaysCount();
-            setTimeout(() => { refreshMapPins(); renderExploreCards(); }, 300);
+
+            setTimeout(() => { 
+                refreshMapPins(); 
+                renderExploreCards();
+            }, 300);
         }
 
         function onMapCategorySelectChange(category) {
@@ -1374,6 +1150,17 @@
 
         function setCategoryFilter(category) {
             selectedCategoryFilter = category;
+            const categories = ['all', 'attraction', 'hotel', 'activity', 'shop'];
+            categories.forEach(cat => {
+                const btn = document.getElementById(`cat-btn-${cat}`);
+                if (btn) {
+                    if (cat === category) {
+                        btn.className = "cat-pill-active px-3.5 py-1.5 rounded-full text-xs font-semibold border border-sky-600 transition";
+                    } else {
+                        btn.className = "px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition";
+                    }
+                }
+            });
             renderExploreCards();
         }
 
@@ -1383,33 +1170,51 @@
             const city = document.getElementById('select-city').value;
 
             let filtered = allPinsData.filter(item => item.country === country);
-            if (city && city !== '-- ทั้งประเทศ --') filtered = filtered.filter(item => item.city === city);
-            if (selectedCategoryFilter !== 'all') filtered = filtered.filter(item => item.category === selectedCategoryFilter);
+
+            if (city && city !== '-- ทั้งประเทศ --') {
+                filtered = filtered.filter(item => item.city === city);
+            }
+
+            if (selectedCategoryFilter !== 'all') {
+                filtered = filtered.filter(item => item.category === selectedCategoryFilter);
+            }
 
             if (filtered.length === 0) {
-                container.innerHTML = `<div class="col-span-full py-10 text-center text-slate-400 text-xs">ไม่พบรายการในหมวดหมู่นี้</div>`;
+                container.innerHTML = `
+                    <div class="col-span-full py-10 text-center text-slate-400 text-xs">
+                        <i class="fa-solid fa-folder-open text-3xl mb-2 text-slate-300"></i>
+                        <p>ไม่พบรายการในหมวดหมู่นี้</p>
+                    </div>
+                `;
                 return;
             }
 
-            container.innerHTML = filtered.map(item => `
-                <div class="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 dark:border-slate-700 hover:shadow-md transition flex flex-col group">
-                    <div class="relative h-36 bg-slate-100 dark:bg-slate-900 overflow-hidden">
-                        <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='${fallbackImg}'">
-                    </div>
-                    <div class="p-3 flex-grow flex flex-col justify-between space-y-2">
-                        <div>
-                            <span class="text-[9px] bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-300 font-bold px-2 py-0.5 rounded">${item.city}</span>
-                            <h4 class="font-bold text-slate-800 dark:text-slate-100 text-xs mt-1.5 truncate">${item.title}</h4>
+            container.innerHTML = filtered.map(item => {
+                const theme = categoryThemeMap[item.category] || categoryThemeMap['attraction'];
+
+                return `
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200/80 hover:shadow-md transition flex flex-col group">
+                        <div class="relative h-36 bg-slate-100 overflow-hidden">
+                            <img src="${item.img}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='${fallbackImg}'">
+                            <span class="absolute top-2.5 left-2.5 ${theme.bg} text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md shadow-sm">
+                                ${item.catName}
+                            </span>
                         </div>
-                        <div class="flex items-center justify-between border-t dark:border-slate-700 pt-2">
-                            <span class="text-xs font-extrabold text-slate-700 dark:text-slate-200">${item.price === 0 ? 'เข้าฟรี' : formatMoney(item.price)}</span>
-                            <button onclick="openFullDetailModal('${item.id}')" class="text-xs bg-sky-50 dark:bg-sky-950 text-sky-600 dark:text-sky-400 hover:bg-sky-600 hover:text-white font-semibold px-2.5 py-1 rounded-lg transition">
-                                รายละเอียด
-                            </button>
+                        <div class="p-3 flex-grow flex flex-col justify-between space-y-2">
+                            <div>
+                                <span class="text-[9px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded">${item.city}</span>
+                                <h4 class="font-bold text-slate-800 text-xs mt-1.5 truncate">${item.title}</h4>
+                            </div>
+                            <div class="flex items-center justify-between border-t pt-2">
+                                <span class="text-xs font-extrabold text-slate-700">${item.price === 0 ? 'เข้าฟรี' : item.price.toLocaleString() + ' B'}</span>
+                                <button onclick="openFullDetailModal('${item.id}')" class="text-xs bg-sky-50 text-sky-600 hover:bg-sky-600 hover:text-white font-semibold px-2.5 py-1 rounded-lg transition">
+                                    รายละเอียด
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function refreshMapPins() {
@@ -1418,14 +1223,28 @@
 
             const country = document.getElementById('select-country').value;
             const city = document.getElementById('select-city').value;
+            const zoom = map.getZoom();
+
             let visiblePins = allPinsData.filter(pin => pin.country === country);
 
-            if (city && city !== '-- ทั้งประเทศ --') visiblePins = visiblePins.filter(pin => pin.city === city);
-            if (selectedMapCategoryFilter !== 'all') visiblePins = visiblePins.filter(pin => pin.category === selectedMapCategoryFilter);
+            if (city && city !== '-- ทั้งประเทศ --') {
+                visiblePins = visiblePins.filter(pin => pin.city === city);
+            }
+
+            if (selectedMapCategoryFilter !== 'all') {
+                visiblePins = visiblePins.filter(pin => pin.category === selectedMapCategoryFilter);
+            }
+
+            visiblePins = visiblePins.filter(pin => {
+                if (zoom < 5) return pin.tier === 1;
+                else if (zoom < 7) return pin.tier <= 2;
+                else if (zoom < 9) return pin.tier <= 3;
+                else return true;
+            });
 
             visiblePins.forEach(pin => {
                 const theme = categoryThemeMap[pin.category] || categoryThemeMap['attraction'];
-                const priceDisplay = pin.price === 0 ? 'เข้าฟรี' : formatMoney(pin.price);
+                const priceDisplay = pin.price === 0 ? 'เข้าฟรี' : `${pin.price.toLocaleString()} B`;
 
                 const pinHtml = `
                     <div class="custom-map-pin" style="--pin-bg: ${theme.hex};">
@@ -1447,17 +1266,38 @@
 
                 const marker = L.marker([pin.lat, pin.lng], { icon: customIcon }).addTo(map);
 
+                // ป๊อปอัพของแต่ละพื้นที่
                 const popupContent = `
-                    <div class="w-60 font-sans bg-white dark:bg-slate-800 overflow-hidden rounded-2xl border-t-4 shadow-xl" style="border-top-color: ${theme.hex}">
-                        <div class="p-3 space-y-2">
-                            <h4 class="font-bold text-xs text-slate-800 dark:text-slate-100 truncate">${pin.title}</h4>
-                            <div class="flex items-center justify-between text-[11px]">
-                                <span class="text-slate-500">${pin.city}</span>
-                                <span class="font-bold text-emerald-600">${priceDisplay}</span>
+                    <div class="w-60 font-sans bg-white overflow-hidden rounded-2xl border-t-4 shadow-xl" style="border-top-color: ${theme.hex}">
+                        <div class="relative h-32 w-full overflow-hidden bg-slate-900">
+                            <img src="${pin.img}" class="w-full h-full object-cover" onerror="this.src='${fallbackImg}'">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/10"></div>
+                            
+                            <span class="absolute top-2.5 left-2.5 ${theme.bg} text-white text-[9px] font-bold px-2.5 py-0.5 rounded-full shadow-md">
+                                ${pin.catName}
+                            </span>
+
+                            <div class="absolute bottom-2 left-3 right-3 text-white">
+                                <h4 class="font-bold text-xs leading-tight drop-shadow-md truncate">${pin.title}</h4>
                             </div>
-                            <button onclick="addToItinerary('${pin.id}', '${pin.title.replace(/'/g, "\\'")}', ${pin.price}, '${pin.city}')" class="w-full ${theme.bg} text-white text-[11px] py-1.5 rounded-xl font-bold transition">
-                                + ใส่ในทริป
-                            </button>
+                        </div>
+
+                        <div class="p-3 space-y-2 bg-white">
+                            <div class="flex items-center justify-between text-[11px] border-b pb-1.5">
+                                <span class="text-slate-500 font-medium truncate flex items-center gap-1">
+                                    <i class="fa-solid fa-location-dot text-rose-500"></i> ${pin.city}
+                                </span>
+                                <span class="font-extrabold text-emerald-600">${priceDisplay}</span>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-1.5 pt-1">
+                                <button onclick="openFullDetailModal('${pin.id}')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] py-1.5 rounded-xl font-bold transition flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-eye text-[9px]"></i> รายละเอียด
+                                </button>
+                                <button onclick="addToItinerary('${pin.id}', '${pin.title.replace(/'/g, "\\'")}', ${pin.price}, '${pin.city}')" class="w-full ${theme.bg} hover:opacity-90 text-white text-[11px] py-1.5 rounded-xl font-bold shadow-md transition flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-plus text-[9px]"></i> ใส่ในทริป
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -1467,6 +1307,329 @@
             });
         }
 
+        function openFullDetailModal(pinId) {
+            let pin = allPinsData.find(p => p.id === pinId);
+            
+            // ค้นหาเพิ่มเติมจากตารางทริป หากไม่พบใน allPinsData
+            if (!pin) {
+                for (let d in itineraryData) {
+                    const found = itineraryData[d].find(item => item.id === pinId);
+                    if (found) {
+                        pin = {
+                            id: found.id,
+                            title: found.title,
+                            price: found.price || 0,
+                            city: found.city || 'ทั่วไป',
+                            country: 'ประเทศไทย',
+                            category: found.category || 'attraction',
+                            catName: found.catName || 'กิจกรรม/สถานที่',
+                            img: found.img || fallbackImg,
+                            address: found.address || (found.city ? `ย่าน/เมือง ${found.city}` : 'ตามระบุในแผนการเดินทาง'),
+                            rating: 4.8,
+                            reviewCount: 50,
+                            contact: found.contact || 'ติดต่อสอบถามเพิ่มเติม ณ จุดบริการสถานที่',
+                            description: found.description || `รายละเอียดกิจกรรมและสถานที่ "${found.title}" ในตารางทริปของคุณ`,
+                            reviews: [{ author: 'ผู้ใช้งาน Let\'s U Plan', rating: 5, comment: 'สถานที่/กิจกรรมน่าสนใจ เพิ่มเข้าตารางทริปแล้ว' }]
+                        };
+                        break;
+                    }
+                }
+            }
+
+            if (!pin) return;
+
+            const theme = categoryThemeMap[pin.category] || categoryThemeMap['attraction'];
+
+            document.getElementById('modal-full-img').src = pin.img || fallbackImg;
+            document.getElementById('modal-full-title').innerText = pin.title;
+            document.getElementById('modal-full-location').querySelector('span').innerText = `${pin.city || ''}, ${pin.country || ''}`;
+            document.getElementById('modal-full-rating').querySelector('span').innerText = `${pin.rating || 4.8} (${pin.reviewCount || 100}+ รีวิว)`;
+            document.getElementById('modal-full-price').innerText = pin.price === 0 ? 'เข้าฟรีไม่มีค่าใช้จ่าย' : `${pin.price.toLocaleString()} บาท / ท่าน`;
+            document.getElementById('modal-full-address').innerText = pin.address || `${pin.city || ''}, ${pin.country || ''}`;
+            document.getElementById('modal-full-description').innerText = pin.description || 'สถานที่ท่องเที่ยวยอดนิยม บรรยากาศดี การเดินทางสะดวกสบาย';
+            document.getElementById('modal-full-contact').innerText = pin.contact || 'ไม่มีข้อมูลติดต่อเพิ่มเติม';
+
+            const badge = document.getElementById('modal-full-cat-badge');
+            badge.innerText = pin.catName || 'ท่องเที่ยว';
+            badge.className = `absolute top-3 left-3 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md ${theme.bg}`;
+
+            const reviewsContainer = document.getElementById('modal-full-reviews-list');
+            document.getElementById('modal-full-review-count').innerText = `จากผู้ใช้ทั้งหมด ${pin.reviewCount || 100} รายการ`;
+            
+            const reviews = pin.reviews || [
+                { author: 'นักท่องเที่ยวท่านหนึ่ง', rating: 5, comment: 'ประทับใจมาก บรรยากาศดี เหมาะแก่การไปเที่ยวพักผ่อน' }
+            ];
+
+            reviewsContainer.innerHTML = reviews.map(r => `
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs space-y-1">
+                    <div class="flex items-center justify-between font-bold text-slate-700">
+                        <span>${r.author}</span>
+                        <span class="text-amber-500 font-bold"><i class="fa-solid fa-star text-[10px]"></i> ${r.rating}.0</span>
+                    </div>
+                    <p class="text-slate-500 leading-relaxed">${r.comment}</p>
+                </div>
+            `).join('');
+
+            document.getElementById('btn-full-add-plan').onclick = function() {
+                addToItinerary(pin.id, pin.title, pin.price, pin.city);
+                closeModal('modal-full-detail');
+            };
+
+            document.getElementById('modal-full-detail').classList.remove('hidden');
+        }
+
+        // ================= AUTO PLAN MODAL & BUDGET LOGIC =================
+        function openAutoPlanModal() {
+            const hotelInput = document.getElementById('input-hotel')?.value.trim();
+            if (hotelInput) {
+                document.getElementById('auto-ext-hotel-name').value = hotelInput;
+            }
+            onAccStatusChange();
+            document.getElementById('modal-auto-plan').classList.remove('hidden');
+        }
+
+        function onAccStatusChange() {
+            const status = document.querySelector('input[name="acc_status"]:checked')?.value || 'none';
+            const subExtBox = document.getElementById('sub-external-box');
+            const subNoneBox = document.getElementById('sub-none-box');
+
+            if (status === 'external') {
+                subExtBox.classList.remove('hidden');
+                subNoneBox.classList.add('hidden');
+            } else if (status === 'none') {
+                subExtBox.classList.add('hidden');
+                subNoneBox.classList.remove('hidden');
+            } else {
+                subExtBox.classList.add('hidden');
+                subNoneBox.classList.add('hidden');
+            }
+            updateAutoPlanSummary();
+        }
+
+        function onExtBudgetTypeChange() {
+            const extType = document.querySelector('input[name="ext_budget_type"]:checked')?.value || 'included';
+            const priceBox = document.getElementById('ext-hotel-price-box');
+            if (extType === 'included') {
+                priceBox.classList.remove('hidden');
+            } else {
+                priceBox.classList.add('hidden');
+            }
+            updateAutoPlanSummary();
+        }
+
+        function updateAutoPlanSummary() {
+            const totalBudget = parseInt(document.getElementById('input-budget')?.value || '25000') || 25000;
+            const status = document.querySelector('input[name="acc_status"]:checked')?.value || 'none';
+            const summaryText = document.getElementById('summary-budget-text');
+            if (!summaryText) return;
+
+            const country = document.getElementById('select-country').value;
+            const city = document.getElementById('select-city').value;
+
+            if (status === 'in_app') {
+                let hotel = allPinsData.find(p => p.category === 'hotel' && p.country === country && (city === '-- ทั้งประเทศ --' || p.city === city));
+                let hotelPrice = hotel ? hotel.price : Math.round(totalBudget * 0.35);
+                let hotelName = hotel ? hotel.title : 'โรงแรมในระบบ (In-App Booking)';
+                let travelBudget = Math.max(0, totalBudget - hotelPrice);
+
+                summaryText.innerHTML = `
+                    • <b>ที่พักในระบบ:</b> ${hotelName} (${hotelPrice.toLocaleString()} บาท)<br>
+                    • <b>งบเที่ยว/กิน/กิจกรรม:</b> <span class="text-emerald-600 font-bold">${travelBudget.toLocaleString()} บาท</span> (หักค่าที่พักอัตโนมัติ)<br>
+                    • <b>การเลือกสถานที่:</b> ค้นหาร้านอาหาร และสถานที่ท่องเที่ยวอิงรัศมีจากที่พักที่จองไว้
+                `;
+            } else if (status === 'external') {
+                const extType = document.querySelector('input[name="ext_budget_type"]:checked')?.value || 'included';
+                const extHotelName = document.getElementById('auto-ext-hotel-name')?.value.trim() || 'ที่พักระบุภายนอก';
+
+                if (extType === 'included') {
+                    const extPrice = parseInt(document.getElementById('auto-ext-hotel-price')?.value || '3000') || 0;
+                    const travelBudget = Math.max(0, totalBudget - extPrice);
+                    summaryText.innerHTML = `
+                        • <b>ที่พักภายนอก:</b> ${extHotelName} (หักค่าที่พัก ${extPrice.toLocaleString()} บาท)<br>
+                        • <b>งบเที่ยว/กิน/กิจกรรม:</b> <span class="text-emerald-600 font-bold">${travelBudget.toLocaleString()} บาท</span><br>
+                        • <b>การเลือกสถานที่:</b> อิงตำแหน่งจากที่พักที่กรอกไว้
+                    `;
+                } else {
+                    summaryText.innerHTML = `
+                        • <b>ที่พักภายนอก:</b> ${extHotelName} (ไม่รวมค่าที่พัก)<br>
+                        • <b>งบเที่ยว/กิน/กิจกรรม:</b> <span class="text-emerald-600 font-bold">${totalBudget.toLocaleString()} บาท (ใช้เต็ม 100%)</span><br>
+                        • <b>การเลือกสถานที่:</b> อิงตำแหน่งจากที่พักที่กรอกไว้
+                    `;
+                }
+            } else if (status === 'none') {
+                const noneOpt = document.querySelector('input[name="none_hotel_option"]:checked')?.value || 'recommend';
+                if (noneOpt === 'recommend') {
+                    const hBudget = Math.round(totalBudget * 0.35);
+                    const tBudget = totalBudget - hBudget;
+                    summaryText.innerHTML = `
+                        • <b>ประมาณการค่าที่พัก (~35%):</b> ${hBudget.toLocaleString()} บาท (ช่วยแนะนำที่พักในงบ)<br>
+                        • <b>งบเที่ยว/กิน/กิจกรรม (~65%):</b> <span class="text-emerald-600 font-bold">${tBudget.toLocaleString()} บาท</span><br>
+                        • <b>การเลือกสถานที่:</b> แนะนำที่พัก + ค้นหาสถานที่ใกล้เคียงให้อยู่ในงบ
+                    `;
+                } else {
+                    summaryText.innerHTML = `
+                        • <b>สถานะที่พัก:</b> หาเองทีหลัง<br>
+                        • <b>งบเที่ยว/กิน/กิจกรรม:</b> <span class="text-emerald-600 font-bold">${totalBudget.toLocaleString()} บาท (เต็ม 100%)</span><br>
+                        • <b>การเลือกสถานที่:</b> อิงตามย่านท่องเที่ยวยอดนิยม (Center Zone)
+                    `;
+                }
+            }
+        }
+
+        function executeAutoPlan() {
+            const country = document.getElementById('select-country').value;
+            const city = document.getElementById('select-city').value;
+            const days = parseInt(document.getElementById('input-days').value || '4') || 1;
+            const totalBudget = parseInt(document.getElementById('input-budget').value || '25000') || 25000;
+            const status = document.querySelector('input[name="acc_status"]:checked')?.value || 'none';
+
+            updateDaysCount();
+
+            // ล้างข้อมูลตารางทริป
+            for (let d = 1; d <= days; d++) {
+                itineraryData[d] = [];
+            }
+
+            let travelBudget = totalBudget;
+            let selectedHotelItem = null;
+            let targetLocationName = city && city !== '-- ทั้งประเทศ --' ? city : country;
+
+            if (status === 'in_app') {
+                let hotel = allPinsData.find(p => p.category === 'hotel' && p.country === country && (city === '-- ทั้งประเทศ --' || p.city === city));
+                if (!hotel) {
+                    hotel = {
+                        id: 'inapp_h1',
+                        title: 'โรงแรมที่จองในระบบ (' + targetLocationName + ')',
+                        price: Math.round(totalBudget * 0.35),
+                        city: targetLocationName
+                    };
+                }
+                selectedHotelItem = {
+                    id: hotel.id,
+                    title: '🏨 ' + hotel.title + ' (In-App)',
+                    price: hotel.price,
+                    city: hotel.city,
+                    img: hotel.img,
+                    address: hotel.address,
+                    description: hotel.description,
+                    contact: hotel.contact,
+                    category: hotel.category,
+                    catName: hotel.catName
+                };
+                travelBudget = Math.max(0, totalBudget - hotel.price);
+            } else if (status === 'external') {
+                const extName = document.getElementById('auto-ext-hotel-name')?.value.trim() || 'ที่พักระบุภายนอก';
+                const extType = document.querySelector('input[name="ext_budget_type"]:checked')?.value || 'included';
+                let extPrice = 0;
+                if (extType === 'included') {
+                    extPrice = parseInt(document.getElementById('auto-ext-hotel-price')?.value || '0') || 0;
+                    travelBudget = Math.max(0, totalBudget - extPrice);
+                }
+                selectedHotelItem = {
+                    id: 'ext_h_' + Date.now(),
+                    title: '🏨 ' + extName + ' (ที่พักภายนอก)',
+                    price: extPrice,
+                    city: targetLocationName,
+                    address: extName,
+                    description: 'ที่พักภายนอกที่จองเรียบร้อยแล้ว ใช้เป็นจุดอิงตำแหน่งทริป',
+                    contact: 'โปรดดูข้อมูลการจองภายนอกของคุณ'
+                };
+            } else if (status === 'none') {
+                const noneOpt = document.querySelector('input[name="none_hotel_option"]:checked')?.value || 'recommend';
+                if (noneOpt === 'recommend') {
+                    const hBudget = Math.round(totalBudget * 0.35);
+                    travelBudget = totalBudget - hBudget;
+
+                    let hotel = allPinsData.find(p => p.category === 'hotel' && p.country === country && (city === '-- ทั้งประเทศ --' || p.city === city) && p.price <= hBudget);
+                    if (!hotel) {
+                        hotel = allPinsData.find(p => p.category === 'hotel' && p.country === country);
+                    }
+                    
+                    if (hotel) {
+                        selectedHotelItem = {
+                            id: hotel.id,
+                            title: '🏨 [แนะนำ] ' + hotel.title,
+                            price: hotel.price,
+                            city: hotel.city,
+                            img: hotel.img,
+                            address: hotel.address,
+                            description: hotel.description,
+                            contact: hotel.contact,
+                            category: hotel.category,
+                            catName: hotel.catName
+                        };
+                    } else {
+                        selectedHotelItem = {
+                            id: 'rec_h_' + Date.now(),
+                            title: '🏨 [แนะนำที่พัก] โรงแรมใกล้ย่านท่องเที่ยว ' + targetLocationName,
+                            price: hBudget,
+                            city: targetLocationName,
+                            description: 'แนะนำโรงแรมใกล้ย่านท่องเที่ยวในงบประมาณที่กำหนด',
+                            contact: 'สอบถามข้อมูลเพิ่มเติมกับศูนย์บริการ'
+                        };
+                    }
+                } else {
+                    travelBudget = totalBudget;
+                }
+            }
+
+            // ใส่ที่พักในแผนทริปวันแรก (ถ้ามี)
+            if (selectedHotelItem) {
+                itineraryData[1].push(selectedHotelItem);
+            }
+
+            // คัดเลือกสถานที่ท่องเที่ยว กิจกรรม และร้านค้าตามงบที่เหลือ
+            let matches = allPinsData.filter(p => p.country === country && p.category !== 'hotel');
+            if (city && city !== '-- ทั้งประเทศ --') {
+                let cityMatches = matches.filter(p => p.city === city);
+                if (cityMatches.length > 0) matches = cityMatches;
+            }
+            if (matches.length === 0) matches = allPinsData.filter(p => p.category !== 'hotel');
+
+            let currentSpent = 0;
+            matches.forEach((p, i) => {
+                if (currentSpent + p.price <= travelBudget || p.price === 0) {
+                    let dayAssigned = (i % days) + 1;
+                    if (itineraryData[dayAssigned]) {
+                        itineraryData[dayAssigned].push({
+                            id: p.id,
+                            title: p.title,
+                            price: p.price,
+                            city: p.city,
+                            img: p.img,
+                            address: p.address,
+                            description: p.description,
+                            contact: p.contact,
+                            category: p.category,
+                            catName: p.catName
+                        });
+                        currentSpent += p.price;
+                    }
+                }
+            });
+
+            closeModal('modal-auto-plan');
+            switchTab('plan');
+        }
+
+        // ---------------- TRIP PLANNER LOGIC ----------------
+        function switchDay(day) {
+            activeDay = day;
+            const daysInput = document.getElementById('input-days');
+            let days = parseInt(daysInput ? daysInput.value : '4') || 1;
+            for (let i = 1; i <= days; i++) {
+                const btn = document.getElementById(`day-btn-${i}`);
+                if (btn) {
+                    if (i === day) {
+                        btn.className = "px-4 py-2 rounded-xl font-semibold text-xs bg-sky-600 text-white shadow-sm transition";
+                    } else {
+                        btn.className = "px-4 py-2 rounded-xl font-semibold text-xs bg-white text-slate-600 hover:bg-slate-100 transition";
+                    }
+                }
+            }
+            renderItinerary();
+        }
+
         function addToItinerary(pinId, title, price, city) {
             let pin = allPinsData.find(p => p.id === pinId);
             let item = {
@@ -1474,7 +1637,12 @@
                 title: title || (pin ? pin.title : 'สถานที่ท่องเที่ยว'),
                 price: price !== undefined ? price : (pin ? pin.price : 0),
                 city: city || (pin ? pin.city : 'ทั่วไป'),
-                category: pin ? pin.category : 'activity'
+                img: pin ? pin.img : undefined,
+                address: pin ? pin.address : undefined,
+                description: pin ? pin.description : undefined,
+                contact: pin ? pin.contact : undefined,
+                category: pin ? pin.category : undefined,
+                catName: pin ? pin.catName : undefined
             };
 
             if (!itineraryData[activeDay]) itineraryData[activeDay] = [];
@@ -1483,65 +1651,322 @@
             alert(`เพิ่ม "${item.title}" เข้าตารางทริป DAY ${activeDay} เรียบร้อยแล้ว!`);
         }
 
-        function openAutoPlanModal() {
-            currentWizardStep = 1;
-            changeWizardStep(0);
-            document.getElementById('modal-auto-plan').classList.remove('hidden');
+        function removeFromItinerary(day, index) {
+            if (itineraryData[day]) {
+                itineraryData[day].splice(index, 1);
+            }
+            renderItinerary();
         }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
+        function renderItinerary() {
+            const container = document.getElementById('itinerary-container');
+            const items = itineraryData[activeDay] || [];
 
-        function switchDay(day) {
-            activeDay = day;
-            updateDaysCount();
-        }
-
-        function executeAutoPlan() {
-            const country = document.getElementById('select-country').value;
-            const city = document.getElementById('select-city').value;
-            const days = parseInt(document.getElementById('input-days').value || '4') || 1;
-            const totalBudget = parseInt(document.getElementById('input-budget').value || '25000') || 25000;
-
-            for (let d = 1; d <= days; d++) itineraryData[d] = [];
-
-            let matches = allPinsData.filter(p => p.country === country);
-            matches.forEach((p, i) => {
-                let dayAssigned = (i % days) + 1;
-                if (itineraryData[dayAssigned]) {
-                    itineraryData[dayAssigned].push({
-                        id: p.id,
-                        title: p.title,
-                        price: p.price,
-                        city: p.city,
-                        category: p.category
-                    });
-                }
+            let totalSpent = 0;
+            Object.keys(itineraryData).forEach(d => {
+                itineraryData[d].forEach(item => {
+                    totalSpent += (item.price || 0);
+                });
             });
 
-            closeModal('modal-auto-plan');
-            switchTab('plan');
+            const budgetInput = parseInt(document.getElementById('input-budget')?.value || '25000');
+            const remaining = budgetInput - totalSpent;
+            const percent = Math.max(0, Math.min(100, Math.round((remaining / budgetInput) * 100)));
+
+            const budgetText = document.getElementById('budget-remaining-text');
+            if (budgetText) {
+                budgetText.innerText = `${remaining.toLocaleString()} / ${budgetInput.toLocaleString()} B`;
+                budgetText.className = remaining < 0 ? "text-rose-600 font-bold" : "text-emerald-600 font-bold";
+            }
+
+            const progressBar = document.getElementById('budget-progress-bar');
+            if (progressBar) {
+                progressBar.style.width = `${percent}%`;
+                progressBar.className = remaining < 0 ? "bg-rose-500 h-2.5 rounded-full transition-all" : "bg-emerald-500 h-2.5 rounded-full transition-all";
+            }
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="py-12 text-center text-slate-400 space-y-2">
+                        <i class="fa-solid fa-calendar-plus text-3xl text-slate-300"></i>
+                        <p class="text-xs">ยังไม่มีกิจกรรมใน DAY ${activeDay}</p>
+                        <button onclick="switchTab('search')" class="text-xs text-sky-600 hover:underline font-semibold">เลือกสถานที่จากแผนที่เพื่อเพิ่มกิจกรรม</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map((item, idx) => `
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 flex items-center justify-between gap-3 hover:border-sky-300 hover:bg-sky-50/30 transition group">
+                    <div class="flex items-center space-x-3 cursor-pointer flex-grow" onclick="openFullDetailModal('${item.id}')" title="คลิกเพื่อดูรายละเอียด">
+                        <div class="w-8 h-8 rounded-xl bg-sky-100 group-hover:bg-sky-600 group-hover:text-white text-sky-600 flex items-center justify-center font-bold text-xs shrink-0 transition">
+                            ${idx + 1}
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800 group-hover:text-sky-600 transition flex items-center gap-1.5">
+                                <span>${item.title}</span>
+                                <i class="fa-solid fa-circle-info text-sky-500 text-[11px] opacity-70 group-hover:opacity-100"></i>
+                            </h4>
+                            <span class="text-[10px] text-slate-400 font-medium">${item.city ? item.city + ' • ' : ''}ค่าใช้จ่าย: ${item.price === 0 ? 'ฟรี' : item.price.toLocaleString() + ' B'}</span>
+                        </div>
+                    </div>
+                    <button onclick="event.stopPropagation(); removeFromItinerary(${activeDay}, ${idx})" class="text-rose-500 hover:text-rose-700 p-2 text-xs transition shrink-0" title="ลบออกจากทริป">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </div>
+            `).join('');
         }
 
-        function openFullDetailModal(id) {
-            const pin = allPinsData.find(p => p.id === id);
-            if (!pin) return;
-            document.getElementById('modal-full-img').src = pin.img || fallbackImg;
-            document.getElementById('modal-full-title').innerText = pin.title;
-            document.getElementById('modal-full-location').querySelector('span').innerText = `${pin.city}, ${pin.country}`;
-            document.getElementById('modal-full-price').innerText = pin.price === 0 ? 'เข้าฟรี' : formatMoney(pin.price);
-            document.getElementById('modal-full-detail').classList.remove('hidden');
+        function startPlanning(mode) {
+            if (mode === 'auto') {
+                openAutoPlanModal();
+            } else {
+                updateDaysCount();
+                alert('พร้อมให้คุณจัดแผนทริป DIY ตามใจชอบ!');
+                switchTab('plan');
+            }
         }
 
-        function renderMomentsFeed() {}
-        function triggerLogin() { alert('เปิดหน้าลงชื่อเข้าใช้'); }
-        function openCreateMomentModal() { document.getElementById('modal-create-moment').classList.remove('hidden'); }
-        function submitNewMoment() { closeModal('modal-create-moment'); alert('โพสต์เรียบร้อยแล้ว!'); }
-        function onAccStatusChange() {}
-        function onExtBudgetTypeChange() {}
-        function updateAutoPlanSummary() {}
-        function startPlanning(type) { switchTab('plan'); }
+        // ---------------- MOMENTS COMMUNITY LOGIC ----------------
+        function onSearchMoments() {
+            const input = document.getElementById('moment-search-input');
+            searchQuery = input.value.trim().toLowerCase();
+            
+            const btnClear = document.getElementById('btn-clear-search');
+            if (searchQuery.length > 0) {
+                btnClear.classList.remove('hidden');
+            } else {
+                btnClear.classList.add('hidden');
+            }
+
+            renderMomentsFeed();
+        }
+
+        function clearSearch() {
+            document.getElementById('moment-search-input').value = '';
+            document.getElementById('btn-clear-search').classList.add('hidden');
+            searchQuery = '';
+            renderMomentsFeed();
+        }
+
+        function renderMomentsFeed() {
+            const container = document.getElementById('moment-feed-container');
+            let items = momentsData;
+
+            if (selectedMomentFilter !== 'all') {
+                items = items.filter(m => m.tag === selectedMomentFilter);
+            }
+
+            if (searchQuery) {
+                items = items.filter(m => 
+                    m.title.toLowerCase().includes(searchQuery) ||
+                    m.content.toLowerCase().includes(searchQuery) ||
+                    m.location.toLowerCase().includes(searchQuery) ||
+                    m.author.toLowerCase().includes(searchQuery) ||
+                    m.hashtags.some(h => h.toLowerCase().includes(searchQuery))
+                );
+            }
+
+            document.getElementById('moment-count-text').innerText = `แสดง ${items.length} เรื่องราว`;
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-16 text-center text-slate-400 space-y-3">
+                        <i class="fa-solid fa-magnifying-glass text-4xl text-slate-300"></i>
+                        <p class="text-xs font-medium">ไม่พบเรื่องราวที่ตรงกับการค้นหา หรือหมวดหมู่นี้</p>
+                        <button onclick="clearSearch(); filterMoments('all');" class="text-xs text-rose-500 underline font-semibold">ดูเรื่องราวทั้งหมด</button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map(m => {
+                let mediaHtml = m.mediaType === 'video' ? `
+                    <video controls class="w-full h-full object-cover">
+                        <source src="${m.mediaUrl}">
+                    </video>
+                ` : `
+                    <img src="${m.mediaUrl}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='${fallbackImg}'">
+                `;
+
+                return `
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-200/80 hover:shadow-lg transition duration-300 flex flex-col justify-between group">
+                        <div>
+                            <div class="p-4 flex items-center justify-between border-b border-slate-100">
+                                <div class="flex items-center space-x-3">
+                                    <img src="${m.avatar}" class="w-10 h-10 rounded-full object-cover border-2 border-rose-200 shadow-sm" onerror="this.src='https://i.pravatar.cc/150'">
+                                    <div>
+                                        <h4 class="text-xs font-bold text-slate-800 leading-tight">${m.author}</h4>
+                                        <span class="text-[10px] text-slate-400 font-medium">${m.timeAgo}</span>
+                                    </div>
+                                </div>
+                                <span class="text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200/60 px-2.5 py-1 rounded-full shrink-0">
+                                    ${m.tagLabel}
+                                </span>
+                            </div>
+
+                            <div class="relative h-52 w-full bg-slate-900 overflow-hidden">
+                                ${mediaHtml}
+                                <span class="absolute bottom-3 left-3 bg-slate-900/70 backdrop-blur-md text-white text-[10px] px-2.5 py-1 rounded-lg flex items-center gap-1 font-medium">
+                                    <i class="fa-solid fa-location-dot text-rose-400"></i> ${m.location}
+                                </span>
+                            </div>
+
+                            <div class="p-4 space-y-2">
+                                <h3 class="font-bold text-sm text-slate-800 group-hover:text-rose-600 transition leading-snug">${m.title}</h3>
+                                <p class="text-xs text-slate-600 leading-relaxed line-clamp-3">${m.content}</p>
+
+                                <div class="flex flex-wrap gap-1.5 pt-1">
+                                    ${m.hashtags.map(h => `<span class="text-[10px] text-slate-500 bg-slate-100 font-medium px-2 py-0.5 rounded-md">${h}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between">
+                            <button onclick="toggleLikeMoment('${m.id}')" class="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl transition ${m.isLiked ? 'text-rose-600 bg-rose-50' : 'text-slate-500 hover:text-rose-600'}">
+                                <i class="${m.isLiked ? 'fa-solid' : 'fa-regular'} fa-heart text-sm"></i>
+                                <span>${m.likes} ไลก์</span>
+                            </button>
+
+                            <button onclick="addMomentToPlan('${m.title.replace(/'/g, "\\'")}', '${m.location.replace(/'/g, "\\\'")}')" class="text-[11px] font-bold text-sky-600 hover:text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200/60 px-3 py-1.5 rounded-xl transition flex items-center gap-1">
+                                <i class="fa-solid fa-plus text-[9px]"></i> ใส่ในตารางทริป
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterMoments(tag) {
+            selectedMomentFilter = tag;
+            const allTags = ['all', 'food', 'cafe', 'hidden', 'sea', 'mountain', 'hotel', 'activity', 'camping', 'mu', 'pet', 'solo'];
+            
+            allTags.forEach(t => {
+                const btn = document.getElementById(`m-btn-${t}`);
+                if (btn) {
+                    if (t === tag) {
+                        btn.className = "moment-tag-active px-4 py-1.5 rounded-full text-xs font-semibold border border-rose-500 transition shadow-sm shrink-0";
+                    } else {
+                        btn.className = "px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 transition shrink-0";
+                    }
+                }
+            });
+            renderMomentsFeed();
+        }
+
+        function toggleLikeMoment(id) {
+            const moment = momentsData.find(m => m.id === id);
+            if (moment) {
+                moment.isLiked = !moment.isLiked;
+                moment.likes += moment.isLiked ? 1 : -1;
+                renderMomentsFeed();
+            }
+        }
+
+        function addMomentToPlan(title, location) {
+            addToItinerary('moment_' + Date.now(), title, 0, location);
+        }
+
+        function handleMediaPreview(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const previewContainer = document.getElementById('media-preview-container');
+            const previewContent = document.getElementById('media-preview-content');
+            
+            uploadedMediaUrl = URL.createObjectURL(file);
+
+            if (file.type.startsWith('video/')) {
+                uploadedMediaType = 'video';
+                previewContent.innerHTML = `<video controls class="w-full max-h-48 object-contain"><source src="${uploadedMediaUrl}" type="${file.type}"></video>`;
+            } else {
+                uploadedMediaType = 'image';
+                previewContent.innerHTML = `<img src="${uploadedMediaUrl}" class="w-full max-h-48 object-cover">`;
+            }
+
+            previewContainer.classList.remove('hidden');
+        }
+
+        function clearMediaPreview() {
+            uploadedMediaUrl = null;
+            document.getElementById('new-moment-file').value = '';
+            document.getElementById('media-preview-container').classList.add('hidden');
+            document.getElementById('media-preview-content').innerHTML = '';
+        }
+
+        function openCreateMomentModal() {
+            document.getElementById('modal-create-moment').classList.remove('hidden');
+        }
+
+        function submitNewMoment() {
+            const title = document.getElementById('new-moment-title').value.trim();
+            const city = document.getElementById('new-moment-city').value.trim();
+            const tag = document.getElementById('new-moment-tag').value;
+            const content = document.getElementById('new-moment-content').value.trim();
+
+            if (!title) {
+                alert('กรุณากรอกชื่อสถานที่หรือทริปด้วยนะครับ');
+                return;
+            }
+
+            const mediaUrl = uploadedMediaUrl || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600';
+
+            const newMoment = {
+                id: 'm_' + Date.now(),
+                author: 'You (นักเดินทาง)',
+                avatar: 'https://i.pravatar.cc/150?img=65',
+                timeAgo: 'เมื่อสักครู่นี้',
+                location: city || 'ประเทศไทย',
+                tag: tag,
+                tagLabel: tagMap[tag] || '🏖️ ท่องเที่ยว',
+                title: title,
+                content: content || 'แบ่งปันประสบการณ์การเดินทางประทับใจ',
+                mediaType: uploadedMediaType,
+                mediaUrl: mediaUrl,
+                likes: 1,
+                isLiked: true,
+                hashtags: ['#MyTrip', `#${tag}`]
+            };
+
+            momentsData.unshift(newMoment);
+            closeModal('modal-create-moment');
+            clearMediaPreview();
+            renderMomentsFeed();
+
+            document.getElementById('new-moment-title').value = '';
+            document.getElementById('new-moment-city').value = '';
+            document.getElementById('new-moment-content').value = '';
+
+            alert('โพสต์แชร์ Moment เรียบร้อยแล้ว!');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // NAVIGATION LOGIC
+        function switchTab(tab) {
+            document.getElementById('page-search').classList.add('hidden');
+            document.getElementById('page-plan').classList.add('hidden');
+            document.getElementById('page-moment').classList.add('hidden');
+
+            document.getElementById('nav-search').className = "py-5 px-1 text-slate-500 hover:text-sky-600 flex items-center space-x-2 transition";
+            document.getElementById('nav-plan').className = "py-5 px-1 text-slate-500 hover:text-sky-600 flex items-center space-x-2 transition";
+            document.getElementById('nav-moment').className = "py-5 px-1 text-slate-500 hover:text-sky-600 flex items-center space-x-2 transition";
+
+            document.getElementById('page-' + tab).classList.remove('hidden');
+            document.getElementById('nav-' + tab).className = "py-5 px-1 tab-active flex items-center space-x-2";
+
+            if (tab === 'moment') renderMomentsFeed();
+            if (tab === 'plan') {
+                updateDaysCount();
+                renderItinerary();
+            }
+        }
+
+        function triggerLogin() {
+            alert('เปิดหน้าต่างเข้าสู่ระบบ');
+        }
     </script>
 </body>
 </html>
