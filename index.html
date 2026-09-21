@@ -584,25 +584,13 @@
                     </h4>
                     
                     <div class="space-y-2">
-                        <label class="block font-semibold">สไตล์การเดินทางที่ชอบ (เลือกได้หลายข้อ):</label>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <label class="flex items-center gap-2.5 p-2.5 border rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-                                <input type="checkbox" name="auto-travel-style" value="chill" class="w-4 h-4 rounded text-sky-600 focus:ring-sky-500 border-slate-300 cursor-pointer">
-                                <span class="text-xs">☕ ชิลๆ คาเฟ่ พักผ่อนไม่เร่งรีบ</span>
-                            </label>
-                            <label class="flex items-center gap-2.5 p-2.5 border rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-                                <input type="checkbox" name="auto-travel-style" value="adventure" class="w-4 h-4 rounded text-sky-600 focus:ring-sky-500 border-slate-300 cursor-pointer">
-                                <span class="text-xs">🎒 สายลุย กิจกรรมจัดเต็ม</span>
-                            </label>
-                            <label class="flex items-center gap-2.5 p-2.5 border rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-                                <input type="checkbox" name="auto-travel-style" value="cultural" class="w-4 h-4 rounded text-sky-600 focus:ring-sky-500 border-slate-300 cursor-pointer">
-                                <span class="text-xs">🔮 สายมู วัฒนธรรม ถ่ายรูป</span>
-                            </label>
-                            <label class="flex items-center gap-2.5 p-2.5 border rounded-xl cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-                                <input type="checkbox" name="auto-travel-style" value="foodie" class="w-4 h-4 rounded text-sky-600 focus:ring-sky-500 border-slate-300 cursor-pointer">
-                                <span class="text-xs">🍜 สายกิน ตะลุยร้านดัง</span>
-                            </label>
-                        </div>
+                        <label class="block font-semibold">สไตล์การเดินทางที่ชอบ:</label>
+                        <select id="auto-travel-style" class="w-full px-3 py-2 border rounded-xl text-xs bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 outline-none">
+                            <option value="chill">☕ ชิลๆ คาเฟ่ พักผ่อนไม่เร่งรีบ</option>
+                            <option value="adventure">🎒 สายลุย กิจกรรมจัดเต็ม แอดเวนเจอร์</option>
+                            <option value="cultural">🔮 สายมู วัฒนธรรม ถ่ายรูปเช็คอิน</option>
+                            <option value="foodie">🍜 สายกิน ตะลุยร้านดัง สตรีทฟู้ด</option>
+                        </select>
                     </div>
 
                     <div class="space-y-2">
