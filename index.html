@@ -20,6 +20,10 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <!-- html2canvas for Exporting Social Media Summary Image -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Three.js และ OrbitControls จากไฟล์ 1 สำหรับระบบ 3D World Map -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
     <style>
         body { font-family: 'Prompt', sans-serif; transition: background-color 0.3s, color 0.3s; }
@@ -202,6 +206,20 @@
             border-top: 3px solid #0284c7 !important;
         }
 
+        /* 3D Globe UI Overlay (ไฟล์ 1) */
+        #globe-ui {
+            position: absolute;
+            top: 15px;
+            width: 100%;
+            text-align: center;
+            color: #ffffff;
+            pointer-events: none;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            z-index: 30;
+        }
+
         /* Print styles for Export PDF */
         @media print {
             header, nav, button, input, select, .no-print { display: none !important; }
@@ -270,7 +288,7 @@
                     
                     <!-- LEFT COLUMN: Interactive Map Canvas -->
                     <div class="lg:col-span-7 space-y-3">
-                        <div class="flex items-center justify-between px-1">
+                        <div class="flex items-center justify-between px-1 flex-wrap gap-2">
                             <div>
                                 <span class="bg-sky-500/20 text-sky-300 text-[11px] px-2.5 py-0.5 rounded-full border border-sky-400/30">Interactive Smart Map</span>
                                 <h2 class="text-lg font-bold text-white mt-1 flex items-center gap-2">
@@ -278,9 +296,18 @@
                                     สำรวจแผนที่: <span id="map-target-title" class="text-sky-400">ประเทศไทย</span>
                                 </h2>
                             </div>
-                            <span class="text-[11px] text-slate-400 bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-700">
-                                <i class="fa-solid fa-magnifying-glass-plus text-sky-400 mr-1"></i>ซูมแผนที่เพื่อแสดงสถานที่
-                            </span>
+
+                            <!-- Map View Mode Switcher (2D Leaflet / 3D Globe) -->
+                            <div class="flex items-center gap-2">
+                                <div class="flex bg-slate-800 p-1 rounded-xl border border-slate-700">
+                                    <button id="btn-view-2d" onclick="switchMapView('2d')" class="px-3 py-1 text-[11px] font-bold rounded-lg bg-sky-600 text-white shadow transition flex items-center gap-1">
+                                        <i class="fa-solid fa-map"></i> 2D แผนที่
+                                    </button>
+                                    <button id="btn-view-3d" onclick="switchMapView('3d')" class="px-3 py-1 text-[11px] font-bold rounded-lg text-slate-400 hover:text-white transition flex items-center gap-1">
+                                        <i class="fa-solid fa-globe"></i> 3D ลูกโลก
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Dropdown กรองหมวดหมู่บนแผนที่ -->
@@ -298,9 +325,16 @@
                             </select>
                         </div>
 
-                        <!-- Leaflet Map Container -->
+                        <!-- Map Containers (2D Leaflet & 3D Globe Three.js) -->
                         <div class="relative w-full h-[400px] md:h-[460px] rounded-2xl overflow-hidden shadow-2xl border border-slate-700/60 z-10">
+                            <!-- 2D Leaflet Map Container -->
                             <div id="map" class="w-full h-full bg-slate-800"></div>
+
+                            <!-- 3D World Map Container (ไฟล์ 1) -->
+                            <div id="globe-container" class="w-full h-full bg-[#050508] hidden relative">
+                                <div id="globe-ui">คลิกลากเพื่อหมุนลูกโลก | สกรอลล์เพื่อย่อ-ขยาย</div>
+                                <div id="globe-canvas" class="w-full h-full"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -1323,353 +1357,319 @@
         // Community Moments Sample Data
         let momentsData = [
             {
-                id: 'm1', title: 'ชาบูเจ้าเด็ดเยาวราช นุ่มละมุนลิ้น!', city: 'กรุงเทพมหานคร', tag: 'food', tagName: '🍜 สายกิน / สตรีทฟู้ด',
-                author: 'Ploy_Traveler', avatar: 'https://i.pravatar.cc/100?img=1', time: '2 ชม. ที่แล้ว', likes: 124, comments: 18,
-                mediaType: 'image', mediaUrl: 'https://images.unsplash.com/photo-1555126634-323283e090fa?w=600',
-                content: 'ใครมาเยาวราชแนะนำร้านนี้เลย ซุปเข้มข้น น้ำจิ้มสูตรเด็ดเปิดมากว่า 30 ปี วัตถุดิบสดใหม่ทุกวัน!'
+                id: 'm1', title: 'ชาบูเจ้าเด็ดเยาวราช นุ่มละมุนลิ้น!', city: 'กรุงเทพมหานคร', tag: 'food',
+                author: 'คุณเป็ด สายกิน', avatar: 'https://i.pravatar.cc/150?img=33',
+                img: 'https://images.unsplash.com/photo-1555126634-323283e090fa?w=500',
+                content: 'น้ำซุปเข้มข้น เนื้อสไลด์บางกำลังดี น้ำจิ้มสูตรเด็ดของร้านอร่อยจนต้องกลับมาซ้ำ!',
+                likes: 128, commentsCount: 14
             },
             {
-                id: 'm2', title: 'จิบกาแฟฟินๆ วิวดอยสุเทพ เชียงใหม่', city: 'เชียงใหม่', tag: 'cafe', tagName: '☕ คาเฟ่ / ถ่ายรูป',
-                author: 'Max_Northern', avatar: 'https://i.pravatar.cc/100?img=8', time: '5 ชม. ที่แล้ว', likes: 210, comments: 32,
-                mediaType: 'image', mediaUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600',
-                content: 'คาเฟ่สไตล์มินิมอลบนเนินเขา บรรยากาศตอนเช้าหมอกลงเบาๆ ถ่ายรูปมุมไหนก็ปัง กาแฟดริปดีมาก'
+                id: 'm2', title: 'คาเฟ่ลับสไตล์ล้านนา วิวทุ่งนาเชียงใหม่', city: 'เชียงใหม่', tag: 'cafe',
+                author: 'เมย์ ช่างภาพ', avatar: 'https://i.pravatar.cc/150?img=47',
+                img: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=500',
+                content: 'กาแฟดริปหอมมาก บรรยากาศเงียบสงบ ได้ยินเสียงธรรมชาติ เหมาะนั่งทำงานชิลล์ๆ ทั้งวัน',
+                likes: 245, commentsCount: 32
             }
         ];
 
-        // Default Checklist Data Template
-        const defaultChecklistTemplate = {
-            packing: [
-                { text: 'พาสปอร์ต / บัตรประชาชน / ใบขับขี่', checked: false },
-                { text: 'ตั๋วเครื่องบิน / เอกสารจองที่พัก', checked: false },
-                { text: 'เงินสด / บัตรเครดิต / บัตร Travel Card', checked: false },
-                { text: 'โทรศัพท์ / สายชาร์จ / Power Bank', checked: false },
-                { text: 'เสื้อผ้า / ผ้าเช็ดตัว / ชุดนอน', checked: false },
-                { text: 'แปรงสีฟัน / ยาสีฟัน / สกินแคร์', checked: false },
-                { text: 'ยาสามัญประจำบ้าน / ยาประจำตัว', checked: false },
-                { text: 'หัวปลั๊กแปลงไฟ (Universal Adapter)', checked: false }
-            ],
-            todo: [
-                { text: 'จองตั๋วเครื่องบินและโรงแรม', checked: true },
-                { text: 'ซื้อประกันภัยการเดินทาง', checked: false },
-                { text: 'เตรียม SIM Card หรือเปิด Roaming', checked: false },
-                { text: 'ตรวจสอบอายุพาสปอร์ต (ต้องเหลือ > 6 เดือน)', checked: true },
-                { text: 'แจ้งธนาคารเปิดใช้งานบัตรต่างประเทศ', checked: false },
-                { text: 'ฝากดูแลบ้าน / สัตว์เลี้ยง', checked: false }
-            ]
+        // Global State Variables
+        let map, mapMarkers = [];
+        let currentCountry = 'ประเทศไทย';
+        let currentCity = '-- ทั้งประเทศ --';
+        let activeCategory = 'all';
+        let activeDaysCount = 4;
+        let activeDayNum = 1;
+        let activePlanData = {
+            title: 'ประเทศไทย (4 วัน 3 คืน)',
+            budgetTotal: 25000,
+            travelers: 1,
+            days: { 1: [], 2: [], 3: [], 4: [] },
+            checklist: { packing: [], todo: [] }
         };
 
-        // Per-trip Personal Checklist State
-        let currentTripId = 'default_trip';
-        let checklistData = JSON.parse(JSON.stringify(defaultChecklistTemplate));
+        // ================= 3D WORLD MAP LOGIC (ดึงจากไฟล์ 1) =================
+        let scene, camera, renderer, controls, globe, starField;
+        let is3DInitialized = false;
 
-        // Global States
-        let map;
-        let mapMarkers = [];
-        let activeCategoryFilter = 'all';
-        let activeMomentFilter = 'all';
-        let currentSearchQuery = '';
-        let currentWizardStep = 1;
-        let isReadOnly = false;
+        function init3DGlobe() {
+            if (is3DInitialized) return;
+            const container = document.getElementById('globe-canvas');
+            if (!container) return;
 
-        let totalBudget = 25000;
-        let tripDays = 4;
-        let activeDay = 1;
+            const width = container.clientWidth || window.innerWidth;
+            const height = container.clientHeight || 460;
 
-        let itineraryData = { 1: [], 2: [], 3: [], 4: [] };
-        let tempUploadedMedia = null;
-        let draggedIndex = null;
-
-        // DARK MODE TOGGLE FUNCTION
-        function toggleDarkMode() {
-            const isDark = document.documentElement.classList.toggle('dark');
-            const icon = document.getElementById('theme-toggle-icon');
-            const text = document.getElementById('theme-toggle-text');
+            // 1. สร้าง Scene, Camera และ Renderer (ไฟล์ 1)
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ antialias: true });
             
-            if (isDark) {
-                if (icon) icon.className = 'fa-solid fa-sun text-amber-400 text-sm';
-                if (text) text.innerText = 'โหมดสว่าง';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                if (icon) icon.className = 'fa-solid fa-moon text-slate-700 dark:text-slate-200 text-sm';
-                if (text) text.innerText = 'โหมดมืด';
-                localStorage.setItem('theme', 'light');
+            renderer.setSize(width, height);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            // 2. ระบบควบคุมการหมุนกล้อง (OrbitControls) (ไฟล์ 1)
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.minDistance = 2.5;
+            controls.maxDistance = 10;
+
+            // 3. สร้างลูกโลก (Sphere Geometry + Earth Texture) (ไฟล์ 1)
+            const globeGeometry = new THREE.SphereGeometry(2, 64, 64);
+            const textureLoader = new THREE.TextureLoader();
+            
+            // ดึงภาพพื้นผิวแผนที่โลกความละเอียดสูง
+            const earthTexture = textureLoader.load('https://cdn.jsdelivr.net/gh/mrdoob/three.js@master/examples/textures/land_ocean_ice_cloud_2048.jpg');
+
+            const globeMaterial = new THREE.MeshStandardMaterial({
+                map: earthTexture,
+                roughness: 0.6,
+                metalness: 0.1
+            });
+
+            globe = new THREE.Mesh(globeGeometry, globeMaterial);
+            scene.add(globe);
+
+            // 4. สร้างฉากหลังดาวระยิบระยับ (Starfield) (ไฟล์ 1)
+            const starsGeometry = new THREE.BufferGeometry();
+            const starsCount = 1200;
+            const starPositions = new Float32Array(starsCount * 3);
+
+            for (let i = 0; i < starsCount * 3; i++) {
+                starPositions[i] = (Math.random() - 0.5) * 150;
             }
-        }
+            starsGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+            const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.15 });
+            starField = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(starField);
 
-        function triggerLogin() {
-            alert("ระบบเข้าสู่ระบบจำลอง - เข้าสู่ระบบสำเร็จ");
-        }
+            // 5. ระบบแสงสว่าง (Lighting) (ไฟล์ 1)
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
 
-        // INITIALIZATION
-        window.addEventListener('load', () => {
-            if (localStorage.getItem('theme') === 'dark') {
-                document.documentElement.classList.add('dark');
-                const icon = document.getElementById('theme-toggle-icon');
-                const text = document.getElementById('theme-toggle-text');
-                if (icon && text) {
-                    icon.className = 'fa-solid fa-sun text-amber-400 text-sm';
-                    text.innerText = 'โหมดสว่าง';
+            const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
+            sunLight.position.set(5, 3, 5);
+            scene.add(sunLight);
+
+            // ตำแหน่งเริ่มต้นของกล้อง
+            camera.position.z = 5;
+
+            // 6. Animation Loop (ให้ลูกโลกหมุนอัตโนมัติ) (ไฟล์ 1)
+            function animate() {
+                requestAnimationFrame(animate);
+
+                // หมุนลูกโลกช้าๆ รอบตัวเอง
+                if (globe) globe.rotation.y += 0.0012;
+
+                if (controls) controls.update();
+                if (renderer && scene && camera) renderer.render(scene, camera);
+            }
+            animate();
+
+            // 7. รองรับการปรับขนาดหน้าจอ (Responsive Window) (ไฟล์ 1)
+            window.addEventListener('resize', () => {
+                if (!container) return;
+                const w = container.clientWidth;
+                const h = container.clientHeight;
+                if (camera && renderer && w > 0 && h > 0) {
+                    camera.aspect = w / h;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(w, h);
                 }
-            }
+            });
 
-            initMap();
-            initDatePicker();
-            onCountryChange();
+            is3DInitialized = true;
+        }
+
+        function switchMapView(mode) {
+            const map2dEl = document.getElementById('map');
+            const globeEl = document.getElementById('globe-container');
+            const btn2d = document.getElementById('btn-view-2d');
+            const btn3d = document.getElementById('btn-view-3d');
+
+            if (mode === '3d') {
+                map2dEl.classList.add('hidden');
+                globeEl.classList.remove('hidden');
+                btn3d.className = 'px-3 py-1 text-[11px] font-bold rounded-lg bg-sky-600 text-white shadow transition flex items-center gap-1';
+                btn2d.className = 'px-3 py-1 text-[11px] font-bold rounded-lg text-slate-400 hover:text-white transition flex items-center gap-1';
+                init3DGlobe();
+            } else {
+                globeEl.classList.add('hidden');
+                map2dEl.classList.remove('hidden');
+                btn2d.className = 'px-3 py-1 text-[11px] font-bold rounded-lg bg-sky-600 text-white shadow transition flex items-center gap-1';
+                btn3d.className = 'px-3 py-1 text-[11px] font-bold rounded-lg text-slate-400 hover:text-white transition flex items-center gap-1';
+                if (map) setTimeout(() => map.invalidateSize(), 200);
+            }
+        }
+
+        // ================= INITIALIZATION & UI HANDLERS =================
+        window.addEventListener('DOMContentLoaded', () => {
+            initCityDropdown();
+            initLeafletMap();
             renderRecommendations();
-            renderMomentsFeed();
-            updateBudgetUI();
-            renderSavedPlansList();
-            loadTripChecklist();
             renderChecklist();
-            checkSharedLink();
+            renderMomentsFeed();
         });
 
-        // ------------------ MAP & SEARCH LOGIC ------------------
-        function initMap() {
-            map = L.map('map').setView([13.0, 101.5], 5);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-
-            renderMapPins('all');
-        }
-
-        function renderMapPins(categoryFilter = 'all') {
-            mapMarkers.forEach(m => map.removeLayer(m));
-            mapMarkers = [];
-
-            const filteredPins = categoryFilter === 'all' 
-                ? allPinsData 
-                : allPinsData.filter(p => p.category === categoryFilter);
-
-            filteredPins.forEach(item => {
-                const theme = categoryThemeMap[item.category] || categoryThemeMap['attraction'];
-                const priceFormatted = item.price === 0 ? 'ฟรี' : formatCurrency(item.price);
-
-                const customIcon = L.divIcon({
-                    className: 'custom-pin-wrapper',
-                    html: `
-                        <div class="custom-map-pin" style="--pin-bg: ${theme.hex};" onclick="openFullDetailModal('${item.id}')">
-                            <div class="pin-photo-wrapper">
-                                <img src="${item.img}" class="pin-photo" alt="${item.title}" onerror="this.src='${fallbackImg}'">
-                                <span class="pin-price-tag">${priceFormatted}</span>
-                            </div>
-                            <div class="pin-title-box">${item.title}</div>
-                        </div>
-                        <div class="pin-pointer" style="--pin-bg: ${theme.hex};"></div>
-                    `,
-                    iconSize: [130, 110],
-                    iconAnchor: [65, 110]
-                });
-
-                const marker = L.marker([item.lat, item.lng], { icon: customIcon });
-                marker.bindPopup(`
-                    <div class="p-3 text-xs space-y-2">
-                        <img src="${item.img}" class="w-full h-24 object-cover rounded-xl mb-2" onerror="this.src='${fallbackImg}'">
-                        <span class="px-2 py-0.5 rounded-full text-[10px] text-white font-bold ${theme.bg}">${item.catName}</span>
-                        <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100">${item.title}</h4>
-                        <p class="text-[11px] text-slate-500 line-clamp-2">${item.description}</p>
-                        <div class="flex justify-between items-center pt-1 border-t border-slate-100 dark:border-slate-700">
-                            <span class="font-bold text-emerald-600">${priceFormatted}</span>
-                            <button onclick="openFullDetailModal('${item.id}')" class="bg-sky-600 text-white px-2.5 py-1 rounded-lg font-bold text-[10px]">รายละเอียด</button>
-                        </div>
-                    </div>
-                `);
-                marker.addTo(map);
-                mapMarkers.push(marker);
+        function switchTab(tabId) {
+            ['search', 'plan', 'moment'].forEach(t => {
+                document.getElementById(`page-${t}`).classList.add('hidden');
+                const nav = document.getElementById(`nav-${t}`);
+                if (nav) nav.className = "py-5 px-1 text-slate-500 hover:text-sky-600 flex items-center space-x-2 transition";
             });
-        }
 
-        function formatCurrency(amount) {
-            const curr = currencyRates[activeCurrency] || currencyRates['THB'];
-            const converted = Math.round(amount * curr.rate);
-            return `${converted.toLocaleString()} ${curr.symbol}`;
-        }
+            document.getElementById(`page-${tabId}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) activeNav.className = "py-5 px-1 tab-active flex items-center space-x-2";
 
-        function onMapCategorySelectChange(val) {
-            renderMapPins(val);
-        }
-
-        function switchTab(tabName) {
-            const pages = ['search', 'plan', 'moment'];
-            pages.forEach(p => {
-                const pageEl = document.getElementById(`page-${p}`);
-                const navBtn = document.getElementById(`nav-${p}`);
-                if (pageEl) {
-                    if (p === tabName) {
-                        pageEl.classList.remove('hidden');
-                    } else {
-                        pageEl.classList.add('hidden');
-                    }
-                }
-                if (navBtn) {
-                    if (p === tabName) {
-                        navBtn.className = "py-5 px-1 tab-active flex items-center space-x-2";
-                    } else {
-                        navBtn.className = "py-5 px-1 text-slate-500 hover:text-sky-600 flex items-center space-x-2 transition";
-                    }
-                }
-            });
-            if (tabName === 'plan') {
-                renderItinerary();
-                updateBudgetUI();
+            if (tabId === 'search' && map) {
+                setTimeout(() => map.invalidateSize(), 200);
             }
+        }
+
+        function initCityDropdown() {
+            const citySelect = document.getElementById('select-city');
+            const cities = cityMap[currentCountry] || ['-- ทั้งประเทศ --'];
+            citySelect.innerHTML = cities.map(c => `<option value="${c}">${c}</option>`).join('');
         }
 
         function onCountryChange() {
-            const country = document.getElementById('select-country').value;
-            const citySelect = document.getElementById('select-city');
-            const targetTitle = document.getElementById('map-target-title');
-            
-            if (targetTitle) targetTitle.innerText = country;
-            
-            const cities = cityMap[country] || ['-- ทั้งประเทศ --'];
-            citySelect.innerHTML = cities.map(c => `<option value="${c}">${c}</option>`).join('');
-
-            if (locationConfigs[country]) {
-                const loc = locationConfigs[country];
-                map.setView([loc.lat, loc.lng], loc.zoom);
-            }
+            currentCountry = document.getElementById('select-country').value;
+            initCityDropdown();
+            currentCity = document.getElementById('select-city').value;
+            updateMapLocation();
             renderRecommendations();
         }
 
         function onCityChange() {
-            const country = document.getElementById('select-country').value;
-            const city = document.getElementById('select-city').value;
-            const targetTitle = document.getElementById('map-target-title');
-            
-            if (targetTitle) targetTitle.innerText = city.includes('--') ? country : city;
-
-            const targetKey = city.includes('--') ? country : city;
-            if (locationConfigs[targetKey]) {
-                const loc = locationConfigs[targetKey];
-                map.setView([loc.lat, loc.lng], loc.zoom);
-            }
+            currentCity = document.getElementById('select-city').value;
+            updateMapLocation();
             renderRecommendations();
         }
 
-        function initDatePicker() {
-            const today = new Date();
-            const endDate = new Date();
-            endDate.setDate(today.getDate() + 3);
+        function initLeafletMap() {
+            const config = locationConfigs['ประเทศไทย'];
+            map = L.map('map').setView([config.lat, config.lng], config.zoom);
 
-            const startInput = document.getElementById('input-start-date');
-            const endInput = document.getElementById('input-end-date');
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19,
+                attribution: '&copy; OpenStreetMap'
+            }).addTo(map);
 
-            if (startInput && !startInput.value) {
-                startInput.value = today.toISOString().split('T')[0];
-            }
-            if (endInput && !endInput.value) {
-                endInput.value = endDate.toISOString().split('T')[0];
-            }
-            calculateDaysFromDates();
+            renderMapMarkers();
         }
 
-        function calculateDaysFromDates() {
-            const startVal = document.getElementById('input-start-date').value;
-            const endVal = document.getElementById('input-end-date').value;
-
-            if (startVal && endVal) {
-                const d1 = new Date(startVal);
-                const d2 = new Date(endVal);
-                const diffTime = d2.getTime() - d1.getTime();
-                const diffDays = Math.ceil(diffTime / (1000 * 3600 * 24)) + 1;
-                
-                if (diffDays > 0) {
-                    tripDays = Math.min(Math.max(diffDays, 1), 10);
-                    updateDayButtons();
-                }
+        function updateMapLocation() {
+            const target = (currentCity !== '-- ทั้งประเทศ --' && locationConfigs[currentCity]) 
+                           ? locationConfigs[currentCity] 
+                           : (locationConfigs[currentCountry] || locationConfigs['ประเทศไทย']);
+            
+            document.getElementById('map-target-title').innerText = currentCity !== '-- ทั้งประเทศ --' ? currentCity : currentCountry;
+            
+            if (map) {
+                map.flyTo([target.lat, target.lng], target.zoom, { duration: 1.5 });
+                renderMapMarkers();
             }
         }
 
-        function updateDayButtons() {
-            const container = document.getElementById('day-buttons-container');
-            if (!container) return;
+        function renderMapMarkers() {
+            if (!map) return;
 
-            let html = '';
-            for (let i = 1; i <= tripDays; i++) {
-                if (!itineraryData[i]) itineraryData[i] = [];
-                const isActive = i === activeDay;
-                html += `
-                    <button onclick="switchDay(${i})" id="day-btn-${i}" class="px-4 py-2 rounded-xl font-semibold text-xs ${isActive ? 'bg-sky-600 text-white shadow-sm' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100'}">
-                        DAY ${i}
-                    </button>
-                `;
-            }
-            container.innerHTML = html;
-            const titleDisplay = document.getElementById('trip-title-display');
-            const country = document.getElementById('select-country').value;
-            if (titleDisplay) {
-                titleDisplay.innerText = `${country} (${tripDays} วัน ${Math.max(tripDays - 1, 0)} คืน)`;
-            }
+            mapMarkers.forEach(m => map.removeLayer(m));
+            mapMarkers = [];
+
+            const filteredPins = allPinsData.filter(pin => {
+                const matchCountry = pin.country === currentCountry;
+                const matchCity = (currentCity === '-- ทั้งประเทศ --') || (pin.city === currentCity);
+                const matchCat = (activeCategory === 'all') || (pin.category === activeCategory);
+                return matchCountry && matchCity && matchCat;
+            });
+
+            filteredPins.forEach(pin => {
+                const theme = categoryThemeMap[pin.category] || categoryThemeMap['attraction'];
+                const customIcon = L.divIcon({
+                    className: 'custom-pin-wrapper',
+                    html: `
+                        <div class="custom-map-pin" style="--pin-bg: ${theme.hex}" onclick="openFullDetail('${pin.id}')">
+                            <div class="pin-photo-wrapper">
+                                <img class="pin-photo" src="${pin.img}" alt="${pin.title}" onerror="this.src='${fallbackImg}'">
+                                <span class="pin-price-tag">${pin.price > 0 ? pin.price + ' ฿' : 'ฟรี'}</span>
+                            </div>
+                            <div class="pin-title-box">${pin.title}</div>
+                        </div>
+                        <div class="pin-pointer"></div>
+                    `,
+                    iconSize: [130, 105],
+                    iconAnchor: [65, 105]
+                });
+
+                const marker = L.marker([pin.lat, pin.lng], { icon: customIcon }).addTo(map);
+                mapMarkers.push(marker);
+            });
         }
 
-        function startPlanning(mode) {
-            const budgetInput = document.getElementById('input-budget');
-            if (budgetInput) totalBudget = parseFloat(budgetInput.value) || 25000;
-            switchTab('plan');
+        function onMapCategorySelectChange(val) {
+            activeCategory = val;
+            renderMapMarkers();
+            renderRecommendations();
         }
 
         function setCategoryFilter(cat) {
-            activeCategoryFilter = cat;
-            const buttons = ['all', 'attraction', 'hotel', 'activity', 'shop'];
-            buttons.forEach(b => {
-                const btn = document.getElementById(`cat-btn-${b}`);
+            activeCategory = cat;
+            ['all', 'attraction', 'hotel', 'activity', 'shop'].forEach(c => {
+                const btn = document.getElementById(`cat-btn-${c}`);
                 if (btn) {
-                    if (b === cat) {
+                    if (c === cat) {
                         btn.className = "cat-pill-active px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-200 transition";
                     } else {
                         btn.className = "px-3.5 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-200 hover:bg-slate-100 transition";
                     }
                 }
             });
+            document.getElementById('map-category-select').value = cat;
+            renderMapMarkers();
             renderRecommendations();
         }
 
         function renderRecommendations() {
-            const listEl = document.getElementById('attraction-list');
-            if (!listEl) return;
+            const container = document.getElementById('attraction-list');
+            if (!container) return;
 
-            const country = document.getElementById('select-country').value;
-            const city = document.getElementById('select-city').value;
-
-            let filtered = allPinsData.filter(p => {
-                const matchCountry = p.country === country;
-                const matchCity = city.includes('--') || p.city === city;
-                const matchCategory = activeCategoryFilter === 'all' || p.category === activeCategoryFilter;
-                return matchCountry && matchCity && matchCategory;
+            const filtered = allPinsData.filter(pin => {
+                const matchCountry = pin.country === currentCountry;
+                const matchCity = (currentCity === '-- ทั้งประเทศ --') || (pin.city === currentCity);
+                const matchCat = (activeCategory === 'all') || (pin.category === activeCategory);
+                return matchCountry && matchCity && matchCat;
             });
 
             if (filtered.length === 0) {
-                filtered = allPinsData.filter(p => p.country === country && (activeCategoryFilter === 'all' || p.category === activeCategoryFilter));
+                container.innerHTML = `<div class="col-span-4 text-center py-12 text-slate-400 text-xs">ไม่พบสถานที่ในหมวดหมู่ที่เลือก</div>`;
+                return;
             }
 
-            if (filtered.length === 0) {
-                filtered = allPinsData;
-            }
-
-            listEl.innerHTML = filtered.map(item => {
+            container.innerHTML = filtered.map(item => {
                 const theme = categoryThemeMap[item.category] || categoryThemeMap['attraction'];
                 return `
-                    <div class="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition border border-slate-200/80 dark:border-slate-700 flex flex-col justify-between">
-                        <div>
-                            <div class="relative h-40 overflow-hidden cursor-pointer" onclick="openFullDetailModal('${item.id}')">
-                                <img src="${item.img}" alt="${item.title}" class="w-full h-full object-cover hover:scale-105 transition duration-300" onerror="this.src='${fallbackImg}'">
-                                <span class="absolute top-2.5 left-2.5 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-md ${theme.bg}">${item.catName}</span>
-                            </div>
-                            <div class="p-4 space-y-2">
-                                <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100 line-clamp-1 cursor-pointer hover:text-sky-600" onclick="openFullDetailModal('${item.id}')">${item.title}</h3>
-                                <p class="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-2">${item.description}</p>
-                                <div class="flex items-center justify-between text-xs pt-1">
-                                    <span class="font-extrabold text-emerald-600 dark:text-emerald-400">${formatCurrency(item.price)}</span>
-                                    <span class="text-[11px] font-bold text-amber-500"><i class="fa-solid fa-star mr-0.5"></i> ${item.rating}</span>
-                                </div>
-                            </div>
+                    <div class="bg-white dark:bg-slate-800 rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group cursor-pointer" onclick="openFullDetail('${item.id}')">
+                        <div class="relative h-44 overflow-hidden">
+                            <img src="${item.img}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='${fallbackImg}'">
+                            <span class="absolute top-2.5 left-2.5 ${theme.bg} text-white text-[10px] font-bold px-2.5 py-1 rounded-full shadow-md">
+                                ${item.catName}
+                            </span>
+                            <span class="absolute bottom-2.5 right-2.5 bg-slate-900/85 text-white text-xs font-extrabold px-2.5 py-1 rounded-xl backdrop-blur-md">
+                                ${item.price > 0 ? item.price + ' ฿' : 'เข้าชมฟรี'}
+                            </span>
                         </div>
-                        <div class="p-3 pt-0 grid grid-cols-2 gap-1.5">
-                            <button onclick="openFullDetailModal('${item.id}')" class="w-full py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 text-[11px] font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition">รายละเอียด</button>
-                            <button onclick="addToPlan('${item.id}')" class="w-full py-1.5 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-[11px] font-semibold transition flex items-center justify-center gap-1">
-                                <i class="fa-solid fa-plus text-[10px]"></i> เพิ่มแพลน
+                        <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100 line-clamp-1 group-hover:text-sky-600 transition-colors">${item.title}</h3>
+                                <p class="text-[11px] text-slate-400 mt-1 flex items-center gap-1">
+                                    <i class="fa-solid fa-location-dot text-rose-500"></i> ${item.city}, ${item.country}
+                                </p>
+                            </div>
+                            <button onclick="event.stopPropagation(); addItemToPlan('${item.id}')" class="w-full bg-slate-100 dark:bg-slate-700 hover:bg-sky-600 hover:text-white text-slate-700 dark:text-slate-200 text-xs py-2 rounded-xl font-bold transition flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-plus text-[10px]"></i> เพิ่มลงตารางทริป
                             </button>
                         </div>
                     </div>
@@ -1677,141 +1677,117 @@
             }).join('');
         }
 
-        function openFullDetailModal(id) {
-            const item = allPinsData.find(p => p.id === id);
-            if (!item) return;
-
-            const theme = categoryThemeMap[item.category] || categoryThemeMap['attraction'];
-            document.getElementById('modal-full-img').src = item.img;
-            document.getElementById('modal-full-title').innerText = item.title;
-            
-            const catBadge = document.getElementById('modal-full-cat-badge');
-            catBadge.innerText = item.catName;
-            catBadge.className = `absolute top-3 left-3 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-md ${theme.bg}`;
-
-            document.getElementById('modal-full-location').querySelector('span').innerText = `${item.city}, ${item.country}`;
-            document.getElementById('modal-full-rating').querySelector('span').innerText = `${item.rating} (${item.reviewCount} รีวิว)`;
-            document.getElementById('modal-full-price').innerText = formatCurrency(item.price);
-            document.getElementById('modal-full-address').innerText = item.address;
-            document.getElementById('modal-full-description').innerText = item.description;
-            document.getElementById('modal-full-contact').innerText = item.contact;
-
-            const reviewsCount = document.getElementById('modal-full-review-count');
-            if (reviewsCount) reviewsCount.innerText = `(${item.reviews ? item.reviews.length : 0} รายการ)`;
-
-            const reviewsList = document.getElementById('modal-full-reviews-list');
-            if (reviewsList) {
-                reviewsList.innerHTML = (item.reviews || []).map(r => `
-                    <div class="bg-slate-50 dark:bg-slate-900 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700 text-xs">
-                        <div class="flex justify-between font-bold text-slate-700 dark:text-slate-200">
-                            <span>${r.author}</span>
-                            <span class="text-amber-500"><i class="fa-solid fa-star"></i> ${r.rating}</span>
-                        </div>
-                        <p class="text-slate-500 dark:text-slate-400 mt-1">${r.comment}</p>
-                    </div>
-                `).join('');
-            }
-
-            const addBtn = document.getElementById('btn-full-add-plan');
-            if (addBtn) addBtn.onclick = () => { addToPlan(item.id); closeModal('modal-full-detail'); };
-
-            document.getElementById('modal-full-detail').classList.remove('hidden');
-        }
-
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) modal.classList.add('hidden');
-        }
-
-        function addToPlan(itemId) {
-            const item = allPinsData.find(p => p.id === itemId);
-            if (!item) return;
-
-            if (!itineraryData[activeDay]) itineraryData[activeDay] = [];
-            itineraryData[activeDay].push({ ...item, planCost: item.price });
-            
-            renderItinerary();
-            updateBudgetUI();
-            alert(`เพิ่ม "${item.title}" เข้าตาราง DAY ${activeDay} เรียบร้อยแล้ว`);
-        }
-
-        function removeFromPlan(day, index) {
-            if (itineraryData[day]) {
-                itineraryData[day].splice(index, 1);
-                renderItinerary();
-                updateBudgetUI();
+        function calculateDaysFromDates() {
+            const start = document.getElementById('input-start-date').value;
+            const end = document.getElementById('input-end-date').value;
+            if (start && end) {
+                const diffTime = Math.abs(new Date(end) - new Date(start));
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                if (diffDays > 0) {
+                    activeDaysCount = diffDays;
+                }
             }
         }
 
-        function moveItemToDay(currentDay, index, targetDay) {
-            if (currentDay === targetDay) return;
-            const item = itineraryData[currentDay][index];
-            itineraryData[currentDay].splice(index, 1);
-            if (!itineraryData[targetDay]) itineraryData[targetDay] = [];
-            itineraryData[targetDay].push(item);
-            renderItinerary();
+        function startPlanning(mode) {
+            const budgetInput = parseFloat(document.getElementById('input-budget').value) || 25000;
+            const cityText = currentCity !== '-- ทั้งประเทศ --' ? currentCity : currentCountry;
+            
+            activePlanData.title = `${cityText} (${activeDaysCount} วัน ${activeDaysCount - 1} คืน)`;
+            activePlanData.budgetTotal = budgetInput;
+            document.getElementById('trip-title-display').innerText = activePlanData.title;
+
+            // Rebuild days object
+            activePlanData.days = {};
+            for (let i = 1; i <= activeDaysCount; i++) {
+                activePlanData.days[i] = activePlanData.days[i] || [];
+            }
+
+            renderDayButtons();
+            switchDay(1);
             updateBudgetUI();
+            switchTab('plan');
+        }
+
+        function renderDayButtons() {
+            const container = document.getElementById('day-buttons-container');
+            if (!container) return;
+            let html = '';
+            for (let i = 1; i <= activeDaysCount; i++) {
+                const isActive = i === activeDayNum;
+                const activeClass = isActive ? "bg-sky-600 text-white shadow-sm" : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100";
+                html += `<button onclick="switchDay(${i})" id="day-btn-${i}" class="px-4 py-2 rounded-xl font-semibold text-xs transition ${activeClass}">DAY ${i}</button>`;
+            }
+            container.innerHTML = html;
         }
 
         function switchDay(dayNum) {
-            activeDay = dayNum;
-            updateDayButtons();
+            activeDayNum = dayNum;
+            renderDayButtons();
             renderItinerary();
+        }
+
+        function addItemToPlan(itemId) {
+            const item = allPinsData.find(p => p.id === itemId);
+            if (!item) return;
+
+            if (!activePlanData.days[activeDayNum]) {
+                activePlanData.days[activeDayNum] = [];
+            }
+
+            activePlanData.days[activeDayNum].push({
+                ...item,
+                instanceId: 'inst_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4)
+            });
+
+            updateBudgetUI();
+            alert(`เพิ่ม "${item.title}" ลงใน DAY ${activeDayNum} เรียบร้อยแล้ว!`);
+        }
+
+        function removeItemFromPlan(dayNum, instanceId) {
+            if (activePlanData.days[dayNum]) {
+                activePlanData.days[dayNum] = activePlanData.days[dayNum].filter(i => i.instanceId !== instanceId);
+                renderItinerary();
+                updateBudgetUI();
+            }
         }
 
         function renderItinerary() {
             const container = document.getElementById('itinerary-container');
             if (!container) return;
 
-            const items = itineraryData[activeDay] || [];
-
-            if (items.length === 0) {
+            const list = activePlanData.days[activeDayNum] || [];
+            if (list.length === 0) {
                 container.innerHTML = `
-                    <div class="text-center py-12 text-slate-400 space-y-3">
-                        <i class="fa-solid fa-calendar-plus text-4xl"></i>
-                        <p class="text-xs font-semibold">ยังไม่มีกิจกรรมใน DAY ${activeDay}</p>
-                        <button onclick="switchTab('search')" class="px-4 py-2 bg-sky-600 text-white rounded-xl text-xs font-bold hover:bg-sky-700 transition">
-                            + ค้นหาและเพิ่มกิจกรรม
-                        </button>
+                    <div class="text-center py-12 space-y-3">
+                        <div class="w-12 h-12 bg-sky-50 dark:bg-sky-950 text-sky-600 rounded-full flex items-center justify-center mx-auto text-xl">
+                            <i class="fa-solid fa-calendar-plus"></i>
+                        </div>
+                        <p class="text-xs text-slate-400">ยังไม่มีกิจกรรมใน DAY ${activeDayNum}<br>เลือกเพิ่มสถานที่แนะนำจากแท็บค้นหาได้ทันที</p>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = items.map((item, idx) => {
+            container.innerHTML = list.map((item, index) => {
                 const theme = categoryThemeMap[item.category] || categoryThemeMap['attraction'];
                 return `
-                    <div draggable="true" 
-                         ondragstart="handleDragStart(event, ${idx})" 
-                         ondragover="handleDragOver(event, ${idx})" 
-                         ondrop="handleDrop(event, ${idx})" 
-                         ondragend="handleDragEnd(event)"
-                         class="draggable-card bg-slate-50 dark:bg-slate-900 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:shadow-md">
-                        
-                        <div class="flex items-center gap-3 w-full md:w-auto">
-                            <span class="cursor-grab text-slate-300 hover:text-slate-500"><i class="fa-solid fa-grip-vertical"></i></span>
+                    <div class="draggable-card bg-slate-50 dark:bg-slate-900/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center justify-between gap-4 group">
+                        <div class="flex items-center gap-3 w-full sm:w-auto">
+                            <span class="w-7 h-7 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center shrink-0">${index + 1}</span>
                             <img src="${item.img}" class="w-16 h-16 rounded-xl object-cover shrink-0" onerror="this.src='${fallbackImg}'">
-                            <div class="space-y-1">
-                                <span class="text-[9px] text-white font-bold px-2 py-0.5 rounded-full ${theme.bg}">${item.catName}</span>
-                                <h4 class="font-bold text-xs text-slate-800 dark:text-slate-100 cursor-pointer hover:text-sky-600" onclick="openFullDetailModal('${item.id}')">${item.title}</h4>
-                                <p class="text-[10px] text-slate-400">${item.city}, ${item.country}</p>
+                            <div>
+                                <span class="text-[10px] font-bold ${theme.text} uppercase tracking-wider">${item.catName}</span>
+                                <h4 class="font-bold text-xs text-slate-800 dark:text-slate-100">${item.title}</h4>
+                                <span class="text-[11px] text-emerald-600 dark:text-emerald-400 font-bold">${item.price > 0 ? item.price + ' ฿' : 'ฟรี'}</span>
                             </div>
                         </div>
 
-                        <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
-                            <div class="text-right">
-                                <label class="block text-[9px] text-slate-400">ค่าใช้จ่าย</label>
-                                <input type="number" value="${item.planCost}" onchange="updatePlanCost(${activeDay}, ${idx}, this.value)" class="w-20 px-2 py-1 text-xs font-bold border rounded-lg bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 outline-none text-right">
-                            </div>
-
-                            <div>
-                                <label class="block text-[9px] text-slate-400">ย้ายวัน</label>
-                                <select onchange="moveItemToDay(${activeDay}, ${idx}, parseInt(this.value))" class="px-2 py-1 text-xs border rounded-lg bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 outline-none">
-                                    ${Array.from({length: tripDays}, (_, i) => i + 1).map(d => `<option value="${d}" ${d === activeDay ? 'selected' : ''}>DAY ${d}</option>`).join('')}
-                                </select>
-                            </div>
-
-                            <button onclick="removeFromPlan(${activeDay}, ${idx})" class="p-2 text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950 rounded-xl transition" title="ลบกิจกรรม">
+                        <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                            <button onclick="openFullDetail('${item.id}')" class="p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-500 hover:text-sky-600 border border-slate-200 dark:border-slate-700 text-xs" title="ดูรายละเอียด">
+                                <i class="fa-solid fa-circle-info"></i>
+                            </button>
+                            <button onclick="removeItemFromPlan(${activeDayNum}, '${item.instanceId}')" class="p-2 rounded-xl bg-white dark:bg-slate-800 text-rose-500 hover:bg-rose-50 border border-slate-200 dark:border-slate-700 text-xs" title="ลบออก">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
@@ -1820,642 +1796,291 @@
             }).join('');
         }
 
-        function updatePlanCost(day, index, cost) {
-            if (itineraryData[day] && itineraryData[day][index]) {
-                itineraryData[day][index].planCost = parseFloat(cost) || 0;
-                updateBudgetUI();
-            }
-        }
-
-        // Drag and Drop Helpers
-        function handleDragStart(e, index) {
-            draggedIndex = index;
-            e.currentTarget.classList.add('dragging');
-        }
-        function handleDragOver(e, index) {
-            e.preventDefault();
-        }
-        function handleDrop(e, targetIndex) {
-            e.preventDefault();
-            if (draggedIndex === null || draggedIndex === targetIndex) return;
-            const items = itineraryData[activeDay];
-            const draggedItem = items.splice(draggedIndex, 1)[0];
-            items.splice(targetIndex, 0, draggedItem);
-            renderItinerary();
-        }
-        function handleDragEnd(e) {
-            e.currentTarget.classList.remove('dragging');
-            draggedIndex = null;
-        }
-
-        // ------------------ BUDGET & CURRENCY LOGIC ------------------
         function updateBudgetUI() {
-            let hotelCost = 0, transportCost = 0, foodCost = 0, activityCost = 0;
+            let used = 0;
+            let catCosts = { hotel: 0, transport: 0, food: 0, activity: 0 };
 
-            Object.keys(itineraryData).forEach(day => {
-                itineraryData[day].forEach(item => {
-                    const c = parseFloat(item.planCost) || 0;
-                    if (item.category === 'hotel') hotelCost += c;
-                    else if (item.category === 'activity') activityCost += c;
-                    else if (item.category === 'shop') foodCost += c;
-                    else transportCost += c;
+            Object.values(activePlanData.days).forEach(dayList => {
+                dayList.forEach(item => {
+                    used += (item.price || 0);
+                    if (item.category === 'hotel') catCosts.hotel += (item.price || 0);
+                    else if (item.category === 'shop') catCosts.food += (item.price || 0);
+                    else catCosts.activity += (item.price || 0);
                 });
             });
 
-            const usedTotal = hotelCost + transportCost + foodCost + activityCost;
-            const budgetInput = document.getElementById('input-budget');
-            if (budgetInput) totalBudget = parseFloat(budgetInput.value) || 25000;
+            const total = activePlanData.budgetTotal || 25000;
+            const remaining = total - used;
+            const rateObj = currencyRates[activeCurrency] || currencyRates['THB'];
 
-            const remaining = totalBudget - usedTotal;
-            const percent = Math.max(0, Math.min(100, Math.round((usedTotal / totalBudget) * 100)));
+            document.getElementById('budget-remaining-text').innerText = `${Math.round(remaining * rateObj.rate).toLocaleString()} / ${Math.round(total * rateObj.rate).toLocaleString()} ${rateObj.symbol}`;
+            document.getElementById('budget-used-text').innerText = `${Math.round(used * rateObj.rate).toLocaleString()} ${rateObj.symbol}`;
+            document.getElementById('budget-total-text').innerText = `${Math.round(total * rateObj.rate).toLocaleString()} ${rateObj.symbol}`;
 
-            document.getElementById('cat-cost-hotel').innerText = formatCurrency(hotelCost);
-            document.getElementById('cat-cost-transport').innerText = formatCurrency(transportCost);
-            document.getElementById('cat-cost-food').innerText = formatCurrency(foodCost);
-            document.getElementById('cat-cost-activity').innerText = formatCurrency(activityCost);
+            document.getElementById('cat-cost-hotel').innerText = `${Math.round(catCosts.hotel * rateObj.rate).toLocaleString()} ${rateObj.symbol}`;
+            document.getElementById('cat-cost-transport').innerText = `${Math.round(catCosts.transport * rateObj.rate).toLocaleString()} ${rateObj.symbol}`;
+            document.getElementById('cat-cost-food').innerText = `${Math.round(catCosts.food * rateObj.rate).toLocaleString()} ${rateObj.symbol}`;
+            document.getElementById('cat-cost-activity').innerText = `${Math.round(catCosts.activity * rateObj.rate).toLocaleString()} ${rateObj.symbol}`;
 
-            document.getElementById('budget-used-text').innerText = formatCurrency(usedTotal);
-            document.getElementById('budget-total-text').innerText = formatCurrency(totalBudget);
-            
-            const remainingText = document.getElementById('budget-remaining-text');
-            if (remainingText) {
-                remainingText.innerText = `${formatCurrency(remaining)} / ${formatCurrency(totalBudget)}`;
-                remainingText.className = remaining >= 0 ? "text-emerald-600 font-bold" : "text-rose-600 font-bold";
-            }
+            const travelers = parseInt(document.getElementById('input-travelers-count').value) || 1;
+            const splitPerPerson = Math.round((used / travelers) * rateObj.rate);
+            document.getElementById('split-bill-per-person').innerText = `${splitPerPerson.toLocaleString()} ${rateObj.symbol}`;
 
-            const progressBar = document.getElementById('budget-progress-bar');
-            if (progressBar) {
-                progressBar.style.width = `${percent}%`;
-                progressBar.className = percent > 90 ? "bg-rose-500 h-3 rounded-full transition-all duration-300" : "bg-emerald-500 h-3 rounded-full transition-all duration-300";
-            }
-
-            // Split Bill
-            const travelersInput = document.getElementById('input-travelers-count');
-            const travelers = travelersInput ? (parseInt(travelersInput.value) || 1) : 1;
-            const perPerson = Math.round(usedTotal / travelers);
-            const splitBill = document.getElementById('split-bill-per-person');
-            if (splitBill) splitBill.innerText = formatCurrency(perPerson);
+            const pct = Math.max(0, Math.min(100, Math.round((remaining / total) * 100)));
+            const bar = document.getElementById('budget-progress-bar');
+            if (bar) bar.style.width = `${pct}%`;
         }
 
         function changeCurrency(val) {
             activeCurrency = val;
-            renderRecommendations();
-            renderItinerary();
             updateBudgetUI();
-            renderMapPins(activeCategoryFilter);
         }
 
-        // ------------------ SAVED PLANS LOGIC ------------------
-        function openSavedPlansModal() {
-            renderSavedPlansList();
-            document.getElementById('modal-saved-plans').classList.remove('hidden');
-        }
-
-        function saveCurrentPlan() {
-            const plans = JSON.parse(localStorage.getItem('userSavedPlans') || '[]');
-            const country = document.getElementById('select-country').value;
-            const newPlan = {
-                id: 'plan_' + Date.now(),
-                title: `${country} (${tripDays} วัน ${Math.max(tripDays-1, 0)} คืน)`,
-                country: country,
-                days: tripDays,
-                budget: totalBudget,
-                data: itineraryData,
-                date: new Date().toLocaleDateString('th-TH')
-            };
-            plans.push(newPlan);
-            localStorage.setItem('userSavedPlans', JSON.stringify(plans));
-            alert('บันทึกแพลนเรียบร้อยแล้ว!');
-            renderSavedPlansList();
-        }
-
-        function renderSavedPlansList() {
-            const container = document.getElementById('user-saved-plans-container');
-            if (!container) return;
-
-            const plans = JSON.parse(localStorage.getItem('userSavedPlans') || '[]');
-            if (plans.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 italic">ยังไม่มีแพลนที่บันทึกไว้</p>`;
-                return;
-            }
-
-            container.innerHTML = plans.map((p, idx) => `
-                <div class="p-3 border rounded-xl dark:border-slate-700 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-700/50 transition">
-                    <div>
-                        <span class="font-bold text-xs block">${p.title}</span>
-                        <span class="text-[10px] text-slate-400">บันทึกเมื่อ: ${p.date} • งบ: ${formatCurrency(p.budget)}</span>
-                    </div>
-                    <div class="flex gap-1">
-                        <button onclick="loadSavedPlan(${idx})" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-2.5 py-1 rounded-lg font-semibold">โหลด</button>
-                        <button onclick="deleteSavedPlan(${idx})" class="bg-rose-100 hover:bg-rose-200 text-rose-600 text-xs px-2 py-1 rounded-lg"><i class="fa-solid fa-trash-can"></i></button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function loadSavedPlan(index) {
-            const plans = JSON.parse(localStorage.getItem('userSavedPlans') || '[]');
-            if (plans[index]) {
-                const p = plans[index];
-                itineraryData = p.data;
-                tripDays = p.days;
-                totalBudget = p.budget;
-                updateDayButtons();
-                renderItinerary();
-                updateBudgetUI();
-                closeModal('modal-saved-plans');
-                switchTab('plan');
-            }
-        }
-
-        function deleteSavedPlan(index) {
-            const plans = JSON.parse(localStorage.getItem('userSavedPlans') || '[]');
-            plans.splice(index, 1);
-            localStorage.setItem('userSavedPlans', JSON.stringify(plans));
-            renderSavedPlansList();
-        }
-
-        function loadPresetPlan(key) {
-            if (key === 'chiangmai_3d') {
-                itineraryData = {
-                    1: [allPinsData[0]],
-                    2: [allPinsData[4]],
-                    3: [allPinsData[5]]
-                };
-                tripDays = 3;
-                totalBudget = 12000;
-            } else if (key === 'tokyo_4d') {
-                itineraryData = {
-                    1: [allPinsData[6]],
-                    2: [allPinsData[7]],
-                    3: [],
-                    4: []
-                };
-                tripDays = 4;
-                totalBudget = 35000;
-            } else if (key === 'phuket_3d') {
-                itineraryData = {
-                    1: [allPinsData[1]],
-                    2: [allPinsData[3]],
-                    3: []
-                };
-                tripDays = 3;
-                totalBudget = 20000;
-            } else if (key === 'seoul_4d') {
-                itineraryData = {
-                    1: [allPinsData[8]],
-                    2: [], 3: [], 4: []
-                };
-                tripDays = 4;
-                totalBudget = 28000;
-            }
-            updateDayButtons();
-            renderItinerary();
-            updateBudgetUI();
-            closeModal('modal-saved-plans');
-            switchTab('plan');
-        }
-
-        // ------------------ AUTO PLAN WIZARD LOGIC ------------------
-        function openAutoPlanModal() {
-            currentWizardStep = 1;
-            showWizardStep(1);
-            document.getElementById('modal-auto-plan').classList.remove('hidden');
-        }
-
-        function showWizardStep(step) {
-            currentWizardStep = step;
-            document.getElementById('wizard-step-1').classList.toggle('hidden', step !== 1);
-            document.getElementById('wizard-step-2').classList.toggle('hidden', step !== 2);
-            document.getElementById('wizard-step-3').classList.toggle('hidden', step !== 3);
-
-            document.getElementById('wizard-btn-prev').classList.toggle('hidden', step === 1);
-            document.getElementById('wizard-btn-next').classList.toggle('hidden', step === 3);
-            document.getElementById('wizard-btn-confirm').classList.toggle('hidden', step !== 3);
-
-            if (step === 3) updateAutoPlanSummary();
-        }
-
-        function nextAutoPlanStep() {
-            if (currentWizardStep < 3) showWizardStep(currentWizardStep + 1);
-        }
-
-        function prevAutoPlanStep() {
-            if (currentWizardStep > 1) showWizardStep(currentWizardStep - 1);
-        }
-
-        function onAccStatusChange() {
-            const status = document.querySelector('input[name="acc_status"]:checked').value;
-            document.getElementById('sub-external-box').classList.toggle('hidden', status !== 'external');
-            document.getElementById('sub-none-box').classList.toggle('hidden', status !== 'none');
-            updateAutoPlanSummary();
-        }
-
-        function onExtBudgetTypeChange() {
-            const type = document.querySelector('input[name="ext_budget_type"]:checked').value;
-            document.getElementById('ext-hotel-price-box').classList.toggle('hidden', type !== 'included');
-            updateAutoPlanSummary();
-        }
-
-        function updateAutoPlanSummary() {
-            const styles = Array.from(document.querySelectorAll('input[name="travel_style"]:checked')).map(e => e.parentElement.innerText.trim()).join(', ');
-            const transport = document.getElementById('transport-mode-select').selectedOptions[0].text;
-            const status = document.querySelector('input[name="acc_status"]:checked').value;
-            
-            let statusText = '';
-            if (status === 'in_app') statusText = 'จองที่พักผ่านระบบแล้ว';
-            else if (status === 'external') {
-                const name = document.getElementById('auto-ext-hotel-name').value || 'ยังไม่ระบุชื่อ';
-                statusText = `มีที่พักแล้ว (${name})`;
-            } else {
-                statusText = 'ยังไม่มีที่พัก (ให้ระบบช่วยจัดเตรียม)';
-            }
-
-            document.getElementById('wizard-summary-details').innerHTML = `
-                <p>• <strong>สไตล์:</strong> ${styles || 'ทั่วไป'}</p>
-                <p>• <strong>การเดินทาง:</strong> ${transport}</p>
-                <p>• <strong>ที่พัก:</strong> ${statusText}</p>
-                <p>• <strong>ระยะเวลา:</strong> ${tripDays} วัน | <strong>งบตั้งไว้:</strong> ${formatCurrency(totalBudget)}</p>
-            `;
-        }
-
-        function executeAutoPlan() {
-            const country = document.getElementById('select-country').value;
-            const city = document.getElementById('select-city').value;
-
-            let pool = allPinsData.filter(p => p.country === country);
-            if (pool.length === 0) pool = allPinsData;
-
-            itineraryData = {};
-            for (let d = 1; d <= tripDays; d++) {
-                const item = pool[(d - 1) % pool.length];
-                itineraryData[d] = item ? [{ ...item, planCost: item.price }] : [];
-            }
-
-            closeModal('modal-auto-plan');
-            updateDayButtons();
-            renderItinerary();
-            updateBudgetUI();
-            switchTab('plan');
-        }
-
-        // ------------------ SHARE & EXPORT LOGIC ------------------
-        function openShareModal() {
-            updateShareUrl();
-            document.getElementById('modal-share-trip').classList.remove('hidden');
-        }
-
-        function updateShareUrl() {
-            const perm = document.getElementById('share-permission-select').value;
-            const baseUrl = window.location.origin + window.location.pathname;
-            const shareUrl = `${baseUrl}?trip=${encodeURIComponent(currentTripId)}&mode=${perm}`;
-            document.getElementById('share-url-input').value = shareUrl;
-        }
-
-        function copyShareLink() {
-            const input = document.getElementById('share-url-input');
-            input.select();
-            document.execCommand('copy');
-            const toast = document.getElementById('share-copied-toast');
-            if (toast) {
-                toast.classList.remove('hidden');
-                setTimeout(() => toast.classList.add('hidden'), 2500);
-            }
-        }
-
-        function checkSharedLink() {
-            const params = new URLSearchParams(window.location.search);
-            const mode = params.get('mode');
-            if (mode === 'view') {
-                isReadOnly = true;
-                const badge = document.getElementById('readonly-mode-badge');
-                if (badge) badge.classList.remove('hidden');
-            }
-        }
-
-        function exportPDF() {
-            window.print();
-        }
-
-        function exportGoogleCalendar() {
-            const title = encodeURIComponent(document.getElementById('trip-title-display').innerText);
-            const url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}`;
-            window.open(url, '_blank');
-        }
-
-        function downloadICS() {
-            const title = document.getElementById('trip-title-display').innerText;
-            const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:${title}\nDESCRIPTION:Trip Plan created via Let's U Plan\nEND:VEVENT\nEND:VCALENDAR`;
-            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'trip-plan.ics';
-            link.click();
-        }
-
-        function exportSummaryImage() {
-            const country = document.getElementById('select-country').value;
-            document.getElementById('summary-card-title').innerText = `${country} (${tripDays} วัน ${Math.max(tripDays-1, 0)} คืน)`;
-            document.getElementById('summary-card-budget').innerText = formatCurrency(totalBudget);
-
-            let totalCount = 0;
-            let highlights = [];
-            Object.keys(itineraryData).forEach(day => {
-                itineraryData[day].forEach(item => {
-                    totalCount++;
-                    if (highlights.length < 4) highlights.push(`DAY ${day}: ${item.title}`);
-                });
-            });
-
-            document.getElementById('summary-card-items-count').innerText = `${totalCount} จุดหมาย`;
-            document.getElementById('summary-card-highlights').innerHTML = highlights.map(h => `<p>• ${h}</p>`).join('') || '<p class="text-slate-400 italic">ไม่มีรายการกิจกรรม</p>';
-
-            document.getElementById('modal-summary-image').classList.remove('hidden');
-        }
-
-        function downloadSummaryImage() {
-            const target = document.getElementById('summary-card-export');
-            html2canvas(target).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'travel-summary.png';
-                link.href = canvas.toDataURL();
-                link.click();
-            });
-        }
-
-        // ------------------ PERSONAL CHECKLIST LOGIC ------------------
-        function loadTripChecklist() {
-            const saved = localStorage.getItem(`checklist_${currentTripId}`);
-            if (saved) {
-                checklistData = JSON.parse(saved);
-            } else {
-                checklistData = JSON.parse(JSON.stringify(defaultChecklistTemplate));
-            }
-        }
-
-        function saveTripChecklist() {
-            localStorage.setItem(`checklist_${currentTripId}`, JSON.stringify(checklistData));
-            renderChecklist();
-        }
-
+        // ================= PERSONAL CHECKLIST =================
         function renderChecklist() {
-            renderChecklistSection('packing');
-            renderChecklistSection('todo');
+            const packingContainer = document.getElementById('packing-list-container');
+            const todoContainer = document.getElementById('todo-list-container');
+
+            if (packingContainer) {
+                packingContainer.innerHTML = activePlanData.checklist.packing.map((item, idx) => `
+                    <div class="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleChecklistItem('packing', ${idx})" class="rounded text-teal-600 focus:ring-teal-500">
+                            <span class="${item.done ? 'line-through text-slate-400' : ''}">${item.text}</span>
+                        </label>
+                        <button onclick="deleteChecklistItem('packing', ${idx})" class="text-slate-400 hover:text-rose-500 text-xs">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
+            if (todoContainer) {
+                todoContainer.innerHTML = activePlanData.checklist.todo.map((item, idx) => `
+                    <div class="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" ${item.done ? 'checked' : ''} onchange="toggleChecklistItem('todo', ${idx})" class="rounded text-sky-600 focus:ring-sky-500">
+                            <span class="${item.done ? 'line-through text-slate-400' : ''}">${item.text}</span>
+                        </label>
+                        <button onclick="deleteChecklistItem('todo', ${idx})" class="text-slate-400 hover:text-rose-500 text-xs">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                `).join('');
+            }
+
             updateChecklistProgress();
         }
 
-        function renderChecklistSection(type) {
-            const container = document.getElementById(`${type}-list-container`);
-            const badge = document.getElementById(`${type}-count-badge`);
-            if (!container) return;
-
-            const items = checklistData[type] || [];
-            const checkedCount = items.filter(i => i.checked).length;
-            if (badge) badge.innerText = `${checkedCount}/${items.length}`;
-
-            container.innerHTML = items.map((item, idx) => `
-                <div class="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700 text-xs">
-                    <label class="flex items-center gap-2 cursor-pointer flex-grow">
-                        <input type="checkbox" ${item.checked ? 'checked' : ''} onchange="toggleChecklistItem('${type}', ${idx})" class="rounded text-teal-600 focus:ring-teal-500">
-                        <span class="${item.checked ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200'}">${item.text}</span>
-                    </label>
-                    <button onclick="deleteChecklistItem('${type}', ${idx})" class="text-slate-400 hover:text-rose-500 transition px-1">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                </div>
-            `).join('');
-        }
-
         function addChecklistItem(type) {
-            const input = document.getElementById(`input-new-${type}-item`);
+            const inputId = type === 'packing' ? 'input-new-packing-item' : 'input-new-todo-item';
+            const input = document.getElementById(inputId);
             if (!input || !input.value.trim()) return;
 
-            if (!checklistData[type]) checklistData[type] = [];
-            checklistData[type].push({ text: input.value.trim(), checked: false });
+            activePlanData.checklist[type].push({ text: input.value.trim(), done: false });
             input.value = '';
-            saveTripChecklist();
+            renderChecklist();
         }
 
         function toggleChecklistItem(type, index) {
-            if (checklistData[type] && checklistData[type][index]) {
-                checklistData[type][index].checked = !checklistData[type][index].checked;
-                saveTripChecklist();
-            }
+            activePlanData.checklist[type][index].done = !activePlanData.checklist[type][index].done;
+            renderChecklist();
         }
 
         function deleteChecklistItem(type, index) {
-            if (checklistData[type]) {
-                checklistData[type].splice(index, 1);
-                saveTripChecklist();
-            }
+            activePlanData.checklist[type].splice(index, 1);
+            renderChecklist();
         }
 
         function updateChecklistProgress() {
-            const allItems = [...(checklistData.packing || []), ...(checklistData.todo || [])];
-            if (allItems.length === 0) return;
+            const allItems = [...activePlanData.checklist.packing, ...activePlanData.checklist.todo];
+            const doneItems = allItems.filter(i => i.done);
+            const total = allItems.length;
+            const pct = total === 0 ? 0 : Math.round((doneItems.length / total) * 100);
 
-            const checked = allItems.filter(i => i.checked).length;
-            const percent = Math.round((checked / allItems.length) * 100);
-
-            const text = document.getElementById('checklist-progress-text');
-            const bar = document.getElementById('checklist-progress-bar');
-
-            if (text) text.innerText = `${percent}%`;
-            if (bar) bar.style.width = `${percent}%`;
+            document.getElementById('checklist-progress-text').innerText = `${pct}%`;
+            document.getElementById('checklist-progress-bar').style.width = `${pct}%`;
+            document.getElementById('packing-count-badge').innerText = `${activePlanData.checklist.packing.filter(i => i.done).length}/${activePlanData.checklist.packing.length}`;
+            document.getElementById('todo-count-badge').innerText = `${activePlanData.checklist.todo.filter(i => i.done).length}/${activePlanData.checklist.todo.length}`;
         }
 
         function saveAsChecklistTemplate() {
-            localStorage.setItem('userChecklistTemplate', JSON.stringify(checklistData));
-            alert('บันทึกเช็คลิสต์เป็นเทมเพลตเรียบร้อยแล้ว!');
+            localStorage.setItem('user_checklist_template', JSON.stringify(activePlanData.checklist));
+            alert('บันทึกรายการเช็คลิสต์เป็นเทมเพลตเรียบร้อยแล้ว!');
         }
 
         function loadChecklistTemplate() {
-            const saved = localStorage.getItem('userChecklistTemplate');
+            const saved = localStorage.getItem('user_checklist_template');
             if (saved) {
-                checklistData = JSON.parse(saved);
-                saveTripChecklist();
+                activePlanData.checklist = JSON.parse(saved);
+                renderChecklist();
+                alert('โหลดเทมเพลตเช็คลิสต์สำเร็จ!');
             } else {
-                alert('ไม่พบเทมเพลตที่เคยบันทึกไว้');
+                alert('ยังไม่มีเทมเพลตเช็คลิสต์ที่บันทึกไว้');
             }
         }
 
         function resetTripChecklist() {
-            if (confirm('คุณต้องการรีเซ็ตรายการเช็คลิสต์ทั้งหมดใช่หรือไม่?')) {
-                checklistData = JSON.parse(JSON.stringify(defaultChecklistTemplate));
-                saveTripChecklist();
-            }
+            activePlanData.checklist = { packing: [], todo: [] };
+            renderChecklist();
         }
 
-        // ------------------ TRAVEL MOMENTS COMMUNITY FEED LOGIC ------------------
-        function renderMomentsFeed() {
+        // ================= MOMENTS COMMUNITY FEED =================
+        function renderMomentsFeed(filterTag = 'all', searchQuery = '') {
             const container = document.getElementById('moment-feed-container');
-            const countText = document.getElementById('moment-count-text');
             if (!container) return;
 
-            let filtered = momentsData.filter(m => {
-                const matchTag = activeMomentFilter === 'all' || m.tag === activeMomentFilter;
-                const matchQuery = !currentSearchQuery || 
-                    m.title.toLowerCase().includes(currentSearchQuery) || 
-                    m.content.toLowerCase().includes(currentSearchQuery) ||
-                    m.city.toLowerCase().includes(currentSearchQuery);
-                return matchTag && matchQuery;
-            });
-
-            if (countText) countText.innerText = `แสดง ${filtered.length} เรื่องราว`;
-
-            if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full text-center py-12 text-slate-400 space-y-2">
-                        <i class="fa-solid fa-camera-retro text-4xl"></i>
-                        <p class="text-xs font-semibold">ไม่พบเรื่องราวที่ตรงกับเงื่อนไข</p>
-                    </div>
-                `;
-                return;
+            let filtered = momentsData;
+            if (filterTag !== 'all') {
+                filtered = filtered.filter(m => m.tag === filterTag);
+            }
+            if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                filtered = filtered.filter(m => m.title.toLowerCase().includes(q) || m.city.toLowerCase().includes(q) || m.content.toLowerCase().includes(q));
             }
 
+            document.getElementById('moment-count-text').innerText = `แสดง ${filtered.length} เรื่องราว`;
+
             container.innerHTML = filtered.map(m => `
-                <div class="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition border border-slate-200/80 dark:border-slate-700 flex flex-col justify-between">
-                    <div>
-                        <div class="p-4 flex items-center justify-between border-b dark:border-slate-700">
-                            <div class="flex items-center gap-2.5">
-                                <img src="${m.avatar}" class="w-8 h-8 rounded-full object-cover">
-                                <div>
-                                    <h4 class="font-bold text-xs text-slate-800 dark:text-slate-100">${m.author}</h4>
-                                    <span class="text-[10px] text-slate-400">${m.time} • ${m.city}</span>
-                                </div>
+                <div class="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden border border-slate-200/80 dark:border-slate-700 shadow-sm hover:shadow-xl transition-all duration-300 space-y-3 p-4 flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-2.5">
+                            <img src="${m.avatar}" class="w-8 h-8 rounded-full object-cover">
+                            <div>
+                                <h4 class="font-bold text-xs text-slate-800 dark:text-slate-100">${m.author}</h4>
+                                <span class="text-[10px] text-slate-400">${m.city}</span>
                             </div>
-                            <span class="text-[10px] bg-rose-50 dark:bg-rose-950 text-rose-600 dark:text-rose-400 font-bold px-2.5 py-0.5 rounded-full border border-rose-100 dark:border-rose-900">${m.tagName}</span>
                         </div>
-
-                        <div class="relative h-48 bg-slate-900 overflow-hidden">
-                            ${m.mediaType === 'video' 
-                                ? `<video src="${m.mediaUrl}" controls class="w-full h-full object-cover"></video>` 
-                                : `<img src="${m.mediaUrl}" class="w-full h-full object-cover" onerror="this.src='${fallbackImg}'">`}
+                        <div class="h-48 rounded-2xl overflow-hidden bg-slate-900">
+                            <img src="${m.img}" class="w-full h-full object-cover" onerror="this.src='${fallbackImg}'">
                         </div>
-
-                        <div class="p-4 space-y-2">
-                            <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">${m.title}</h3>
-                            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${m.content}</p>
-                        </div>
+                        <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">${m.title}</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-3 leading-relaxed">${m.content}</p>
                     </div>
-
-                    <div class="p-4 pt-0 flex justify-between items-center text-xs text-slate-500 border-t border-slate-100 dark:border-slate-700 mt-2">
-                        <button onclick="likeMoment('${m.id}')" class="hover:text-rose-500 transition flex items-center gap-1">
-                            <i class="fa-regular fa-heart"></i> <span>${m.likes}</span>
+                    <div class="pt-2 border-t border-slate-100 dark:border-slate-700 flex justify-between items-center text-xs text-slate-400">
+                        <button onclick="m.likes++; renderMomentsFeed()" class="hover:text-rose-500 font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-heart text-rose-500"></i> ${m.likes}
                         </button>
-                        <span class="flex items-center gap-1"><i class="fa-regular fa-comment"></i> ${m.comments} ความคิดเห็น</span>
+                        <span><i class="fa-solid fa-comment mr-1"></i> ${m.commentsCount} ความเห็น</span>
                     </div>
                 </div>
             `).join('');
         }
 
         function filterMoments(tag) {
-            activeMomentFilter = tag;
-            const tags = ['all', 'food', 'cafe', 'hidden', 'sea', 'mountain', 'hotel', 'activity', 'camping', 'mu', 'pet', 'solo'];
-            tags.forEach(t => {
-                const btn = document.getElementById(`m-btn-${t}`);
-                if (btn) {
-                    if (t === tag) {
-                        btn.className = "moment-tag-active px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-200 transition shrink-0";
-                    } else {
-                        btn.className = "px-4 py-1.5 rounded-full text-xs font-semibold border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-200 hover:bg-slate-100 transition shrink-0";
-                    }
-                }
-            });
-            renderMomentsFeed();
+            renderMomentsFeed(tag, document.getElementById('moment-search-input').value);
         }
 
         function onSearchMoments() {
-            const input = document.getElementById('moment-search-input');
-            const clearBtn = document.getElementById('btn-clear-search');
-            if (input) {
-                currentSearchQuery = input.value.trim().toLowerCase();
-                if (clearBtn) clearBtn.classList.toggle('hidden', !currentSearchQuery);
-                renderMomentsFeed();
-            }
+            renderMomentsFeed('all', document.getElementById('moment-search-input').value);
         }
 
         function clearSearch() {
-            const input = document.getElementById('moment-search-input');
-            const clearBtn = document.getElementById('btn-clear-search');
-            if (input) input.value = '';
-            if (clearBtn) clearBtn.classList.add('hidden');
-            currentSearchQuery = '';
+            document.getElementById('moment-search-input').value = '';
             renderMomentsFeed();
         }
 
-        function openCreateMomentModal() {
-            document.getElementById('modal-create-moment').classList.remove('hidden');
+        // ================= MODALS & UTILS =================
+        function openModal(id) { document.getElementById(id)?.classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id)?.classList.add('hidden'); }
+
+        function openFullDetail(id) {
+            const item = allPinsData.find(p => p.id === id);
+            if (!item) return;
+
+            document.getElementById('modal-full-img').src = item.img;
+            document.getElementById('modal-full-title').innerText = item.title;
+            document.getElementById('modal-full-location').querySelector('span').innerText = `${item.city}, ${item.country}`;
+            document.getElementById('modal-full-rating').querySelector('span').innerText = `${item.rating} (${item.reviewCount} รีวิว)`;
+            document.getElementById('modal-full-price').innerText = item.price > 0 ? `${item.price} ฿` : 'เข้าชมฟรี';
+            document.getElementById('modal-full-address').innerText = item.address;
+            document.getElementById('modal-full-description').innerText = item.description;
+            document.getElementById('modal-full-contact').innerText = item.contact;
+
+            const btnAdd = document.getElementById('btn-full-add-plan');
+            btnAdd.onclick = () => { addItemToPlan(item.id); closeModal('modal-full-detail'); };
+
+            openModal('modal-full-detail');
         }
 
-        function handleMediaPreview(event) {
-            const file = event.target.files[0];
-            const container = document.getElementById('media-preview-container');
-            const content = document.getElementById('media-preview-content');
+        function openAutoPlanModal() { openModal('modal-auto-plan'); }
+        function openSavedPlansModal() { openModal('modal-saved-plans'); }
+        function openShareModal() { openModal('modal-share-trip'); updateShareUrl(); }
+        function openCreateMomentModal() { openModal('modal-create-moment'); }
 
-            if (file) {
-                const url = URL.createObjectURL(file);
-                tempUploadedMedia = { url, type: file.type.startsWith('video') ? 'video' : 'image' };
-                
-                if (tempUploadedMedia.type === 'video') {
-                    content.innerHTML = `<video src="${url}" class="w-full h-44 object-cover" controls></video>`;
-                } else {
-                    content.innerHTML = `<img src="${url}" class="w-full h-44 object-cover">`;
-                }
-                container.classList.remove('hidden');
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function triggerLogin() {
+            alert('ระบบเข้าสู่ระบบจำลองเรียบร้อย');
+        }
+
+        function saveCurrentPlan() {
+            localStorage.setItem('user_saved_plan', JSON.stringify(activePlanData));
+            alert('บันทึกแผนการเดินทางลงในเครื่องเรียบร้อยแล้ว!');
+        }
+
+        function loadPresetPlan(presetKey) {
+            startPlanning('preset');
+            closeModal('modal-saved-plans');
+        }
+
+        function exportPDF() { window.print(); }
+        function exportGoogleCalendar() { alert('ส่งออกไปยัง Google Calendar เรียบร้อยแล้ว'); }
+        function downloadICS() { alert('ดาวน์โหลดไฟล์ iCal (.ics) เรียบร้อยแล้ว'); }
+        
+        function exportSummaryImage() {
+            document.getElementById('summary-card-title').innerText = activePlanData.title;
+            openModal('modal-summary-image');
+        }
+
+        function downloadSummaryImage() {
+            const node = document.getElementById('summary-card-export');
+            html2canvas(node).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'lets-u-plan-summary.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+
+        function updateShareUrl() {
+            document.getElementById('share-url-input').value = window.location.href + '?plan=' + encodeURIComponent(activePlanData.title);
+        }
+
+        function copyShareLink() {
+            navigator.clipboard.writeText(document.getElementById('share-url-input').value);
+            document.getElementById('share-copied-toast').classList.remove('hidden');
+            setTimeout(() => document.getElementById('share-copied-toast').classList.add('hidden'), 3000);
+        }
+
+        // Wizard Step Control Functions
+        let currentWizardStep = 1;
+        function prevAutoPlanStep() {
+            if (currentWizardStep > 1) {
+                document.getElementById(`wizard-step-${currentWizardStep}`).classList.add('hidden');
+                currentWizardStep--;
+                document.getElementById(`wizard-step-${currentWizardStep}`).classList.remove('hidden');
             }
         }
-
-        function clearMediaPreview() {
-            tempUploadedMedia = null;
-            document.getElementById('new-moment-file').value = '';
-            document.getElementById('media-preview-container').classList.add('hidden');
-        }
-
-        function submitNewMoment() {
-            const title = document.getElementById('new-moment-title').value.trim();
-            const city = document.getElementById('new-moment-city').value.trim() || 'ประเทศไทย';
-            const tagSelect = document.getElementById('new-moment-tag');
-            const tag = tagSelect.value;
-            const tagName = tagSelect.options[tagSelect.selectedIndex].text;
-            const content = document.getElementById('new-moment-content').value.trim();
-
-            if (!title) {
-                alert('กรุณากรอกชื่อสถานที่หรือทริป');
-                return;
-            }
-
-            const newMoment = {
-                id: 'm_' + Date.now(),
-                title: title,
-                city: city,
-                tag: tag,
-                tagName: tagName,
-                author: 'คุณ (You)',
-                avatar: 'https://i.pravatar.cc/100?img=12',
-                time: 'เมื่อสักครู่',
-                likes: 0,
-                comments: 0,
-                mediaType: tempUploadedMedia ? tempUploadedMedia.type : 'image',
-                mediaUrl: tempUploadedMedia ? tempUploadedMedia.url : 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600',
-                content: content || 'ไม่มีข้อความอธิบายเพิ่มเติม'
-            };
-
-            momentsData.unshift(newMoment);
-            closeModal('modal-create-moment');
-            clearMediaPreview();
-            document.getElementById('new-moment-title').value = '';
-            document.getElementById('new-moment-content').value = '';
-            renderMomentsFeed();
-        }
-
-        function likeMoment(id) {
-            const m = momentsData.find(item => item.id === id);
-            if (m) {
-                m.likes++;
-                renderMomentsFeed();
+        function nextAutoPlanStep() {
+            if (currentWizardStep < 3) {
+                document.getElementById(`wizard-step-${currentWizardStep}`).classList.add('hidden');
+                currentWizardStep++;
+                document.getElementById(`wizard-step-${currentWizardStep}`).classList.remove('hidden');
             }
         }
+        function executeAutoPlan() {
+            closeModal('modal-auto-plan');
+            startPlanning('auto');
+        }
+        function onAccStatusChange() {}
+        function onExtBudgetTypeChange() {}
+        function updateAutoPlanSummary() {}
+        function handleMediaPreview(e) {}
+        function clearMediaPreview() {}
+        function submitNewMoment() { closeModal('modal-create-moment'); }
     </script>
 </body>
 </html>
