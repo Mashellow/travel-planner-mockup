@@ -213,7 +213,7 @@
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 dark:text-slate-100 min-h-screen text-slate-800 flex flex-col transition-colors duration-300">
 
-    <!-- Header / Navbar (Design รูปที่ 1) -->
+    <!-- Header / Navbar -->
     <header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm sticky top-0 z-50 border-b border-slate-100 dark:border-slate-800">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-2.5 cursor-pointer" onclick="switchTab('search')">
@@ -244,49 +244,15 @@
                     <i class="fa-solid fa-eye"></i> <span>โหมดดูอย่างเดียว (Read-only)</span>
                 </span>
 
-                <!-- LANGUAGE SELECTOR (เปลี่ยนภาษาข้างมุม) -->
-                <div class="relative">
-                    <select id="language-select" onchange="changeLanguage(this.value)" class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold px-2.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 focus:outline-none cursor-pointer">
-                        <option value="th">🇹🇭 TH</option>
-                        <option value="en">🇬🇧 EN</option>
-                        <option value="jp">🇯🇵 JP</option>
-                        <option value="kr">🇰🇷 KR</option>
-                        <option value="cn">🇨🇳 CN</option>
-                    </select>
-                </div>
+                <!-- DARK MODE / LIGHT MODE TOGGLE BUTTON -->
+                <button id="theme-toggle-btn" onclick="toggleDarkMode()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-amber-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center gap-1.5 text-xs font-semibold" title="สลับธีม สว่าง-มืด">
+                    <i id="theme-toggle-icon" class="fa-solid fa-moon text-sm"></i>
+                    <span id="theme-toggle-text" class="hidden sm:inline">โหมดมืด</span>
+                </button>
 
-                <!-- LOGIN BUTTON -->
                 <button onclick="triggerLogin()" class="bg-slate-900 hover:bg-slate-800 dark:bg-sky-600 dark:hover:bg-sky-500 text-white text-xs px-4 py-2 rounded-xl font-medium shadow-md transition">
                     <i class="fa-solid fa-user-circle mr-1.5"></i> เข้าสู่ระบบ
                 </button>
-
-                <!-- 3-LINE SETTINGS MENU BUTTON (3 ขีด ทำหน้าที่เป็นตั้งค่า + ใส่ระบบธีมมืด) -->
-                <div class="relative">
-                    <button id="settings-menu-btn" onclick="toggleSettingsMenu()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center text-sm font-semibold" title="ตั้งค่า">
-                        <i class="fa-solid fa-bars"></i>
-                    </button>
-
-                    <!-- DROPDOWN SETTINGS MENU -->
-                    <div id="settings-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 p-2 z-50">
-                        <div class="px-3 py-2 border-b border-slate-100 dark:border-slate-700 text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                            <i class="fa-solid fa-gear"></i> ตั้งค่าระบบ
-                        </div>
-                        
-                        <!-- DARK MODE / LIGHT MODE TOGGLE BUTTON INSIDE 3-BAR MENU -->
-                        <button id="theme-toggle-btn" onclick="toggleDarkMode()" class="w-full text-left mt-1 p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition flex items-center justify-between text-xs font-semibold">
-                            <span class="flex items-center gap-2">
-                                <i id="theme-toggle-icon" class="fa-solid fa-moon text-sm text-amber-400"></i>
-                                <span>ธีมของระบบ</span>
-                            </span>
-                            <span id="theme-toggle-text" class="text-[11px] text-slate-400 font-normal">โหมดมืด</span>
-                        </button>
-
-                        <div class="p-2.5 text-[11px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700 mt-1 flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
-                            <span>โหมดระบบแผนที่ใหม่</span>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </header>
@@ -1308,144 +1274,9 @@
                 reviews: [{ author: 'นภา พ.', rating: 5, comment: 'สถาปัตยกรรมงดงาม ทรงคุณค่าทางประวัติศาสตร์อย่างยิ่ง' }]
             },
             { 
-                id: 'th_4', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'ภูเก็ต', title: 'Sri Panwa Resort', price: 16500, img: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400', lat: 7.805, lng: 98.408, tier: 2,
-                address: '88 หมู่ 8 ถนนศักดิเดช แหลมพันวา จ.ภูเก็ต', rating: 4.9, reviewCount: 210,
-                contact: 'โทร: 076-371000 | Email: chill@sripanwa.com',
-                description: 'รีสอร์ตหรูระดับ 5 ดาว บนปลายแหลมพันวา มองเห็นวิวทะเลอันดามันแบบ 360 องศา พร้อมพูลวิลล่าส่วนตัว',
-                reviews: [{ author: 'Ake S.', rating: 5, comment: 'วิวสวยที่สุด วิลล่ากว้างขวางบริการยอดเยี่ยมมาก' }]
-            },
-            { 
-                id: 'th_5', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'Anantara Chiang Mai', price: 7200, img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400', lat: 18.781, lng: 98.999, tier: 2,
-                address: '123-123/1 ถนนเจริญประเทศ อ.เมือง จ.เชียงใหม่', rating: 4.8, reviewCount: 175,
-                contact: 'โทร: 053-253333 | เว็บไซต์: anantara.com/chiang-mai',
-                description: 'โรงแรมสไตล์รีสอร์ตริมแม่น้ำปิง บรรยากาศสงบ ผ่อนคลาย ผสมผสานความร่วมสมัยกับกลิ่นอายล้านนาได้อย่างลงตัว',
-                reviews: [{ author: 'กิตติพงษ์', rating: 5, comment: 'ติดแม่น้ำปิง บรรยากาศเงียบสงบ เหมาะกับการพักผ่อน' }]
-            },
-            { 
-                id: 'th_6', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ประเทศไทย', city: 'เชียงใหม่', title: 'กาดหลวง วโรรส', price: 250, img: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400', lat: 18.789, lng: 99.001, tier: 3,
-                address: 'ถนนวิชยานนท์ ต.ช้างม่อย อ.เมือง จ.เชียงใหม่', rating: 4.7, reviewCount: 430,
-                contact: 'เปิดบริการทุกวัน: 05:00 - 18:00 น.',
-                description: 'ตลาดเก่าแก่คู่เมืองเชียงใหม่ แหล่งรวมของฝากขึ้นชื่อ เช่น แคบหมู น้ำพริกหนุ่ม ไส้อั่ว และของกินพื้นเมืองมากมาย',
-                reviews: [{ author: 'ปรียาภรณ์', rating: 5, comment: 'ของฝากครบครัน ไส้อั่วอร่อยมาก' }]
-            },
-            {
-                id: 'jp_1', category: 'attraction', catName: 'ท่องเที่ยว', country: 'ญี่ปุ่น', city: 'โตเกียว (Tokyo)', title: 'วัดอาซากุสะ (Sensoji)', price: 0, img: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=400', lat: 35.714, lng: 139.796, tier: 1,
-                address: '2-3-1 Asakusa, Taito City, Tokyo, Japan', rating: 4.9, reviewCount: 1420,
-                contact: 'Asakusa Tourist Information Center',
-                description: 'วัดพุทธที่เก่าแก่ที่สุดในโตเกียว มีโคมไฟสีแดงยักษ์อันเป็นเอกลักษณ์ และถนนช้อปปิ้งนากามิเสะ',
-                reviews: [{ author: 'Kenji S.', rating: 5, comment: 'Must visit landmark in Tokyo!' }]
-            },
-            { 
-                id: 'jp_2', category: 'shop', catName: 'ร้านค้า/ของฝาก', country: 'ญี่ปุ่น', city: 'โอซาก้า (Osaka)', title: 'ย่านโดทงโบริ (Dotonbori)', price: 500, img: 'https://images.unsplash.com/photo-1565031491910-e57fac031c41?w=400', lat: 34.668, lng: 135.501, tier: 2,
-                address: 'Dotonbori, Chuo Ward, Osaka, Japan', rating: 4.8, reviewCount: 980,
-                contact: 'Osaka Tourist Info',
-                description: 'ย่านช้อปปิ้งและสตรีทฟู้ดอันเลื่องชื่อของเมืองโอซาก้า มีป้ายกูลิโกะชูมืออันเป็นสัญลักษณ์',
-                reviews: [{ author: 'Taro M.', rating: 5, comment: 'Food paradise!' }]
+                id: 'th_4', category: 'hotel', catName: 'ที่พัก', country: 'ประเทศไทย', city: 'ภูเก็ต', title: 'Sri Panwa Resort', price: 16500, img: 'https://images.unsplash.com/photo-1566073771259-6a850609994d?w=400'
             }
         ];
-
-        // --- NEW HELPER FUNCTIONS FOR SETTINGS & LANGUAGE ---
-        function toggleSettingsMenu() {
-            const dropdown = document.getElementById('settings-dropdown');
-            if (dropdown) {
-                dropdown.classList.toggle('hidden');
-            }
-        }
-
-        function changeLanguage(lang) {
-            console.log('Language changed to:', lang);
-        }
-
-        // ปิดเมนูตั้งค่าเมื่อคลิกข้างนอก
-        document.addEventListener('click', function(e) {
-            const btn = document.getElementById('settings-menu-btn');
-            const dropdown = document.getElementById('settings-dropdown');
-            if (btn && dropdown && !btn.contains(e.target) && !dropdown.contains(e.target)) {
-                dropdown.classList.add('hidden');
-            }
-        });
-
-        // --- CORE FUNCTIONS preserved ---
-        function toggleDarkMode() {
-            const html = document.documentElement;
-            const isDark = html.classList.toggle('dark');
-            const icon = document.getElementById('theme-toggle-icon');
-            const text = document.getElementById('theme-toggle-text');
-            if (icon) {
-                icon.className = isDark ? 'fa-solid fa-sun text-sm text-amber-400' : 'fa-solid fa-moon text-sm text-slate-700';
-            }
-            if (text) {
-                text.innerText = isDark ? 'โหมดสว่าง' : 'โหมดมืด';
-            }
-        }
-
-        function switchTab(tabName) {
-            const tabs = ['search', 'plan', 'moment'];
-            tabs.forEach(t => {
-                const page = document.getElementById(`page-${t}`);
-                const nav = document.getElementById(`nav-${t}`);
-                if (page) page.classList.add('hidden');
-                if (nav) {
-                    nav.classList.remove('tab-active');
-                    nav.classList.add('text-slate-500');
-                }
-            });
-            const activePage = document.getElementById(`page-${tabName}`);
-            const activeNav = document.getElementById(`nav-${tabName}`);
-            if (activePage) activePage.classList.remove('hidden');
-            if (activeNav) {
-                activeNav.classList.add('tab-active');
-                activeNav.classList.remove('text-slate-500');
-            }
-        }
-
-        function triggerLogin() {
-            alert('ระบบเข้าสู่ระบบกำลังเตรียมเปิดใช้งาน');
-        }
-
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) modal.classList.add('hidden');
-        }
-
-        function onCountryChange() {}
-        function onCityChange() {}
-        function calculateDaysFromDates() {}
-        function openAutoPlanModal() {}
-        function startPlanning() {}
-        function setCategoryFilter() {}
-        function onMapCategorySelectChange() {}
-        function changeCurrency() {}
-        function exportPDF() {}
-        function exportGoogleCalendar() {}
-        function downloadICS() {}
-        function exportSummaryImage() {}
-        function openShareModal() {}
-        function saveCurrentPlan() {}
-        function updateBudgetUI() {}
-        function switchDay() {}
-        function saveAsChecklistTemplate() {}
-        function loadChecklistTemplate() {}
-        function resetTripChecklist() {}
-        function addChecklistItem() {}
-        function openCreateMomentModal() {}
-        function onSearchMoments() {}
-        function clearSearch() {}
-        function filterMoments() {}
-        function onAccStatusChange() {}
-        function updateAutoPlanSummary() {}
-        function onExtBudgetTypeChange() {}
-        function prevAutoPlanStep() {}
-        function nextAutoPlanStep() {}
-        function executeAutoPlan() {}
-        function openSavedPlansModal() {}
-        function loadPresetPlan() {}
-        function updateShareUrl() {}
-        function copyShareLink() {}
-        function downloadSummaryImage() {}
-        function handleMediaPreview() {}
-        function clearMediaPreview() {}
-        function submitNewMoment() {}
     </script>
 </body>
 </html>
