@@ -2530,5 +2530,251 @@
         function onExtBudgetTypeChange() {}
         function calculateDaysFromDates() {}
     </script>
+<script>
+/* LET'S U PLAN - Production-ready local-first enhancement layer
+   Keeps the original UI, adds persistence, validation, share/export, autosave,
+   saved-trip management, and safer DOM rendering. Backend hooks are ready for later API migration.
+*/
+(function(){
+'use strict';
+
+const APP_VERSION = '2.0.0';
+const STORAGE_PREFIX = 'lup_v2_';
+let saveTimer = null;
+let undoStack = [];
+let redoStack = [];
+let isRestoringState = false;
+
+function safeClone(obj){
+  try { return JSON.parse(JSON.stringify(obj)); } catch(e){ return null; }
+}
+function esc(value){
+  return String(value ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+}
+function toast(message, type='success'){
+  let el = document.getElementById('lup-global-toast');
+  if(!el){
+    el = document.createElement('div');
+    el.id='lup-global-toast';
+    el.className='fixed bottom-5 left-1/2 -translate-x-1/2 z-[20000] hidden max-w-[90vw] px-4 py-3 rounded-2xl shadow-xl text-xs font-semibold border backdrop-blur';
+    document.body.appendChild(el);
+  }
+  el.className='fixed bottom-5 left-1/2 -translate-x-1/2 z-[20000] max-w-[90vw] px-4 py-3 rounded-2xl shadow-xl text-xs font-semibold border backdrop-blur ' +
+    (type==='error' ? 'bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-950/80 dark:text-rose-200 dark:border-rose-800' :
+     type==='warning' ? 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/80 dark:text-amber-200 dark:border-amber-800' :
+     'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/80 dark:text-emerald-200 dark:border-emerald-800');
+  el.textContent=message; el.classList.remove('hidden');
+  clearTimeout(el._t); el._t=setTimeout(()=>el.classList.add('hidden'),3000);
+}
+function ensureSaveIndicator(){
+  if(document.getElementById('lup-save-indicator')) return;
+  const el=document.createElement('div'); el.id='lup-save-indicator';
+  el.className='fixed top-20 right-4 z-[15000] hidden text-[10px] font-semibold px-3 py-1.5 rounded-full bg-white/90 dark:bg-slate-800/90 shadow border border-slate-200 dark:border-slate-700 text-slate-500';
+  document.body.appendChild(el);
+}
+function saveIndicator(text, show=true){
+  ensureSaveIndicator(); const el=document.getElementById('lup-save-indicator');
+  el.textContent=text; if(show) el.classList.remove('hidden'); else el.classList.add('hidden');
+}
+function getTripTitle(){ return document.getElementById('trip-title-display')?.innerText || 'ประเทศไทย (4 วัน 3 คืน)'; }
+function snapshot(){
+  return {version:APP_VERSION, tripId:currentTripId, title:getTripTitle(), itinerary:safeClone(itineraryData), budget:totalBudget,
+    checklist:safeClone(checklistData), guideHired:!!isGuideHired, selectedGuideId:selectedGuideId || null,
+    tripDays, activeDay, travelers:parseInt(document.getElementById('input-travelers-count')?.value||'1',10), savedAt:new Date().toISOString()};
+}
+function stateKey(){ return STORAGE_PREFIX+'trip_'+(currentTripId||'default_trip'); }
+function persistCurrent(show=true){
+  try{
+    localStorage.setItem(stateKey(), JSON.stringify(snapshot()));
+    localStorage.setItem(STORAGE_PREFIX+'last_trip', currentTripId||'default_trip');
+    if(show) saveIndicator('✓ บันทึกแล้ว');
+  }catch(e){ toast('พื้นที่จัดเก็บไม่เพียงพอ กรุณาลบแพลนเก่าบางรายการ','error'); }
+}
+function scheduleSave(){
+  if(isReadOnly) return;
+  saveIndicator('กำลังบันทึก…'); clearTimeout(saveTimer);
+  saveTimer=setTimeout(()=>persistCurrent(true),700);
+}
+function pushHistory(){
+  if(isRestoringState) return;
+  undoStack.push(snapshot()); if(undoStack.length>30) undoStack.shift(); redoStack=[];
+}
+function applyState(state){
+  if(!state) return;
+  isRestoringState=true;
+  if(state.title && document.getElementById('trip-title-display')) document.getElementById('trip-title-display').innerText=state.title;
+  if(state.itinerary) itineraryData=safeClone(state.itinerary);
+  if(state.checklist) checklistData=safeClone(state.checklist);
+  if(Number.isFinite(state.budget)) totalBudget=state.budget;
+  if(Number.isFinite(state.tripDays)) tripDays=state.tripDays;
+  if(Number.isFinite(state.activeDay)) activeDay=Math.min(Math.max(1,state.activeDay),tripDays);
+  if(document.getElementById('input-budget')) document.getElementById('input-budget').value=totalBudget;
+  if(document.getElementById('input-travelers-count') && state.travelers) document.getElementById('input-travelers-count').value=state.travelers;
+  renderItinerary(); renderChecklists(); updateBudgetUI();
+  isRestoringState=false;
+}
+function restoreSavedTrip(id){
+  const raw=localStorage.getItem(STORAGE_PREFIX+'trip_'+id); if(!raw) return false;
+  try{ const state=JSON.parse(raw); currentTripId=id; applyState(state); persistCurrent(false); toast('โหลดแพลนเรียบร้อยแล้ว'); return true; }
+  catch(e){ toast('ไม่สามารถโหลดแพลนนี้ได้','error'); return false; }
+}
+function listSavedTrips(){
+  const out=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i); if(!k || !k.startsWith(STORAGE_PREFIX+'trip_')) continue;
+    try{ const s=JSON.parse(localStorage.getItem(k)); out.push({id:k.replace(STORAGE_PREFIX+'trip_',''),...s}); }catch(e){}
+  }
+  return out.sort((a,b)=>String(b.savedAt).localeCompare(String(a.savedAt)));
+}
+function renderSavedTrips(){
+  const box=document.getElementById('user-saved-plans-container'); if(!box) return;
+  const trips=listSavedTrips();
+  if(!trips.length){ box.innerHTML='<div class="text-[11px] text-slate-400 text-center py-4">ยังไม่มีแพลนที่บันทึกไว้ในเครื่องนี้</div>'; return; }
+  box.innerHTML=trips.map(t=>`<div class="p-3 border rounded-xl dark:border-slate-700 flex items-center justify-between gap-2 bg-slate-50/60 dark:bg-slate-900/40">
+    <div class="min-w-0"><b class="text-xs block truncate">${esc(t.title)}</b><span class="text-[10px] text-slate-400">${new Date(t.savedAt||Date.now()).toLocaleString('th-TH')}</span></div>
+    <div class="flex gap-1 shrink-0"><button onclick="loadSavedTrip('${esc(t.id)}')" class="bg-sky-600 text-white text-[10px] px-2 py-1.5 rounded-lg">โหลด</button><button onclick="deleteSavedTrip('${esc(t.id)}')" class="bg-rose-50 text-rose-600 dark:bg-rose-950/40 text-[10px] px-2 py-1.5 rounded-lg">ลบ</button></div>
+  </div>`).join('');
+}
+window.loadSavedTrip=restoreSavedTrip;
+window.deleteSavedTrip=function(id){ if(confirm('ลบแพลนนี้จากเครื่องหรือไม่?')){ localStorage.removeItem(STORAGE_PREFIX+'trip_'+id); renderSavedTrips(); toast('ลบแพลนแล้ว'); }};
+
+// Safer checklist rendering + autosave.
+window.renderChecklists=function(){
+  const packingContainer=document.getElementById('packing-list-container'), todoContainer=document.getElementById('todo-list-container');
+  if(packingContainer) packingContainer.innerHTML=(checklistData.packing||[]).map((item,idx)=>`<div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs"><label class="flex items-center gap-2 cursor-pointer flex-grow"><input type="checkbox" ${item.checked?'checked':''} onchange="toggleChecklist('packing',${idx})" class="rounded text-teal-600 focus:ring-teal-500"><span class="${item.checked?'line-through text-slate-400':''}">${esc(item.text)}</span></label><button onclick="deleteChecklistItem('packing',${idx})" class="text-slate-400 hover:text-rose-500 text-xs"><i class="fa-solid fa-xmark"></i></button></div>`).join('');
+  if(todoContainer) todoContainer.innerHTML=(checklistData.todo||[]).map((item,idx)=>`<div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs"><label class="flex items-center gap-2 cursor-pointer flex-grow"><input type="checkbox" ${item.checked?'checked':''} onchange="toggleChecklist('todo',${idx})" class="rounded text-sky-600 focus:ring-sky-500"><span class="${item.checked?'line-through text-slate-400':''}">${esc(item.text)}</span></label><button onclick="deleteChecklistItem('todo',${idx})" class="text-slate-400 hover:text-rose-500 text-xs"><i class="fa-solid fa-xmark"></i></button></div>`).join('');
+  updateChecklistProgress();
+};
+const _toggleChecklist=window.toggleChecklist, _deleteChecklistItem=window.deleteChecklistItem, _addChecklistItem=window.addChecklistItem;
+window.toggleChecklist=function(type,index){ pushHistory(); _toggleChecklist(type,index); scheduleSave(); };
+window.deleteChecklistItem=function(type,index){ pushHistory(); _deleteChecklistItem(type,index); scheduleSave(); };
+window.addChecklistItem=function(type){ pushHistory(); _addChecklistItem(type); scheduleSave(); };
+window.resetTripChecklist=function(){ pushHistory(); checklistData=safeClone(defaultChecklistTemplate); renderChecklists(); scheduleSave(); toast('รีเซ็ตเช็กลิสต์แล้ว'); };
+window.saveAsChecklistTemplate=function(){ localStorage.setItem('lets_u_plan_checklist_template',JSON.stringify(checklistData)); toast('บันทึกเทมเพลตเช็กลิสต์แล้ว'); };
+window.loadChecklistTemplate=function(){ try{const saved=localStorage.getItem('lets_u_plan_checklist_template'); if(!saved) return toast('ไม่พบเทมเพลตที่บันทึกไว้','warning'); pushHistory(); checklistData=JSON.parse(saved); renderChecklists(); scheduleSave(); toast('โหลดเทมเพลตเรียบร้อยแล้ว');}catch(e){toast('เทมเพลตเสียหาย','error');} };
+
+// Plan mutation wrappers.
+const _addPlanItem=window.addPlanItem, _removePlanItem=window.removePlanItem, _movePlanItem=window.movePlanItem;
+window.addPlanItem=function(id){ pushHistory(); _addPlanItem(id); scheduleSave(); toast('เพิ่มสถานที่ลงแพลนแล้ว'); };
+window.removePlanItem=function(day,index){ pushHistory(); _removePlanItem(day,index); scheduleSave(); };
+window.movePlanItem=function(day,index,targetDay){ pushHistory(); _movePlanItem(day,index,targetDay); scheduleSave(); };
+
+// Real local saved-plan management.
+window.saveCurrentPlan=function(){
+  if(isReadOnly) return toast('แพลนนี้อยู่ในโหมดดูอย่างเดียว','warning');
+  const id=currentTripId||('trip_'+Date.now()); currentTripId=id; persistCurrent(true); renderSavedTrips(); toast('บันทึกแพลนเดินทางเรียบร้อยแล้ว');
+};
+window.openSavedPlansModal=function(){ renderSavedTrips(); openModal('modal-saved-plans'); };
+
+// Budget changes persist.
+const budgetInput=document.getElementById('input-budget');
+if(budgetInput) budgetInput.addEventListener('change',()=>{ const n=Math.max(0,Number(budgetInput.value)||0); totalBudget=n; updateBudgetUI(); scheduleSave(); });
+const travelersInput=document.getElementById('input-travelers-count');
+if(travelersInput) travelersInput.addEventListener('change',scheduleSave);
+
+// Undo / redo shortcuts. Added non-intrusively as keyboard support.
+window.undoTripChange=function(){
+  if(!undoStack.length) return toast('ไม่มีการเปลี่ยนแปลงให้ย้อนกลับ','warning');
+  redoStack.push(snapshot()); applyState(undoStack.pop()); scheduleSave(); toast('ย้อนกลับ 1 ขั้นตอน');
+};
+window.redoTripChange=function(){
+  if(!redoStack.length) return toast('ไม่มีการเปลี่ยนแปลงให้ทำซ้ำ','warning');
+  undoStack.push(snapshot()); applyState(redoStack.pop()); scheduleSave(); toast('ทำซ้ำ 1 ขั้นตอน');
+};
+document.addEventListener('keydown',e=>{ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){e.preventDefault(); e.shiftKey?redoTripChange():undoTripChange();} });
+
+// Media validation: image only, max 5MB.
+window.handleMediaPreview=function(e){
+  const file=e.target.files?.[0]; if(!file) return;
+  if(!file.type.startsWith('image/')){ e.target.value=''; return toast('รองรับเฉพาะไฟล์รูปภาพ','error'); }
+  if(file.size>5*1024*1024){ e.target.value=''; return toast('รูปภาพต้องมีขนาดไม่เกิน 5MB','error'); }
+  const reader=new FileReader(); reader.onload=evt=>{ tempUploadedMedia=evt.target.result; const c=document.getElementById('media-preview-container'),content=document.getElementById('media-preview-content'); c.classList.remove('hidden'); content.innerHTML=''; const img=document.createElement('img'); img.src=tempUploadedMedia; img.className='w-full h-full object-cover'; img.alt='ตัวอย่างรูปภาพ'; content.appendChild(img); }; reader.readAsDataURL(file);
+};
+
+// Shareable self-contained link. Uses URL hash rather than fake ?trip=123.
+function encodeShare(state){ return btoa(unescape(encodeURIComponent(JSON.stringify(state)))); }
+function decodeShare(v){ try{return JSON.parse(decodeURIComponent(escape(atob(v))));}catch(e){return null;} }
+window.updateShareUrl=function(){
+  const permission=document.getElementById('share-permission-select')?.value||'view';
+  const state=snapshot(); state.sharePermission=permission; state.sharedAt=new Date().toISOString();
+  const url=location.origin+location.pathname+'#shared='+encodeShare(state);
+  const input=document.getElementById('share-url-input'); if(input) input.value=url;
+};
+window.copyShareLink=async function(){
+  const input=document.getElementById('share-url-input'); if(!input) return;
+  try{await navigator.clipboard.writeText(input.value);}catch(e){input.select();document.execCommand('copy');}
+  const toastEl=document.getElementById('share-copied-toast'); if(toastEl){toastEl.classList.remove('hidden');setTimeout(()=>toastEl.classList.add('hidden'),2500);} toast('คัดลอกลิงก์แชร์แล้ว');
+};
+function loadSharedFromHash(){
+  if(!location.hash.startsWith('#shared=')) return;
+  const state=decodeShare(location.hash.slice(8)); if(!state) return toast('ลิงก์แชร์ไม่ถูกต้องหรือข้อมูลเสียหาย','error');
+  isReadOnly=state.sharePermission!=='edit'; currentTripId='shared_'+Date.now(); applyState(state);
+  const label=isReadOnly?'โหมดดูอย่างเดียว':'โหมดแก้ไขร่วมกัน'; toast('เปิดแพลนจากลิงก์แล้ว · '+label,'warning');
+}
+
+// Proper ICS generated from itinerary entries.
+function icsEscape(v){return String(v||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');}
+function localICSDate(dayOffset, timeText){
+  const base=new Date(); base.setHours(9,0,0,0); base.setDate(base.getDate()+dayOffset);
+  const m=String((timeText||'').match(/(\d{1,2}):(\d{2})/)?.[1]||base.getHours()).padStart(2,'0');
+  const min=String((timeText||'').match(/\d{1,2}:(\d{2})/)?.[1]||base.getMinutes()).padStart(2,'0');
+  base.setHours(Number(m),Number(min),0,0);
+  return base.getFullYear()+String(base.getMonth()+1).padStart(2,'0')+String(base.getDate()).padStart(2,'0')+'T'+String(base.getHours()).padStart(2,'0')+String(base.getMinutes()).padStart(2,'0')+'00';
+}
+window.downloadICS=function(){
+  const events=[]; Object.keys(itineraryData||{}).forEach(day=>{
+    (itineraryData[day]||[]).forEach((item,idx)=>{
+      const dt=localICSDate(Number(day)-1,item.time); const end=new Date();
+      const y=Number(dt.slice(0,4)),mo=Number(dt.slice(4,6))-1,d=Number(dt.slice(6,8)),h=Number(dt.slice(9,11)),mi=Number(dt.slice(11,13)); end.setFullYear(y,mo,d); end.setHours(h,mi+90,0,0);
+      const endStr=end.getFullYear()+String(end.getMonth()+1).padStart(2,'0')+String(end.getDate()).padStart(2,'0')+'T'+String(end.getHours()).padStart(2,'0')+String(end.getMinutes()).padStart(2,'0')+'00';
+      events.push(['BEGIN:VEVENT','UID:'+Date.now()+'-'+day+'-'+idx+'@letsuplan','DTSTART;TZID=Asia/Bangkok:'+dt,'DTEND;TZID=Asia/Bangkok:'+endStr,'SUMMARY:'+icsEscape(item.title),'LOCATION:'+icsEscape(item.address||item.city||''),'DESCRIPTION:'+icsEscape(item.description||'') ,'END:VEVENT'].join('\r\n'));
+    });
+  });
+  const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Lets U Plan//Smart Travel Planner//TH','CALSCALE:GREGORIAN','X-WR-TIMEZONE:Asia/Bangkok',...events,'END:VCALENDAR'].join('\r\n');
+  const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'}),link=document.createElement('a'); link.href=URL.createObjectURL(blob); link.download='lets-u-plan-trip.ics'; document.body.appendChild(link); link.click(); link.remove(); setTimeout(()=>URL.revokeObjectURL(link.href),1000); toast('ดาวน์โหลดไฟล์ปฏิทินแล้ว');
+};
+window.exportGoogleCalendar=function(){
+  const first=(itineraryData[1]||[])[0]; const title=encodeURIComponent(getTripTitle()); const details=encodeURIComponent((first?.description||'วางแผนการเดินทางผ่าน Let\'s U Plan')+'\n'+Object.keys(itineraryData).map(d=>'DAY '+d+': '+(itineraryData[d]||[]).map(x=>x.title).join(', ')).join('\n')); window.open('https://calendar.google.com/calendar/render?action=TEMPLATE&text='+title+'&details='+details,'_blank','noopener');
+};
+
+// Auto-plan uses selected days and distributes unique places instead of hard-coded 4-day-only output.
+window.executeAutoPlan=function(){
+  const days=Math.max(1,Math.min(14,Number(tripDays)||4)); const places=[...allPinsData]; const result={}; for(let d=1;d<=days;d++) result[d]=[];
+  places.forEach((p,i)=>result[(i%days)+1].push({...p,time:(9+(i%4)*2)+':00 น.'})); itineraryData=result; activeDay=1; closeModal('modal-auto-plan'); switchTab('plan'); renderItinerary(); updateBudgetUI(); scheduleSave(); toast('จัดแพลนอัตโนมัติตามจำนวนวันแล้ว');
+};
+
+// Local demo auth: password is validated for form completeness; never claim this is server-secure.
+window.handleAuthSubmit=async function(e){
+  e.preventDefault(); const email=document.getElementById('auth-input-email')?.value.trim(); const pass=document.getElementById('auth-input-password')?.value||''; const name=document.getElementById('auth-input-name')?.value.trim()||email?.split('@')[0];
+  if(!email || pass.length<6) return toast('กรุณากรอกอีเมลและรหัสผ่านอย่างน้อย 6 ตัวอักษร','error');
+  let roleName=selectedAuthRole==='merchant'?'ร้านค้า/ที่พัก':selectedAuthRole==='guide'?'ไกด์นำเที่ยว':'ผู้ใช้ทั่วไป';
+  currentUser={email,name,role:selectedAuthRole,roleName,authMode,localOnly:true}; localStorage.setItem('lets_u_plan_user',JSON.stringify(currentUser)); updateUserHeaderUI(); closeModal('modal-auth'); toast(authMode==='register'?'สมัครสมาชิกในเครื่องเรียบร้อยแล้ว':'เข้าสู่ระบบในเครื่องเรียบร้อยแล้ว');
+};
+
+// Global error boundary.
+window.addEventListener('error',e=>{ console.error(e.error||e.message); toast('เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่','error'); });
+window.addEventListener('unhandledrejection',e=>{ console.error(e.reason); toast('ไม่สามารถดำเนินการบางอย่างได้ กรุณาลองใหม่','error'); });
+
+// Patch save/load lifecycle after original DOM init.
+document.addEventListener('DOMContentLoaded',()=>{
+  ensureSaveIndicator();
+  setTimeout(()=>{
+    try{
+      const last=localStorage.getItem(STORAGE_PREFIX+'last_trip');
+      if(last && localStorage.getItem(STORAGE_PREFIX+'trip_'+last)){ currentTripId=last; const raw=localStorage.getItem(STORAGE_PREFIX+'trip_'+last); if(raw) applyState(JSON.parse(raw)); }
+      loadSharedFromHash();
+      renderSavedTrips();
+      saveIndicator('',false);
+    }catch(e){ console.error(e); }
+  },150);
+});
+
+// Autosave on page hide, useful on mobile/iPad.
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&!isReadOnly) persistCurrent(false);});
+window.addEventListener('beforeunload',()=>{if(!isReadOnly) persistCurrent(false);});
+
+})();
+</script>
+
 </body>
 </html>
